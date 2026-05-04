@@ -1,151 +1,4 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Serkan Racing Online</title>
-
-<style>
-body{
-margin:0;
-overflow:hidden;
-background:#111;
-font-family:Arial;
-color:white;
-}
-
-canvas{
-display:block;
-background:#2b2b2b;
-}
-
-.ui{
-position:fixed;
-top:10px;
-left:10px;
-z-index:10;
-}
-
-.bar{
-position:fixed;
-bottom:20px;
-width:100%;
-display:flex;
-justify-content:center;
-gap:20px;
-z-index:10;
-}
-
-button{
-padding:15px 25px;
-font-size:18px;
-border:none;
-border-radius:10px;
-background:#444;
-color:white;
-}
-</style>
-</head>
-
-<body>
-
-<canvas id="c"></canvas>
-
-<div class="ui">
-<h3>🚗 Serkan Online Racing</h3>
-</div>
-
-<div class="bar">
-<button onmousedown="left=true" onmouseup="left=false">⬅ SOL</button>
-<button onmousedown="right=true" onmouseup="right=false">SAĞ ➡</button>
-</div>
-
-<script src="/socket.io/socket.io.js"></script>
-
-<script>
-
-const socket=io();
-const c=document.getElementById("c");
-const ctx=c.getContext("2d");
-
-c.width=innerWidth;
-c.height=innerHeight;
-
-let myId;
-let players={};
-
-let left=false;
-let right=false;
-
-/* CONNECT */
-socket.on("connect",()=>{
-myId=socket.id;
-});
-
-/* PLAYERS */
-socket.on("players",data=>{
-players=data;
-});
-
-/* MOVE */
-function sendMove(){
-
-if(players[myId]){
-
-let p=players[myId];
-
-socket.emit("move",{
-x:p.x + (left?-6:0) + (right?6:0),
-y:p.y - 4
-});
-}
-}
-
-/* ROAD */
-let roadY=0;
-
-/* DRAW */
-function draw(){
-
-ctx.clearRect(0,0,c.width,c.height);
-
-/* yol */
-ctx.fillStyle="#555";
-ctx.fillRect(c.width/2-120,0,240,c.height);
-
-/* çizgi */
-ctx.fillStyle="white";
-for(let i=0;i<20;i++){
-ctx.fillRect(c.width/2-5,i*80+roadY,10,40);
-}
-
-/* oyuncular */
-for(let id in players){
-let p=players[id];
-
-ctx.fillStyle=id===myId?"red":"blue";
-ctx.fillRect(p.x,p.y,40,70);
-}
-}
-
-/* LOOP */
-function loop(){
-
-sendMove();
-draw();
-
-roadY+=4;
-if(roadY>80) roadY=0;
-
-requestAnimationFrame(loop);
-}
-
-loop();
-
-</script>
-
-</body>
-</html>const express=require("express");
+const express=require("express");
 const http=require("http");
 const {Server}=require("socket.io");
 
@@ -187,4 +40,46 @@ io.emit("players",players);
 
 server.listen(3000,()=>{
 console.log("🚗 Racing Server çalışıyor");
+});const express=require("express");
+const http=require("http");
+const {Server}=require("socket.io");
+
+const app=express();
+const server=http.createServer(app);
+const io=new Server(server);
+
+app.use(express.static("public"));
+
+let players={};
+
+/* CONNECT */
+io.on("connection",(socket)=>{
+
+players[socket.id]={
+x:300,
+y:600
+};
+
+/* MOVE */
+socket.on("move",(data)=>{
+if(players[socket.id]){
+players[socket.id].x=data.x;
+players[socket.id].y=data.y;
+}
+});
+
+/* DISCONNECT */
+socket.on("disconnect",()=>{
+delete players[socket.id];
+});
+
+});
+
+/* UPDATE */
+setInterval(()=>{
+io.emit("players",players);
+},50);
+
+server.listen(3000,()=>{
+console.log("🚗 Racing server aktif");
 });
