@@ -1,41 +1,25 @@
 <h1>Serkan Games</h1>
-<p>Oyun yükleniyor...</p>
 <!DOCTYPE html>
 <html>
 <head>
     <title>Serkan Games</title>
 </head>
-<body style="margin:0; background:black; color:white; text-align:center;">
+<body style="margin:0; background:#111; color:white; display:flex; justify-content:center; align-items:center; height:100vh; flex-direction:column;">
 
-<h1 id="yazi">Oyun yükleniyor...</h1>
+<h1>Serkan Games</h1>
 
-<canvas id="game"></canvas>
+<input type="text" id="search" placeholder="Ara..." 
+style="padding:10px; width:250px; font-size:16px;">
+
+<button onclick="ara()" style="padding:10px 20px; margin-top:10px;">Ara</button>
+
+<p id="sonuc"></p>
 
 <script>
-let yazi = document.getElementById("yazi");
-let canvas = document.getElementById("game");
-let ctx = canvas.getContext("2d");
-
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-yazi.innerHTML = "Oyun başladı!";
-
-let x = 100;
-
-function oyun(){
-    ctx.fillStyle = "black";
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-
-    ctx.fillStyle = "red";
-    ctx.fillRect(x,200,50,50);
-
-    x += 2;
-
-    requestAnimationFrame(oyun);
+function ara(){
+    let text = document.getElementById("search").value;
+    document.getElementById("sonuc").innerHTML = "Aradın: " + text;
 }
-
-oyun();
 </script>
 
 </body>
