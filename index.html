@@ -4,23 +4,52 @@
 <head>
     <title>Serkan Games</title>
 </head>
-<body style="margin:0; background:#111; color:white; display:flex; justify-content:center; align-items:center; height:100vh; flex-direction:column;">
 
-<h1>Serkan Games</h1>
+<body style="
+margin:0;
+background:black;
+color:white;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+height:100vh;
+font-family:Arial;
+">
 
-<input type="text" id="search" placeholder="Ara..." 
-style="padding:12px; width:260px; font-size:16px; border-radius:8px; border:none; outline:none;">
+<h1 style="font-size:60px; margin-bottom:40px;">
+Serkan Games
+</h1>
 
-<button onclick="ara()" style="padding:10px 20px; margin-top:10px; border-radius:8px; border:none; cursor:pointer;">
+<input id="search" placeholder="Ara..."
+style="
+width:70%;
+max-width:700px;
+padding:18px;
+font-size:20px;
+border-radius:40px;
+border:none;
+outline:none;
+text-align:center;
+">
+
+<button onclick="ara()" style="
+margin-top:20px;
+padding:12px 30px;
+border-radius:25px;
+border:none;
+cursor:pointer;
+font-size:16px;
+">
 Ara
 </button>
 
-<p id="sonuc" style="margin-top:15px;"></p>
+<p id="sonuc" style="margin-top:20px;"></p>
 
 <script>
 function ara(){
-    let text = document.getElementById("search").value;
-    document.getElementById("sonuc").innerText = "Aradın: " + text;
+    let t = document.getElementById("search").value;
+    document.getElementById("sonuc").innerText = "Aradın: " + t;
 }
 </script>
 
