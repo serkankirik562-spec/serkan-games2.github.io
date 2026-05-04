@@ -3,138 +3,188 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Serkan Games</title>
+<title>Serkan Racing Online</title>
 
 <style>
 body{
 margin:0;
+overflow:hidden;
+background:#111;
 font-family:Arial;
-background:#111;
-color:white;
-}
-
-.header{
-background:#555;
-padding:15px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
-
-.game-box{
-margin:30px;
-padding:20px;
-background:#222;
-border-radius:10px;
-width:200px;
-}
-
-button{
-padding:10px;
-margin-top:10px;
-cursor:pointer;
-}
-
-#game{
-display:none;
-position:fixed;
-top:0;left:0;
-width:100%;height:100%;
-background:#111;
 color:white;
 }
 
 canvas{
 display:block;
-background:#000;
+background:#2b2b2b;
 }
 
-.menu{
-text-align:center;
-margin-top:100px;
+.ui{
+position:fixed;
+top:10px;
+left:10px;
+z-index:10;
+}
+
+.bar{
+position:fixed;
+bottom:20px;
+width:100%;
+display:flex;
+justify-content:center;
+gap:20px;
+z-index:10;
+}
+
+button{
+padding:15px 25px;
+font-size:18px;
+border:none;
+border-radius:10px;
+background:#444;
+color:white;
 }
 </style>
 </head>
 
 <body>
 
-<!-- HEADER -->
-<div class="header">
-<div>🎮 Serkan Games</div>
-<div><input placeholder="Ara..."></div>
-</div>
-
-<!-- ANA SAYFA -->
-<div id="home">
-<div class="game-box">
-<h3>Dövüş Oyunu</h3>
-<button onclick="openGame()">▶ Oyna</button>
-<button>⬇ İndir</button>
-</div>
-</div>
-
-<!-- OYUN -->
-<div id="game">
-
-<div class="menu" id="menu">
-<h2>Serkan Fight</h2>
-<input id="name" placeholder="İsim"><br><br>
-<button onclick="start()">Başla</button>
-</div>
-
 <canvas id="c"></canvas>
 
+<div class="ui">
+<h3>🚗 Serkan Online Racing</h3>
 </div>
+
+<div class="bar">
+<button onmousedown="left=true" onmouseup="left=false">⬅ SOL</button>
+<button onmousedown="right=true" onmouseup="right=false">SAĞ ➡</button>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
 
 <script>
 
-const game=document.getElementById("game");
-const home=document.getElementById("home");
-const canvas=document.getElementById("c");
-const ctx=canvas.getContext("2d");
+const socket=io();
+const c=document.getElementById("c");
+const ctx=c.getContext("2d");
 
-canvas.width=innerWidth;
-canvas.height=innerHeight;
+c.width=innerWidth;
+c.height=innerHeight;
 
-let player={x:100,y:200};
-let enemy={x:400,y:200};
+let myId;
+let players={};
 
-function openGame(){
-home.style.display="none";
-game.style.display="block";
+let left=false;
+let right=false;
+
+/* CONNECT */
+socket.on("connect",()=>{
+myId=socket.id;
+});
+
+/* PLAYERS */
+socket.on("players",data=>{
+players=data;
+});
+
+/* MOVE */
+function sendMove(){
+
+if(players[myId]){
+
+let p=players[myId];
+
+socket.emit("move",{
+x:p.x + (left?-6:0) + (right?6:0),
+y:p.y - 4
+});
+}
 }
 
-function start(){
-document.getElementById("menu").style.display="none";
-loop();
-}
+/* ROAD */
+let roadY=0;
 
-let keys={};
-document.addEventListener("keydown",e=>keys[e.key]=true);
-document.addEventListener("keyup",e=>keys[e.key]=false);
-
-function update(){
-if(keys["a"]) player.x-=5;
-if(keys["d"]) player.x+=5;
-}
-
+/* DRAW */
 function draw(){
-ctx.clearRect(0,0,canvas.width,canvas.height);
 
-ctx.fillStyle="red";
-ctx.fillRect(player.x,player.y,50,50);
+ctx.clearRect(0,0,c.width,c.height);
 
-ctx.fillStyle="blue";
-ctx.fillRect(enemy.x,enemy.y,50,50);
+/* yol */
+ctx.fillStyle="#555";
+ctx.fillRect(c.width/2-120,0,240,c.height);
+
+/* çizgi */
+ctx.fillStyle="white";
+for(let i=0;i<20;i++){
+ctx.fillRect(c.width/2-5,i*80+roadY,10,40);
 }
 
+/* oyuncular */
+for(let id in players){
+let p=players[id];
+
+ctx.fillStyle=id===myId?"red":"blue";
+ctx.fillRect(p.x,p.y,40,70);
+}
+}
+
+/* LOOP */
 function loop(){
-update();
+
+sendMove();
 draw();
+
+roadY+=4;
+if(roadY>80) roadY=0;
+
 requestAnimationFrame(loop);
 }
+
+loop();
 
 </script>
 
 </body>
-</html>
+</html>const express=require("express");
+const http=require("http");
+const {Server}=require("socket.io");
+
+const app=express();
+const server=http.createServer(app);
+const io=new Server(server);
+
+app.use(express.static("public"));
+
+let players={};
+
+/* CONNECT */
+io.on("connection",(socket)=>{
+
+players[socket.id]={
+x:300,
+y:600
+};
+
+/* MOVE */
+socket.on("move",(data)=>{
+if(players[socket.id]){
+players[socket.id].x=data.x;
+players[socket.id].y=data.y;
+}
+});
+
+/* DISCONNECT */
+socket.on("disconnect",()=>{
+delete players[socket.id];
+});
+
+});
+
+/* BROADCAST */
+setInterval(()=>{
+io.emit("players",players);
+},50);
+
+server.listen(3000,()=>{
+console.log("🚗 Racing Server çalışıyor");
+});
