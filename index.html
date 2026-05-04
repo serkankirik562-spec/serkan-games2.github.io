@@ -1,85 +1,75 @@
-const express=require("express");
-const http=require("http");
-const {Server}=require("socket.io");
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Serkan Games</title>
 
-const app=express();
-const server=http.createServer(app);
-const io=new Server(server);
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: #f2f2f2;
+    }
 
-app.use(express.static("public"));
+    /* ÜST BAR */
+    .topbar {
+      background: #777;
+      color: white;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-let players={};
+    .logo {
+      font-size: 22px;
+      font-weight: bold;
+    }
 
-/* CONNECT */
-io.on("connection",(socket)=>{
+    .search-box input {
+      padding: 8px;
+      border-radius: 6px;
+      border: none;
+      outline: none;
+    }
 
-players[socket.id]={
-x:300,
-y:600
-};
+    /* OYUN ALANI */
+    .container {
+      padding: 20px;
+    }
 
-/* MOVE */
-socket.on("move",(data)=>{
-if(players[socket.id]){
-players[socket.id].x=data.x;
-players[socket.id].y=data.y;
-}
-});
+    .game-card {
+      background: white;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 10px;
+    }
+  </style>
+</head>
 
-/* DISCONNECT */
-socket.on("disconnect",()=>{
-delete players[socket.id];
-});
+<body>
 
-});
+  <!-- ÜST BAR -->
+  <div class="topbar">
+    <div class="logo">🎮 Serkan Games</div>
 
-/* BROADCAST */
-setInterval(()=>{
-io.emit("players",players);
-},50);
+    <div class="search-box">
+      <input type="text" placeholder="Oyun ara...">
+    </div>
+  </div>
 
-server.listen(3000,()=>{
-console.log("🚗 Racing Server çalışıyor");
-});const express=require("express");
-const http=require("http");
-const {Server}=require("socket.io");
+  <!-- OYUN ALANI -->
+  <div class="container">
 
-const app=express();
-const server=http.createServer(app);
-const io=new Server(server);
+    <div class="game-card">
+      Buraya ilk oyunu ekleyeceğiz
+    </div>
 
-app.use(express.static("public"));
+    <div class="game-card">
+      Buraya ikinci oyun gelecek
+    </div>
 
-let players={};
+  </div>
 
-/* CONNECT */
-io.on("connection",(socket)=>{
-
-players[socket.id]={
-x:300,
-y:600
-};
-
-/* MOVE */
-socket.on("move",(data)=>{
-if(players[socket.id]){
-players[socket.id].x=data.x;
-players[socket.id].y=data.y;
-}
-});
-
-/* DISCONNECT */
-socket.on("disconnect",()=>{
-delete players[socket.id];
-});
-
-});
-
-/* UPDATE */
-setInterval(()=>{
-io.emit("players",players);
-},50);
-
-server.listen(3000,()=>{
-console.log("🚗 Racing server aktif");
-});
+</body>
+</html>
