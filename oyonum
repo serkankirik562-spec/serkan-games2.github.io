@@ -1,0 +1,40 @@
+import pygame
+import sys
+
+pygame.init()
+
+# ekran
+screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+WIDTH, HEIGHT = screen.get_size()
+
+clock = pygame.time.Clock()
+
+# top
+x, y = WIDTH // 2, HEIGHT // 2
+radius = 25
+
+running = True
+
+while running:
+    screen.fill((0, 0, 0))
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+        # parmak / mouse basılı tutma
+        if event.type == pygame.MOUSEMOTION:
+            x, y = event.pos
+
+        if event.type == pygame.FINGERDOWN or event.type == pygame.FINGERMOTION:
+            x = int(event.x * WIDTH)
+            y = int(event.y * HEIGHT)
+
+    # top çiz
+    pygame.draw.circle(screen, (255, 0, 0), (x, y), radius)
+
+    pygame.display.update()
+    clock.tick(60)
+
+pygame.quit()
+sys.exit()
