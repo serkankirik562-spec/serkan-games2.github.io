@@ -2,6 +2,8 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Serkan Games</title>
 
 <style>
@@ -22,7 +24,7 @@ body {
     color: white;
 }
 
-/* SOL LOGO */
+/* LOGO */
 .logo {
     font-size: 22px;
     font-weight: bold;
@@ -38,11 +40,17 @@ body {
 
 /* ALT ALAN */
 .content {
-    background: white;
     padding: 20px;
 }
 
-/* OYUN LİSTESİ */
+/* OYUN GRID */
+.games {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+}
+
+/* BAŞLIK */
 .games-title {
     font-size: 20px;
     margin-bottom: 10px;
@@ -50,7 +58,6 @@ body {
 
 /* OYUN KARTI */
 .game-card {
-    width: 220px;
     background: #f2f2f2;
     padding: 15px;
     border-radius: 12px;
@@ -72,7 +79,6 @@ body {
 
 <body>
 
-<!-- ÜST BAR -->
 <div class="header">
     <div class="logo">Serkan Games</div>
 
@@ -81,22 +87,21 @@ body {
     </div>
 </div>
 
-<!-- ALT ALAN -->
 <div class="content">
 
     <div class="games-title">Oyunlar</div>
 
-    <!-- SENİN OYUNUN -->
-    <div class="game-card">
-        🕷 Örümcek Oyunu<br>
-        <small>Serkan tarafından tasarlandı</small>
+    <div class="games">
 
-        <div class="play-btn">Oyna</div>
+        <div class="game-card">
+            🕷 Örümcek Oyunu<br>
+            <small>Serkan tarafından tasarlandı</small>
+            <div class="play-btn">Oyna</div>
+        </div>
+
     </div>
 
 </div>
 
 </body>
 </html>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
