@@ -11,156 +11,156 @@ body {
   background: #f2f2f2;
 }
 
-/* TOP BAR */
+/* ===== TOP BAR (TEK GRİ ALAN) ===== */
 .topbar {
   background: #777;
   color: white;
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
   padding: 10px 15px;
+  position: relative;
 }
 
-.left {
-  display: flex;
-  gap: 15px;
-  align-items: center;
+/* SOL - SEARCH */
+.search input {
+  padding: 6px;
+  border: none;
+  border-radius: 5px;
+  outline: none;
 }
 
+/* ORTA - LOGO */
 .logo {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   font-weight: bold;
   font-size: 20px;
 }
 
-.search input {
-  padding: 6px;
-  border-radius: 5px;
-  border: none;
-  outline: none;
-}
-
-/* 3 NOKTA */
-.menu {
-  position: relative;
+/* SAĞ - AYAR */
+.settings {
   cursor: pointer;
   font-size: 22px;
 }
 
+/* DROPDOWN */
 .dropdown {
   display: none;
   position: absolute;
-  right: 0;
-  top: 25px;
+  right: 10px;
+  top: 45px;
   background: white;
   color: black;
-  border-radius: 6px;
+  border-radius: 8px;
   overflow: hidden;
+  min-width: 160px;
 }
 
 .dropdown div {
   padding: 10px;
   cursor: pointer;
+  display: flex;
+  justify-content: space-between;
 }
 
 .dropdown div:hover {
-  background: #ddd;
+  background: #eee;
 }
 
-/* OYUN ALANI */
+/* YEŞİL NOKTA */
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: transparent;
+}
+
+.active-dot {
+  background: green;
+}
+
+/* ===== OYUN ALANI ===== */
 .container {
   padding: 15px;
 }
 
-/* GRID SİSTEMİ (DEFAULT PC = 5) */
 .games {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(5, 1fr); /* PC */
   gap: 10px;
 }
 
-/* OYUN KARTI */
 .game {
   background: white;
   padding: 20px;
   border-radius: 10px;
   text-align: center;
-  cursor: pointer;
 }
 
 /* MOBİL MOD */
 .mobile .games {
   grid-template-columns: repeat(3, 1fr);
 }
-
-/* PC MOD (açık belirtmek için) */
-.pc .games {
-  grid-template-columns: repeat(5, 1fr);
-}
 </style>
 </head>
 
 <body id="body" class="pc">
 
-<!-- TOP BAR -->
+<!-- ===== TOP BAR ===== -->
 <div class="topbar">
 
-  <div class="left">
-    <div class="logo">🎮 Serkan Games</div>
-
-    <div class="search">
-      <input type="text" placeholder="Oyun ara...">
-    </div>
+  <!-- SEARCH -->
+  <div class="search">
+    <input type="text" placeholder="Oyun ara...">
   </div>
 
-  <div class="menu" onclick="toggleMenu()">
-    ⋮
+  <!-- LOGO -->
+  <div class="logo">🎮 Serkan Games</div>
 
-    <div class="dropdown" id="dropdown">
-      <div onclick="setMode('pc')">💻 PC (5 oyun)</div>
-      <div onclick="setMode('mobile')">📱 Mobil (3 oyun)</div>
+  <!-- SETTINGS -->
+  <div class="settings" onclick="toggleMenu()">⚙️</div>
+
+  <!-- DROPDOWN -->
+  <div class="dropdown" id="dropdown">
+
+    <div onclick="setMode('pc')">
+      💻 PC
+      <span class="dot" id="pcDot"></span>
     </div>
+
+    <div onclick="setMode('mobile')">
+      📱 Mobil
+      <span class="dot" id="mobileDot"></span>
+    </div>
+
   </div>
 
 </div>
 
-<!-- OYUNLAR -->
+<!-- ===== OYUN ALANI ===== -->
 <div class="container">
-
   <h2>Oyunlar</h2>
 
   <div class="games">
 
-    <!-- ŞU AN SADECE KUTULAR -->
-    <div class="game">Oyun 1</div>
-    <div class="game">Oyun 2</div>
-    <div class="game">Oyun 3</div>
-    <div class="game">Oyun 4</div>
-    <div class="game">Oyun 5</div>
+    <div class="game">🚗 Araba Oyunu</div>
+    <div class="game">❌⭕ XOX</div>
+    <div class="game">🥊 Dövüş</div>
+    <div class="game">🏃 Koşu</div>
+    <div class="game">🎯 Aim</div>
 
   </div>
-
 </div>
 
 <script>
+let dropdown = document.getElementById("dropdown");
+
 function toggleMenu(){
-  let d = document.getElementById("dropdown");
-  d.style.display = d.style.display === "block" ? "none" : "block";
+  dropdown.style.display =
+    dropdown.style.display === "block" ? "none" : "block";
 }
 
 function setMode(mode){
-  let body = document.getElementById("body");
-
-  body.classList.remove("pc","mobile");
-
-  if(mode === "mobile"){
-    body.classList.add("mobile");
-  } else {
-    body.classList.add("pc");
-  }
-
-  document.getElementById("dropdown").style.display = "none";
-}
-</script>
-
-</body>
-</html>
+  let
