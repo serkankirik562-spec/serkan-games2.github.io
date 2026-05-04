@@ -9,16 +9,18 @@
 <h1>Serkan Games</h1>
 
 <input type="text" id="search" placeholder="Ara..." 
-style="padding:10px; width:250px; font-size:16px;">
+style="padding:12px; width:260px; font-size:16px; border-radius:8px; border:none; outline:none;">
 
-<button onclick="ara()" style="padding:10px 20px; margin-top:10px;">Ara</button>
+<button onclick="ara()" style="padding:10px 20px; margin-top:10px; border-radius:8px; border:none; cursor:pointer;">
+Ara
+</button>
 
-<p id="sonuc"></p>
+<p id="sonuc" style="margin-top:15px;"></p>
 
 <script>
 function ara(){
     let text = document.getElementById("search").value;
-    document.getElementById("sonuc").innerHTML = "Aradın: " + text;
+    document.getElementById("sonuc").innerText = "Aradın: " + text;
 }
 </script>
 
