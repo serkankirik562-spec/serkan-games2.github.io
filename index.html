@@ -1,109 +1,206 @@
-<!-- OYUN KART -->
-<div style="padding:20px;">
-<h2>🎮 Oyunlar</h2>
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Serkan Fight Online</title>
 
-<div style="background:#222;color:white;padding:15px;width:200px;border-radius:10px;">
-    <h3>Dövüş Oyunu</h3>
-    <button onclick="openGame()">▶️ Oyna</button>
-    <button>⬇️ İndir</button>
+<style>
+body{margin:0;background:#111;color:white;font-family:Arial;overflow:hidden}
+
+.bar{
+position:fixed;bottom:20px;left:50%;
+transform:translateX(-50%);
+display:flex;gap:15px;z-index:10;
+}
+
+button{padding:10px 20px}
+
+#gameScreen{display:none;position:fixed;top:0;left:0;width:100%;height:100%}
+
+.menu{text-align:center;margin-top:80px}
+
+canvas{display:none}
+
+#arena{
+position:absolute;width:100%;height:100%;
+display:none;justify-content:center;align-items:center;
+background:black;font-size:30px;z-index:999;
+animation:fade 1s;
+}
+
+@keyframes fade{
+0%{opacity:0}50%{opacity:1}100%{opacity:0}
+}
+
+.mobile{position:absolute;bottom:20px;width:100%;display:flex;justify-content:center;gap:20px}
+
+.block{position:absolute;bottom:120px;width:100%;text-align:center}
+</style>
+</head>
+
+<body>
+
+<div class="bar">
+<button onclick="openGame()">🎮 Oyna</button>
+<button>⬇ İndir</button>
 </div>
+
+<div id="gameScreen">
+
+<div id="arena">ARENA BAŞLIYOR...</div>
+
+<div id="menu" class="menu">
+<h2>Serkan Fight</h2>
+<input id="name" placeholder="İsim"><br><br>
+<select id="char">
+<option value="red">Kırmızı</option>
+<option value="blue">Mavi</option>
+</select><br><br>
+<button onclick="next()">Başla</button>
 </div>
 
-<!-- OYUN PANEL -->
-<div id="panel" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#111;color:white;z-index:999;">
-
-<div style="padding:10px;background:#222;">
-    <button onclick="closeGame()">⬅ Geri</button>
+<div id="mode" class="menu" style="display:none">
+<button onclick="startAI()">🤖 AI</button>
+<button onclick="startOnline()">👥 Online</button>
 </div>
 
-<!-- MENÜ -->
-<div id="menu1" style="text-align:center;margin-top:80px;">
-    <h2>Serkan Fight</h2>
-    <input id="name" placeholder="İsim"><br><br>
-    <button onclick="nextMenu()">Başla</button>
+<canvas id="c"></canvas>
+
+<div class="mobile">
+<button onclick="attack('left')">👊</button>
+<button onclick="attack('right')">💥</button>
 </div>
 
-<div id="menu2" style="display:none;text-align:center;margin-top:80px;">
-    <button onclick="startAI()">🤖 AI Oyna</button>
-</div>
-
-<canvas id="game"></canvas>
-
-<div style="position:absolute;bottom:20px;width:100%;text-align:center;">
-    <button onclick="attack()">👊</button>
+<div class="block">
+<button onmousedown="block=true" onmouseup="block=false">🛡</button>
 </div>
 
 </div>
+
+<script src="/socket.io/socket.io.js"></script>
 
 <script>
-const canvas=document.getElementById("game");
-const ctx=canvas.getContext("2d");
 
-canvas.width=window.innerWidth;
-canvas.height=window.innerHeight;
+let socket,players={},myId;
+let aiMode=false,gameEnded=false;
 
-let player={x:100,y:200,hp:100};
-let ai={x:500,y:200,hp:100};
+const c=document.getElementById("c");
+const ctx=c.getContext("2d");
 
-// MENÜ
-function openGame(){
-    document.getElementById("panel").style.display="block";
-}
-function closeGame(){
-    document.getElementById("panel").style.display="none";
-}
-function nextMenu(){
-    document.getElementById("menu1").style.display="none";
-    document.getElementById("menu2").style.display="block";
-}
-function startAI(){
-    canvas.style.display="block";
-    loop();
+c.width=innerWidth;
+c.height=innerHeight;
+
+let player={x:100,y:200,hp:100,lives:3};
+let ai={x:500,y:200,hp:100,lives:3};
+
+let block=false,combo=0,last=0;
+
+function openGame(){document.getElementById("gameScreen").style.display="block"}
+
+function next(){
+menu.style.display="none";
+mode.style.display="block";
 }
 
-// SALDIRI
-function attack(){
-    if(Math.abs(player.x-ai.x)<100){
-        ai.hp -= 10;
-    }
+function arena(){
+let a=document.getElementById("arena");
+a.style.display="flex";
+setTimeout(()=>a.style.display="none",1200);
 }
 
-// KONTROL
-let keys={};
-document.addEventListener("keydown",e=>keys[e.key]=true);
-document.addEventListener("keyup",e=>keys[e.key]=false);
+function attack(type){
+if(gameEnded) return;
 
-// LOOP
-function loop(){
+let now=Date.now();
+combo = now-last<600 ? combo+1 : 1;
+last=now;
 
-function update(){
-    if(keys["a"]) player.x-=5;
-    if(keys["d"]) player.x+=5;
+let dmg=(type=="left"?5:10)+combo;
 
-    if(ai.x>player.x) ai.x-=2;
-    if(ai.x<player.x) ai.x+=2;
+if(aiMode){
+if(Math.abs(player.x-ai.x)<100){
+if(!block){
+ai.hp-=dmg;
+checkDeath(ai);
+hit();
+}
+}
+}else{
+socket.emit("attack",{type,combo});
+}
 }
 
-function draw(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-
-    ctx.fillStyle="red";
-    ctx.fillRect(player.x,player.y,60,60);
-
-    ctx.fillStyle="blue";
-    ctx.fillRect(ai.x,ai.y,60,60);
-
-    ctx.fillStyle="white";
-    ctx.fillText("HP:"+player.hp,20,30);
-    ctx.fillText("HP:"+ai.hp,ai.x,ai.y-10);
+function hit(){
+c.style.transform="translateX(5px)";
+setTimeout(()=>c.style.transform="translateX(0)",100);
 }
 
-function gameLoop(){
-    update();
-    draw();
-    requestAnimationFrame(gameLoop);
-}
+function checkDeath(t){
+if(t.hp<=0){
+t.lives--;
+t.hp=100;
+t.x=100const express=require("express");
+const http=require("http");
+const {Server}=require("socket.io");
 
-gameLoop();
+const app=express();
+const server=http.createServer(app);
+const io=new Server(server);
+
+app.use(express.static("public"));
+
+let players={};
+
+io.on("connection",(socket)=>{
+
+players[socket.id]={
+x:100,y:200,hp:100,lives:3,name:"Oyuncu",color:"red"
+};
+
+socket.on("join",(d)=>{
+players[socket.id].name=d.name;
+players[socket.id].color=d.color;
+});
+
+socket.on("move",(p)=>{
+players[socket.id].x=p.x;
+players[socket.id].y=p.y;
+});
+
+socket.on("attack",(d)=>{
+
+for(let id in players){
+if(id!==socket.id){
+
+let p=players[id];
+
+if(Math.abs(p.x-players[socket.id].x)<100){
+
+p.hp-=(d.type=="left"?5:10)+d.combo;
+
+if(p.hp<=0){
+p.lives--;
+p.hp=100;
+p.x=Math.random()*400;
+
+if(p.lives<=0){
+io.emit("gameOver",id);
 }
-        </script>
+}
+}
+}
+}
+});
+
+socket.on("disconnect",()=>{
+delete players[socket.id];
+});
+
+setInterval(()=>{
+io.emit("players",players);
+},50);
+
+});
+
+server.listen(3000);
