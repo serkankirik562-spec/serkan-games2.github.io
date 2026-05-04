@@ -16,8 +16,8 @@ body {
   background: #777;
   color: white;
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
   padding: 10px 15px;
   position: relative;
 }
@@ -26,7 +26,6 @@ body {
   padding: 6px;
   border: none;
   border-radius: 5px;
-  outline: none;
 }
 
 .logo {
@@ -50,8 +49,8 @@ body {
   background: white;
   color: black;
   border-radius: 8px;
-  overflow: hidden;
   min-width: 160px;
+  overflow: hidden;
 }
 
 .dropdown div {
@@ -81,19 +80,54 @@ body {
   padding: 20px;
 }
 
-.game-card {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  text-align: center;
-  width: 200px;
-  margin: auto;
+/* START SCREEN */
+#startScreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #222;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 18px;
+  margin: 5px;
   cursor: pointer;
 }
 
-/* MOD */
-.mobile .game-card {
-  width: 150px;
+/* BOARD */
+#board {
+  display: grid;
+  gap: 5px;
+  justify-content: center;
+}
+
+.cell {
+  width: 90px;
+  height: 90px;
+  background: #444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  cursor: pointer;
+  color: white;
+}
+
+/* PC / MOBILE */
+.pc #board {
+  grid-template-columns: repeat(5, 90px);
+}
+
+.mobile #board {
+  grid-template-columns: repeat(3, 90px);
 }
 </style>
 </head>
@@ -127,25 +161,22 @@ body {
 
 </div>
 
-<!-- ONLY XOX -->
-<div class="container">
+<!-- START SCREEN -->
+<div id="startScreen">
+  <h1>❌⭕ XOX OYUNU</h1>
 
-  <div class="game-card" onclick="openXOX()">
-    ❌⭕ XOX OYNA
-  </div>
+  <p>Seçim yap:</p>
 
+  <button onclick="setPlayer('X')">X Oyna (Sen başla)</button>
+  <button onclick="setPlayer('O')">O Oyna (AI başlar)</button>
+
+  <button onclick="startGame()">▶️ OYNA</button>
 </div>
 
-<!-- XOX OYUNU -->
-<div id="xox" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#222; color:white; text-align:center; padding-top:40px;">
-
-  <h2>❌⭕ XOX</h2>
-
+<!-- GAME -->
+<div class="container">
   <div id="board"></div>
-
-  <p id="status"></p>
-
-  <button onclick="closeXOX()">Kapat</button>
+  <h2 id="status"></h2>
 </div>
 
 <script>
@@ -157,6 +188,7 @@ function toggleMenu(){
     dropdown.style.display === "block" ? "none" : "block";
 }
 
+/* PC / MOBILE */
 function setMode(mode){
   let body = document.getElementById("body");
 
@@ -176,80 +208,103 @@ function setMode(mode){
   dropdown.style.display = "none";
 }
 
-/* DEFAULT */
+/* DEFAULT PC */
 document.getElementById("pcDot").classList.add("active-dot");
 
-/* ===== XOX ===== */
-let board = ["","","","","","","","",""];
+/* ===== XOX AI ===== */
+
+let board = [];
 let current = "X";
+let player = "X";
+let ai = "O";
 let gameOver = false;
 
-function openXOX(){
-  document.getElementById("xox").style.display = "block";
-  reset();
+function setPlayer(p){
+  player = p;
+  ai = (p === "X") ? "O" : "X";
 }
 
-function closeXOX(){
-  document.getElementById("xox").style.display = "none";
+function startGame(){
+  document.getElementById("startScreen").style.display = "none";
+  reset();
 }
 
 function reset(){
   board = ["","","","","","","","",""];
   current = "X";
   gameOver = false;
-  document.getElementById("status").innerText = "Sıra: X";
   draw();
+  updateStatus();
 }
 
 function draw(){
   let b = document.getElementById("board");
   b.innerHTML = "";
-  b.style.display = "grid";
-  b.style.gridTemplateColumns = "repeat(3,100px)";
-  b.style.justifyContent = "center";
-  b.style.gap = "5px";
 
   board.forEach((c,i)=>{
     let d = document.createElement("div");
-    d.style.width="100px";
-    d.style.height="100px";
-    d.style.background="#444";
-    d.style.display="flex";
-    d.style.alignItems="center";
-    d.style.justifyContent="center";
-    d.style.fontSize="40px";
-    d.onclick=()=>play(i);
-    d.innerText=c;
+    d.className = "cell";
+    d.innerText = c;
+    d.onclick = ()=>play(i);
     b.appendChild(d);
   });
 }
 
 function play(i){
-  if(board[i]!=="" || gameOver) return;
+  if(gameOver || board[i] !== "") return;
+  if(current !== player) return;
 
-  board[i]=current;
+  board[i] = player;
 
-  if(checkWin()){
-    document.getElementById("status").innerText = current+" kazandı!";
-    gameOver=true;
-  } else {
-    current = current==="X"?"O":"X";
-    document.getElementById("status").innerText = "Sıra: "+current;
+  if(checkWin(player)){
+    end(player);
+    return;
   }
 
+  current = ai;
   draw();
+
+  setTimeout(aiMove, 400);
 }
 
-function checkWin(){
+function aiMove(){
+  if(gameOver) return;
+
+  let empty = board.map((v,i)=>v===""?i:null).filter(v=>v!==null);
+  let move = empty[Math.floor(Math.random()*empty.length)];
+
+  board[move] = ai;
+
+  if(checkWin(ai)){
+    end(ai);
+    return;
+  }
+
+  current = player;
+  draw();
+  updateStatus();
+}
+
+function checkWin(p){
   const w=[[0,1,2],[3,4,5],[6,7,8],
            [0,3,6],[1,4,7],[2,5,8],
            [0,4,8],[2,4,6]];
 
   return w.some(a=>
-    board[a[0]] &&
-    board[a[0]]===board[a[1]] &&
-    board[a[1]]===board[a[2]]
+    board[a[0]]===p &&
+    board[a[1]]===p &&
+    board[a[2]]===p
   );
+}
+
+function end(winner){
+  gameOver = true;
+  document.getElementById("status").innerText = winner + " kazandı!";
+}
+
+function updateStatus(){
+  document.getElementById("status").innerText =
+    (current === player) ? "Sen oynuyorsun" : "AI düşünüyor...";
 }
 
 </script>
