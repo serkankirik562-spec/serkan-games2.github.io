@@ -1,56 +1,66 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+// SADECE SERVER KODU BURADA
+const express = require("express");
+const http = require("http");
+const { Server } = require("socket.io");
 
-<title>Serkan Games</title>
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
 
-<style>
+app.get("/", (req, res) => {
+    res.sendFile(__dirname + "/index.html");
+});
 
-body {
-    margin: 0;
-    font-family: Arial;
-    background: white;
-}
+let players = {};
 
-/* ÜST BAR */
-.header {
-    background: #666;
-    height: 65px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 20px;
-    color: white;
-}
+io.on("connection", (socket) => {
 
-.logo {
-    font-size: 22px;
-    font-weight: bold;
-    color: #ddd;
-}
+    players[socket.id] = {
+        x: Math.random()*500,
+        y: 200,
+        hp: 100,
+        name: "Oyuncu",
+        color: "red"
+    };
 
-.search input {
-    padding: 7px;
-    border: none;
-    border-radius: 6px;
-    outline: none;
-}
+    socket.emit("myId", socket.id);
 
-</style>
-</head>
+    socket.on("join", (data)=>{
+        players[socket.id].name = data.name;
+        players[socket.id].color = data.color;
+    });
 
-<body>
+    socket.on("move", (p)=>{
+        if(players[socket.id]){
+            players[socket.id].x = p.x;
+            players[socket.id].y = p.y;
+        }
+    });
 
-<!-- SADECE ÜST BAR -->
-<div class="header">
-    <div class="logo">Serkan Games</div>
+    socket.on("attack", ()=>{
+        for(let id in players){
+            if(id !== socket.id){
+                let dx = Math.abs(players[id].x - players[socket.id].x);
+                if(dx < 100){
+                    players[id].hp -= 10;
+                }
+            }
+        }
+    });
 
-    <div class="search">
-        <input type="text" placeholder="Arama...">
-    </div>
-</div>
+    socket.on("chat", msg=>{
+        io.emit("chat", players[socket.id].name + ": " + msg);
+    });
 
-</body>
-</html>
+    socket.on("disconnect", ()=>{
+        delete players[socket.id];
+    });
+
+    setInterval(()=>{
+        io.emit("players", players);
+    }, 50);
+});
+
+server.listen(3000, ()=>{
+    console.log("http://localhost:3000");
+});
