@@ -1,63 +1,86 @@
-<!-- OYUN BAŞLAT BUTONU -->
-<button onclick="openGame()" style="position:fixed;bottom:20px;left:20px;z-index:10;">🎮 Oyna</button>
-<button style="position:fixed;bottom:20px;left:100px;">⬇️ İndir</button>
+<!-- OYUN MAĞAZA -->
+<div style="padding:20px;">
 
-<!-- OYUN EKRANI -->
-<div id="gameMenu" style="display:none;position:fixed;width:100%;height:100%;background:#111;top:0;left:0;z-index:999;color:white;text-align:center;">
+<h2>🎮 Oyunlar</h2>
 
-<h2>Serkan Fight</h2>
+<div style="display:flex;gap:20px;flex-wrap:wrap;">
 
-<input id="name" placeholder="İsmini yaz"><br><br>
+    <!-- OYUN KART -->
+    <div style="width:200px;background:#222;color:white;padding:15px;border-radius:10px;">
+        <h3>Dövüş Oyunu</h3>
+        <p>Online & AI</p>
 
-<select id="char">
-<option value="red">Kırmızı</option>
-<option value="blue">Mavi</option>
-<option value="green">Yeşil</option>
-</select>
+        <button onclick="openGame()">▶️ Oyna</button>
+        <button>⬇️ İndir</button>
+    </div>
 
-<br><br>
-
-<button onclick="startOnline()">👥 Arkadaşla Oyna</button>
-<button onclick="startAI()">🤖 AI Oyna</button>
-
-<br><br>
-<button onclick="closeGame()">Kapat</button>
-
-<canvas id="gameCanvas"></canvas>
-
-<!-- MOBİL TUŞ -->
-<div id="mobileBtns" style="position:absolute;bottom:20px;width:100%;display:flex;justify-content:center;gap:20px;">
-<button onclick="attack('left')">👊</button>
-<button onclick="attack('right')">💥</button>
 </div>
+</div>
+
+<!-- OYUN PANEL -->
+<div id="gamePanel" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#111;color:white;z-index:999;">
+
+    <!-- ÜST BAR -->
+    <div style="padding:10px;background:#222;">
+        <button onclick="closeGame()">⬅ Geri</button>
+    </div>
+
+    <!-- MENÜ -->
+    <div id="menu1" style="text-align:center;margin-top:80px;">
+        <h2>Serkan Fight</h2>
+        <input id="name" placeholder="İsim"><br><br>
+
+        <select id="char">
+            <option value="red">Kırmızı</option>
+            <option value="blue">Mavi</option>
+        </select><br><br>
+
+        <button onclick="nextMenu()">Başla</button>
+    </div>
+
+    <!-- MOD -->
+    <div id="menu2" style="display:none;text-align:center;margin-top:80px;">
+        <button onclick="startOnline()">👥 Arkadaşla</button>
+        <button onclick="startAI()">🤖 AI</button>
+    </div>
+
+    <!-- OYUN -->
+    <canvas id="game"></canvas>
 
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
-let socket;
-let myId;
-let players={};
+
+let socket, players={}, myId;
 let aiMode=false;
 
-const canvas=document.getElementById("gameCanvas");
+const canvas=document.getElementById("game");
 const ctx=canvas.getContext("2d");
 
 canvas.width=window.innerWidth;
 canvas.height=window.innerHeight;
 
-// MENÜ
+// AÇ/KAPAT
 function openGame(){
-    document.getElementById("gameMenu").style.display="block";
+    document.getElementById("gamePanel").style.display="block";
 }
 
 function closeGame(){
-    document.getElementById("gameMenu").style.display="none";
+    document.getElementById("gamePanel").style.display="none";
+}
+
+// MENÜ
+function nextMenu(){
+    document.getElementById("menu1").style.display="none";
+    document.getElementById("menu2").style.display="block";
 }
 
 // ONLINE
 function startOnline(){
     aiMode=false;
+    canvas.style.display="block";
+
     socket=io();
 
     let name=document.getElementById("name").value;
@@ -68,7 +91,7 @@ function startOnline(){
 
     socket.emit("join",{name,color});
 
-    gameLoop();
+    loop();
 }
 
 // AI
@@ -76,8 +99,12 @@ let ai={x:500,y:200,hp:100};
 
 function startAI(){
     aiMode=true;
-    gameLoop();
+    canvas.style.display="block";
+    loop();
 }
+
+// PLAYER
+let player={x:100,y:200,hp:100};
 
 // KONTROL
 let keys={};
@@ -85,74 +112,62 @@ document.addEventListener("keydown",e=>keys[e.key]=true);
 document.addEventListener("keyup",e=>keys[e.key]=false);
 
 // SALDIRI
-function attack(type){
+function attack(){
     if(aiMode){
-        let dx=Math.abs(player.x-ai.x);
-        if(dx<100){
-            ai.hp -= type==="left"?5:10;
+        if(Math.abs(player.x-ai.x)<100){
+            ai.hp -= 10;
         }
     }else{
         socket.emit("attack");
     }
 }
 
-// PLAYER
-let player={x:100,y:200,hp:100};
+// MOUSE
+document.onmousedown=(e)=>{
+    if(e.button===0) attack();
+};
+document.oncontextmenu=e=>e.preventDefault();
 
 // LOOP
-function gameLoop(){
+function loop(){
 
     function update(){
-
         if(keys["a"]) player.x-=5;
         if(keys["d"]) player.x+=5;
-
-        // PC mouse
-        document.onmousedown=(e)=>{
-            if(e.button===0) attack("left");
-            if(e.button===2) attack("right");
-        };
 
         if(!aiMode){
             socket.emit("move",player);
         }else{
-            // basit AI
-            if(ai.x > player.x) ai.x -= 2;
-            if(ai.x < player.x) ai.x += 2;
+            if(ai.x>player.x) ai.x-=2;
+            if(ai.x<player.x) ai.x+=2;
         }
     }
 
     function draw(){
         ctx.clearRect(0,0,canvas.width,canvas.height);
 
-        // player
         ctx.fillStyle="red";
-        ctx.fillRect(player.x,player.y,50,50);
+        ctx.fillRect(player.x,player.y,60,60);
 
         if(aiMode){
             ctx.fillStyle="blue";
-            ctx.fillRect(ai.x,ai.y,50,50);
-
-            ctx.fillStyle="white";
-            ctx.fillText("HP:"+ai.hp,ai.x,ai.y-10);
+            ctx.fillRect(ai.x,ai.y,60,60);
         }else{
             for(let id in players){
                 let p=players[id];
                 ctx.fillStyle=p.color;
-                ctx.fillRect(p.x,p.y,50,50);
+                ctx.fillRect(p.x,p.y,60,60);
             }
         }
-
-        ctx.fillStyle="white";
-        ctx.fillText("HP:"+player.hp,20,30);
     }
 
-    function loop(){
+    function gameLoop(){
         update();
         draw();
-        requestAnimationFrame(loop);
+        requestAnimationFrame(gameLoop);
     }
 
-    loop();
+    gameLoop();
 }
-    </script>
+
+</script>
