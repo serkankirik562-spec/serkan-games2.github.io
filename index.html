@@ -1,75 +1,166 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <title>Serkan Games</title>
+<meta charset="UTF-8">
+<title>Serkan Games</title>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial;
-      background: #f2f2f2;
-    }
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #f2f2f2;
+}
 
-    /* ÜST BAR */
-    .topbar {
-      background: #777;
-      color: white;
-      padding: 12px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+/* TOP BAR */
+.topbar {
+  background: #777;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+}
 
-    .logo {
-      font-size: 22px;
-      font-weight: bold;
-    }
+.left {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
 
-    .search-box input {
-      padding: 8px;
-      border-radius: 6px;
-      border: none;
-      outline: none;
-    }
+.logo {
+  font-weight: bold;
+  font-size: 20px;
+}
 
-    /* OYUN ALANI */
-    .container {
-      padding: 20px;
-    }
+.search input {
+  padding: 6px;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+}
 
-    .game-card {
-      background: white;
-      padding: 15px;
-      margin: 10px 0;
-      border-radius: 10px;
-    }
-  </style>
+/* 3 NOKTA */
+.menu {
+  position: relative;
+  cursor: pointer;
+  font-size: 22px;
+}
+
+.dropdown {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 25px;
+  background: white;
+  color: black;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.dropdown div {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.dropdown div:hover {
+  background: #ddd;
+}
+
+/* OYUN ALANI */
+.container {
+  padding: 15px;
+}
+
+/* GRID SİSTEMİ (DEFAULT PC = 5) */
+.games {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+
+/* OYUN KARTI */
+.game {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  cursor: pointer;
+}
+
+/* MOBİL MOD */
+.mobile .games {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* PC MOD (açık belirtmek için) */
+.pc .games {
+  grid-template-columns: repeat(5, 1fr);
+}
+</style>
 </head>
 
-<body>
+<body id="body" class="pc">
 
-  <!-- ÜST BAR -->
-  <div class="topbar">
+<!-- TOP BAR -->
+<div class="topbar">
+
+  <div class="left">
     <div class="logo">🎮 Serkan Games</div>
 
-    <div class="search-box">
+    <div class="search">
       <input type="text" placeholder="Oyun ara...">
     </div>
   </div>
 
-  <!-- OYUN ALANI -->
-  <div class="container">
+  <div class="menu" onclick="toggleMenu()">
+    ⋮
 
-    <div class="game-card">
-      Buraya ilk oyunu ekleyeceğiz
+    <div class="dropdown" id="dropdown">
+      <div onclick="setMode('pc')">💻 PC (5 oyun)</div>
+      <div onclick="setMode('mobile')">📱 Mobil (3 oyun)</div>
     </div>
+  </div>
 
-    <div class="game-card">
-      Buraya ikinci oyun gelecek
-    </div>
+</div>
+
+<!-- OYUNLAR -->
+<div class="container">
+
+  <h2>Oyunlar</h2>
+
+  <div class="games">
+
+    <!-- ŞU AN SADECE KUTULAR -->
+    <div class="game">Oyun 1</div>
+    <div class="game">Oyun 2</div>
+    <div class="game">Oyun 3</div>
+    <div class="game">Oyun 4</div>
+    <div class="game">Oyun 5</div>
 
   </div>
+
+</div>
+
+<script>
+function toggleMenu(){
+  let d = document.getElementById("dropdown");
+  d.style.display = d.style.display === "block" ? "none" : "block";
+}
+
+function setMode(mode){
+  let body = document.getElementById("body");
+
+  body.classList.remove("pc","mobile");
+
+  if(mode === "mobile"){
+    body.classList.add("mobile");
+  } else {
+    body.classList.add("pc");
+  }
+
+  document.getElementById("dropdown").style.display = "none";
+}
+</script>
 
 </body>
 </html>
