@@ -1,2 +1,42 @@
 <h1>Serkan Games</h1>
 <p>Oyun yükleniyor...</p>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Serkan Games</title>
+</head>
+<body style="margin:0; background:black; color:white; text-align:center;">
+
+<h1 id="yazi">Oyun yükleniyor...</h1>
+
+<canvas id="game"></canvas>
+
+<script>
+let yazi = document.getElementById("yazi");
+let canvas = document.getElementById("game");
+let ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+yazi.innerHTML = "Oyun başladı!";
+
+let x = 100;
+
+function oyun(){
+    ctx.fillStyle = "black";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    ctx.fillStyle = "red";
+    ctx.fillRect(x,200,50,50);
+
+    x += 2;
+
+    requestAnimationFrame(oyun);
+}
+
+oyun();
+</script>
+
+</body>
+</html>
