@@ -43,16 +43,22 @@ body {
     padding: 20px;
 }
 
-/* OYUN KARTI */
+/* OYUN KARTI ALANI */
+.games {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+}
+
+/* KART */
 .game-card {
-    width: 220px;
     background: #f2f2f2;
     padding: 15px;
     border-radius: 12px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-/* BUTONLAR */
+/* BUTON */
 .btn {
     margin-top: 10px;
     padding: 8px;
@@ -62,14 +68,7 @@ body {
     display: block;
     text-decoration: none;
     color: white;
-}
-
-.play {
     background: #666;
-}
-
-.download {
-    background: #444;
 }
 
 </style>
@@ -86,18 +85,22 @@ body {
     </div>
 </div>
 
-<!-- OYUN -->
+<!-- OYUNLAR -->
 <div class="content">
 
-    <div class="game-card">
-        🕷 Örümcek Oyunu<br>
-        <small>Serkan tarafından yapıldı</small>
+    <h2>Oyunlar</h2>
 
-        <!-- OYNA -->
-        <a href="spider.html" class="btn play">Oyna</a>
+    <div class="games">
 
-        <!-- İNDİR -->
-        <a href="spider.zip" download class="btn download">İndir</a>
+        <!-- BOŞ KART (sen dolduracaksın) -->
+        <div class="game-card">
+            🎮 Yeni Oyun<br>
+            <small>Kendi oyununuzu ekleyin</small>
+
+            <a href="#" class="btn">Oyna</a>
+            <a href="#" class="btn">İndir</a>
+        </div>
+
     </div>
 
 </div>
