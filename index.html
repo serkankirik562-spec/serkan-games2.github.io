@@ -1,66 +1,158 @@
-// SADECE SERVER KODU BURADA
-const express = require("express");
-const http = require("http");
-const { Server } = require("socket.io");
+<!-- OYUN BAŞLAT BUTONU -->
+<button onclick="openGame()" style="position:fixed;bottom:20px;left:20px;z-index:10;">🎮 Oyna</button>
+<button style="position:fixed;bottom:20px;left:100px;">⬇️ İndir</button>
 
-const app = express();
-const server = http.createServer(app);
-const io = new Server(server);
+<!-- OYUN EKRANI -->
+<div id="gameMenu" style="display:none;position:fixed;width:100%;height:100%;background:#111;top:0;left:0;z-index:999;color:white;text-align:center;">
 
-app.get("/", (req, res) => {
-    res.sendFile(__dirname + "/index.html");
-});
+<h2>Serkan Fight</h2>
 
-let players = {};
+<input id="name" placeholder="İsmini yaz"><br><br>
 
-io.on("connection", (socket) => {
+<select id="char">
+<option value="red">Kırmızı</option>
+<option value="blue">Mavi</option>
+<option value="green">Yeşil</option>
+</select>
 
-    players[socket.id] = {
-        x: Math.random()*500,
-        y: 200,
-        hp: 100,
-        name: "Oyuncu",
-        color: "red"
-    };
+<br><br>
 
-    socket.emit("myId", socket.id);
+<button onclick="startOnline()">👥 Arkadaşla Oyna</button>
+<button onclick="startAI()">🤖 AI Oyna</button>
 
-    socket.on("join", (data)=>{
-        players[socket.id].name = data.name;
-        players[socket.id].color = data.color;
-    });
+<br><br>
+<button onclick="closeGame()">Kapat</button>
 
-    socket.on("move", (p)=>{
-        if(players[socket.id]){
-            players[socket.id].x = p.x;
-            players[socket.id].y = p.y;
+<canvas id="gameCanvas"></canvas>
+
+<!-- MOBİL TUŞ -->
+<div id="mobileBtns" style="position:absolute;bottom:20px;width:100%;display:flex;justify-content:center;gap:20px;">
+<button onclick="attack('left')">👊</button>
+<button onclick="attack('right')">💥</button>
+</div>
+
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+let socket;
+let myId;
+let players={};
+let aiMode=false;
+
+const canvas=document.getElementById("gameCanvas");
+const ctx=canvas.getContext("2d");
+
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
+// MENÜ
+function openGame(){
+    document.getElementById("gameMenu").style.display="block";
+}
+
+function closeGame(){
+    document.getElementById("gameMenu").style.display="none";
+}
+
+// ONLINE
+function startOnline(){
+    aiMode=false;
+    socket=io();
+
+    let name=document.getElementById("name").value;
+    let color=document.getElementById("char").value;
+
+    socket.on("myId", id=>myId=id);
+    socket.on("players", data=>players=data);
+
+    socket.emit("join",{name,color});
+
+    gameLoop();
+}
+
+// AI
+let ai={x:500,y:200,hp:100};
+
+function startAI(){
+    aiMode=true;
+    gameLoop();
+}
+
+// KONTROL
+let keys={};
+document.addEventListener("keydown",e=>keys[e.key]=true);
+document.addEventListener("keyup",e=>keys[e.key]=false);
+
+// SALDIRI
+function attack(type){
+    if(aiMode){
+        let dx=Math.abs(player.x-ai.x);
+        if(dx<100){
+            ai.hp -= type==="left"?5:10;
         }
-    });
+    }else{
+        socket.emit("attack");
+    }
+}
 
-    socket.on("attack", ()=>{
-        for(let id in players){
-            if(id !== socket.id){
-                let dx = Math.abs(players[id].x - players[socket.id].x);
-                if(dx < 100){
-                    players[id].hp -= 10;
-                }
+// PLAYER
+let player={x:100,y:200,hp:100};
+
+// LOOP
+function gameLoop(){
+
+    function update(){
+
+        if(keys["a"]) player.x-=5;
+        if(keys["d"]) player.x+=5;
+
+        // PC mouse
+        document.onmousedown=(e)=>{
+            if(e.button===0) attack("left");
+            if(e.button===2) attack("right");
+        };
+
+        if(!aiMode){
+            socket.emit("move",player);
+        }else{
+            // basit AI
+            if(ai.x > player.x) ai.x -= 2;
+            if(ai.x < player.x) ai.x += 2;
+        }
+    }
+
+    function draw(){
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+
+        // player
+        ctx.fillStyle="red";
+        ctx.fillRect(player.x,player.y,50,50);
+
+        if(aiMode){
+            ctx.fillStyle="blue";
+            ctx.fillRect(ai.x,ai.y,50,50);
+
+            ctx.fillStyle="white";
+            ctx.fillText("HP:"+ai.hp,ai.x,ai.y-10);
+        }else{
+            for(let id in players){
+                let p=players[id];
+                ctx.fillStyle=p.color;
+                ctx.fillRect(p.x,p.y,50,50);
             }
         }
-    });
 
-    socket.on("chat", msg=>{
-        io.emit("chat", players[socket.id].name + ": " + msg);
-    });
+        ctx.fillStyle="white";
+        ctx.fillText("HP:"+player.hp,20,30);
+    }
 
-    socket.on("disconnect", ()=>{
-        delete players[socket.id];
-    });
+    function loop(){
+        update();
+        draw();
+        requestAnimationFrame(loop);
+    }
 
-    setInterval(()=>{
-        io.emit("players", players);
-    }, 50);
-});
-
-server.listen(3000, ()=>{
-    console.log("http://localhost:3000");
-});
+    loop();
+}
+    </script>
