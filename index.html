@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>Serkan Games</title>
+<title>Serkan Games - XOX</title>
 
 <style>
 body {
@@ -35,6 +35,7 @@ body {
   font-weight: bold;
 }
 
+/* SETTINGS */
 .settings {
   cursor: pointer;
   font-size: 22px;
@@ -75,16 +76,9 @@ body {
   background: green;
 }
 
-/* OYUN ALANI */
-.container {
-  padding: 20px;
-}
-
 /* START SCREEN */
 #startScreen {
   position: fixed;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
   background: #222;
@@ -97,8 +91,8 @@ body {
 
 button {
   padding: 10px 20px;
-  font-size: 18px;
   margin: 5px;
+  font-size: 16px;
   cursor: pointer;
 }
 
@@ -107,6 +101,7 @@ button {
   display: grid;
   gap: 5px;
   justify-content: center;
+  margin-top: 20px;
 }
 
 .cell {
@@ -117,17 +112,24 @@ button {
   align-items: center;
   justify-content: center;
   font-size: 40px;
-  cursor: pointer;
   color: white;
+  cursor: pointer;
 }
 
-/* PC / MOBILE */
+/* PC / MOBILE GRID */
 .pc #board {
   grid-template-columns: repeat(5, 90px);
 }
 
 .mobile #board {
   grid-template-columns: repeat(3, 90px);
+}
+
+/* STATUS */
+#status {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 20px;
 }
 </style>
 </head>
@@ -165,24 +167,23 @@ button {
 <div id="startScreen">
   <h1>❌⭕ XOX OYUNU</h1>
 
-  <p>Seçim yap:</p>
+  <p>Kim olacaksın?</p>
 
-  <button onclick="setPlayer('X')">X Oyna (Sen başla)</button>
-  <button onclick="setPlayer('O')">O Oyna (AI başlar)</button>
+  <button onclick="setPlayer('X')">X Oyna</button>
+  <button onclick="setPlayer('O')">O Oyna</button>
 
   <button onclick="startGame()">▶️ OYNA</button>
 </div>
 
 <!-- GAME -->
-<div class="container">
-  <div id="board"></div>
-  <h2 id="status"></h2>
-</div>
+<div id="board"></div>
+<h2 id="status"></h2>
 
 <script>
 
 let dropdown = document.getElementById("dropdown");
 
+/* MENU */
 function toggleMenu(){
   dropdown.style.display =
     dropdown.style.display === "block" ? "none" : "block";
@@ -208,7 +209,7 @@ function setMode(mode){
   dropdown.style.display = "none";
 }
 
-/* DEFAULT PC */
+/* DEFAULT */
 document.getElementById("pcDot").classList.add("active-dot");
 
 /* ===== XOX AI ===== */
@@ -219,24 +220,33 @@ let player = "X";
 let ai = "O";
 let gameOver = false;
 
+/* PLAYER SEÇ */
 function setPlayer(p){
   player = p;
   ai = (p === "X") ? "O" : "X";
 }
 
+/* START */
 function startGame(){
   document.getElementById("startScreen").style.display = "none";
   reset();
 }
 
+/* RESET */
 function reset(){
   board = ["","","","","","","","",""];
-  current = "X";
   gameOver = false;
+  current = "X";
+
   draw();
   updateStatus();
+
+  if(ai === "X"){
+    setTimeout(aiMove, 500);
+  }
 }
 
+/* DRAW */
 function draw(){
   let b = document.getElementById("board");
   b.innerHTML = "";
@@ -250,6 +260,7 @@ function draw(){
   });
 }
 
+/* PLAY */
 function play(i){
   if(gameOver || board[i] !== "") return;
   if(current !== player) return;
@@ -261,12 +272,18 @@ function play(i){
     return;
   }
 
+  if(board.every(c => c !== "")){
+    end("DRAW");
+    return;
+  }
+
   current = ai;
   draw();
 
   setTimeout(aiMove, 400);
 }
 
+/* AI */
 function aiMove(){
   if(gameOver) return;
 
@@ -280,15 +297,23 @@ function aiMove(){
     return;
   }
 
+  if(board.every(c => c !== "")){
+    end("DRAW");
+    return;
+  }
+
   current = player;
   draw();
   updateStatus();
 }
 
+/* WIN CHECK */
 function checkWin(p){
-  const w=[[0,1,2],[3,4,5],[6,7,8],
-           [0,3,6],[1,4,7],[2,5,8],
-           [0,4,8],[2,4,6]];
+  const w=[
+    [0,1,2],[3,4,5],[6,7,8],
+    [0,3,6],[1,4,7],[2,5,8],
+    [0,4,8],[2,4,6]
+  ];
 
   return w.some(a=>
     board[a[0]]===p &&
@@ -297,14 +322,25 @@ function checkWin(p){
   );
 }
 
+/* END GAME */
 function end(winner){
   gameOver = true;
-  document.getElementById("status").innerText = winner + " kazandı!";
+
+  if(winner === "DRAW"){
+    document.getElementById("status").innerText = "🤝 Berabere!";
+  }
+  else if(winner === player){
+    document.getElementById("status").innerText = "🎉 Sen kazandın!";
+  }
+  else {
+    document.getElementById("status").innerText = "🤖 AI kazandı!";
+  }
 }
 
+/* STATUS */
 function updateStatus(){
   document.getElementById("status").innerText =
-    (current === player) ? "Sen oynuyorsun" : "AI düşünüyor...";
+    (current === player) ? "Sen oynuyorsun" : "AI oynuyor...";
 }
 
 </script>
