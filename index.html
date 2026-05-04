@@ -2,46 +2,36 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>Serkan Games - XOX</title>
+<title>Serkan Games XOX</title>
 
 <style>
 body {
   margin: 0;
   font-family: Arial;
-  background: #f2f2f2;
+  background: #222;
+  color: white;
+  text-align: center;
 }
 
 /* TOP BAR */
 .topbar {
   background: #777;
-  color: white;
+  padding: 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 15px;
-  position: relative;
-}
-
-.search input {
-  padding: 6px;
-  border: none;
-  border-radius: 5px;
 }
 
 .logo {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
   font-weight: bold;
 }
 
-/* SETTINGS */
+/* MENU */
 .settings {
   cursor: pointer;
   font-size: 22px;
 }
 
-/* DROPDOWN */
 .dropdown {
   display: none;
   position: absolute;
@@ -50,19 +40,11 @@ body {
   background: white;
   color: black;
   border-radius: 8px;
-  min-width: 160px;
-  overflow: hidden;
 }
 
 .dropdown div {
   padding: 10px;
-  display: flex;
-  justify-content: space-between;
   cursor: pointer;
-}
-
-.dropdown div:hover {
-  background: #eee;
 }
 
 .dot {
@@ -72,36 +54,20 @@ body {
   background: transparent;
 }
 
-.active-dot {
-  background: green;
-}
+.active-dot { background: green; }
 
-/* START SCREEN */
-#startScreen {
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  background: #222;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-button {
-  padding: 10px 20px;
-  margin: 5px;
-  font-size: 16px;
-  cursor: pointer;
+/* SCORE */
+#score {
+  margin: 10px;
+  font-size: 18px;
 }
 
 /* BOARD */
 #board {
   display: grid;
-  gap: 5px;
   justify-content: center;
   margin-top: 20px;
+  position: relative;
 }
 
 .cell {
@@ -112,84 +78,68 @@ button {
   align-items: center;
   justify-content: center;
   font-size: 40px;
-  color: white;
   cursor: pointer;
 }
 
-/* PC / MOBILE GRID */
-.pc #board {
-  grid-template-columns: repeat(5, 90px);
-}
-
+/* PC & MOBILE BOTH 3x3 (XOX STANDARD) */
+.pc #board,
 .mobile #board {
   grid-template-columns: repeat(3, 90px);
 }
 
-/* STATUS */
-#status {
-  text-align: center;
-  margin-top: 15px;
-  font-size: 20px;
+/* WIN LINE */
+#line {
+  position: absolute;
+  height: 6px;
+  background: red;
+  display: none;
 }
 </style>
 </head>
 
 <body id="body" class="pc">
 
-<!-- TOP BAR -->
+<!-- TOP -->
 <div class="topbar">
 
-  <div class="search">
-    <input type="text" placeholder="Oyun ara...">
-  </div>
-
-  <div class="logo">🎮 Serkan Games</div>
+  <div>🎮 Serkan Games</div>
 
   <div class="settings" onclick="toggleMenu()">⚙️</div>
 
   <div class="dropdown" id="dropdown">
-
-    <div onclick="setMode('pc')">
-      💻 PC
-      <span class="dot" id="pcDot"></span>
-    </div>
-
-    <div onclick="setMode('mobile')">
-      📱 Mobil
-      <span class="dot" id="mobileDot"></span>
-    </div>
-
+    <div onclick="setMode('pc')">💻 PC <span class="dot" id="pcDot"></span></div>
+    <div onclick="setMode('mobile')">📱 Mobil <span class="dot" id="mobileDot"></span></div>
   </div>
 
 </div>
 
-<!-- START SCREEN -->
-<div id="startScreen">
-  <h1>❌⭕ XOX OYUNU</h1>
-
-  <p>Kim olacaksın?</p>
-
-  <button onclick="setPlayer('X')">X Oyna</button>
-  <button onclick="setPlayer('O')">O Oyna</button>
-
-  <button onclick="startGame()">▶️ OYNA</button>
+<!-- SCORE -->
+<div id="score">
+  X: 0 | O: 0
 </div>
 
-<!-- GAME -->
-<div id="board"></div>
+<!-- BOARD -->
+<div id="board">
+  <div id="line"></div>
+</div>
+
 <h2 id="status"></h2>
 
 <script>
 
-let dropdown = document.getElementById("dropdown");
+let board = [];
+let current = "X";
+let gameOver = false;
+
+let scoreX = 0;
+let scoreO = 0;
 
 /* MENU */
 function toggleMenu(){
-  dropdown.style.display =
-    dropdown.style.display === "block" ? "none" : "block";
+  let d = document.getElementById("dropdown");
+  d.style.display = d.style.display === "block" ? "none" : "block";
 }
 
-/* PC / MOBILE */
 function setMode(mode){
   let body = document.getElementById("body");
 
@@ -205,45 +155,20 @@ function setMode(mode){
     body.classList.add("pc");
     document.getElementById("pcDot").classList.add("active-dot");
   }
-
-  dropdown.style.display = "none";
 }
 
-/* DEFAULT */
+/* INIT */
 document.getElementById("pcDot").classList.add("active-dot");
-
-/* ===== XOX AI ===== */
-
-let board = [];
-let current = "X";
-let player = "X";
-let ai = "O";
-let gameOver = false;
-
-/* PLAYER SEÇ */
-function setPlayer(p){
-  player = p;
-  ai = (p === "X") ? "O" : "X";
-}
-
-/* START */
-function startGame(){
-  document.getElementById("startScreen").style.display = "none";
-  reset();
-}
+reset();
 
 /* RESET */
 function reset(){
   board = ["","","","","","","","",""];
   gameOver = false;
   current = "X";
-
   draw();
-  updateStatus();
-
-  if(ai === "X"){
-    setTimeout(aiMove, 500);
-  }
+  document.getElementById("status").innerText = "";
+  document.getElementById("line").style.display = "none";
 }
 
 /* DRAW */
@@ -258,17 +183,20 @@ function draw(){
     d.onclick = ()=>play(i);
     b.appendChild(d);
   });
+
+  let line = document.createElement("div");
+  line.id = "line";
+  b.appendChild(line);
 }
 
 /* PLAY */
 function play(i){
   if(gameOver || board[i] !== "") return;
-  if(current !== player) return;
 
-  board[i] = player;
+  board[i] = current;
 
-  if(checkWin(player)){
-    end(player);
+  if(checkWin(current)){
+    end(current);
     return;
   }
 
@@ -277,70 +205,66 @@ function play(i){
     return;
   }
 
-  current = ai;
+  current = current === "X" ? "O" : "X";
   draw();
-
-  setTimeout(aiMove, 400);
 }
 
-/* AI */
-function aiMove(){
-  if(gameOver) return;
-
-  let empty = board.map((v,i)=>v===""?i:null).filter(v=>v!==null);
-  let move = empty[Math.floor(Math.random()*empty.length)];
-
-  board[move] = ai;
-
-  if(checkWin(ai)){
-    end(ai);
-    return;
-  }
-
-  if(board.every(c => c !== "")){
-    end("DRAW");
-    return;
-  }
-
-  current = player;
-  draw();
-  updateStatus();
-}
-
-/* WIN CHECK */
+/* WIN */
 function checkWin(p){
-  const w=[
+  const w = [
     [0,1,2],[3,4,5],[6,7,8],
     [0,3,6],[1,4,7],[2,5,8],
     [0,4,8],[2,4,6]
   ];
 
-  return w.some(a=>
-    board[a[0]]===p &&
-    board[a[1]]===p &&
-    board[a[2]]===p
-  );
+  for(let i=0;i<w.length;i++){
+    let [a,b,c] = w[i];
+
+    if(board[a]===p && board[b]===p && board[c]===p){
+      drawLine(i);
+      return true;
+    }
+  }
+  return false;
 }
 
-/* END GAME */
+/* LINE DRAW */
+function drawLine(type){
+  let line = document.getElementById("line");
+  line.style.display = "block";
+
+  let pos = [
+    "top:45px;left:0;width:270px;",      // row 1
+    "top:135px;left:0;width:270px;",     // row 2
+    "top:225px;left:0;width:270px;",     // row 3
+    "transform:rotate(90deg);top:135px;left:-90px;width:270px;",
+    "transform:rotate(90deg);top:135px;left:0;width:270px;",
+    "transform:rotate(90deg);top:135px;left:90px;width:270px;",
+    "transform:rotate(45deg);top:135px;width:300px;",
+    "transform:rotate(-45deg);top:135px;width:300px;"
+  ];
+
+  line.style.cssText += pos[type];
+}
+
+/* END */
 function end(winner){
   gameOver = true;
 
   if(winner === "DRAW"){
     document.getElementById("status").innerText = "🤝 Berabere!";
   }
-  else if(winner === player){
-    document.getElementById("status").innerText = "🎉 Sen kazandın!";
+  else if(winner === "X"){
+    scoreX++;
+    document.getElementById("status").innerText = "X Kazandı!";
   }
   else {
-    document.getElementById("status").innerText = "🤖 AI kazandı!";
+    scoreO++;
+    document.getElementById("status").innerText = "O Kazandı!";
   }
-}
 
-/* STATUS */
-function updateStatus(){
-  document.getElementById("status").innerText =
-    (current === player) ? "Sen oynuyorsun" : "AI oynuyor...";
+  document.getElementById("score").innerText =
+    "X: " + scoreX + " | O: " + scoreO;
 }
 
 </script>
