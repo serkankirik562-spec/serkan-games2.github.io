@@ -11,7 +11,7 @@ body {
   background: #f2f2f2;
 }
 
-/* ===== TOP BAR (TEK GRİ ALAN) ===== */
+/* TOP BAR */
 .topbar {
   background: #777;
   color: white;
@@ -22,7 +22,6 @@ body {
   position: relative;
 }
 
-/* SOL - SEARCH */
 .search input {
   padding: 6px;
   border: none;
@@ -30,16 +29,13 @@ body {
   outline: none;
 }
 
-/* ORTA - LOGO */
 .logo {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
   font-weight: bold;
-  font-size: 20px;
 }
 
-/* SAĞ - AYAR */
 .settings {
   cursor: pointer;
   font-size: 22px;
@@ -60,16 +56,15 @@ body {
 
 .dropdown div {
   padding: 10px;
-  cursor: pointer;
   display: flex;
   justify-content: space-between;
+  cursor: pointer;
 }
 
 .dropdown div:hover {
   background: #eee;
 }
 
-/* YEŞİL NOKTA */
 .dot {
   width: 10px;
   height: 10px;
@@ -81,48 +76,41 @@ body {
   background: green;
 }
 
-/* ===== OYUN ALANI ===== */
+/* OYUN ALANI */
 .container {
-  padding: 15px;
+  padding: 20px;
 }
 
-.games {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr); /* PC */
-  gap: 10px;
-}
-
-.game {
+.game-card {
   background: white;
   padding: 20px;
   border-radius: 10px;
   text-align: center;
+  width: 200px;
+  margin: auto;
+  cursor: pointer;
 }
 
-/* MOBİL MOD */
-.mobile .games {
-  grid-template-columns: repeat(3, 1fr);
+/* MOD */
+.mobile .game-card {
+  width: 150px;
 }
 </style>
 </head>
 
 <body id="body" class="pc">
 
-<!-- ===== TOP BAR ===== -->
+<!-- TOP BAR -->
 <div class="topbar">
 
-  <!-- SEARCH -->
   <div class="search">
     <input type="text" placeholder="Oyun ara...">
   </div>
 
-  <!-- LOGO -->
   <div class="logo">🎮 Serkan Games</div>
 
-  <!-- SETTINGS -->
   <div class="settings" onclick="toggleMenu()">⚙️</div>
 
-  <!-- DROPDOWN -->
   <div class="dropdown" id="dropdown">
 
     <div onclick="setMode('pc')">
@@ -139,22 +127,29 @@ body {
 
 </div>
 
-<!-- ===== OYUN ALANI ===== -->
+<!-- ONLY XOX -->
 <div class="container">
-  <h2>Oyunlar</h2>
 
-  <div class="games">
-
-    <div class="game">🚗 Araba Oyunu</div>
-    <div class="game">❌⭕ XOX</div>
-    <div class="game">🥊 Dövüş</div>
-    <div class="game">🏃 Koşu</div>
-    <div class="game">🎯 Aim</div>
-
+  <div class="game-card" onclick="openXOX()">
+    ❌⭕ XOX OYNA
   </div>
+
+</div>
+
+<!-- XOX OYUNU -->
+<div id="xox" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#222; color:white; text-align:center; padding-top:40px;">
+
+  <h2>❌⭕ XOX</h2>
+
+  <div id="board"></div>
+
+  <p id="status"></p>
+
+  <button onclick="closeXOX()">Kapat</button>
 </div>
 
 <script>
+
 let dropdown = document.getElementById("dropdown");
 
 function toggleMenu(){
@@ -163,4 +158,101 @@ function toggleMenu(){
 }
 
 function setMode(mode){
-  let
+  let body = document.getElementById("body");
+
+  body.classList.remove("pc","mobile");
+
+  document.getElementById("pcDot").classList.remove("active-dot");
+  document.getElementById("mobileDot").classList.remove("active-dot");
+
+  if(mode === "mobile"){
+    body.classList.add("mobile");
+    document.getElementById("mobileDot").classList.add("active-dot");
+  } else {
+    body.classList.add("pc");
+    document.getElementById("pcDot").classList.add("active-dot");
+  }
+
+  dropdown.style.display = "none";
+}
+
+/* DEFAULT */
+document.getElementById("pcDot").classList.add("active-dot");
+
+/* ===== XOX ===== */
+let board = ["","","","","","","","",""];
+let current = "X";
+let gameOver = false;
+
+function openXOX(){
+  document.getElementById("xox").style.display = "block";
+  reset();
+}
+
+function closeXOX(){
+  document.getElementById("xox").style.display = "none";
+}
+
+function reset(){
+  board = ["","","","","","","","",""];
+  current = "X";
+  gameOver = false;
+  document.getElementById("status").innerText = "Sıra: X";
+  draw();
+}
+
+function draw(){
+  let b = document.getElementById("board");
+  b.innerHTML = "";
+  b.style.display = "grid";
+  b.style.gridTemplateColumns = "repeat(3,100px)";
+  b.style.justifyContent = "center";
+  b.style.gap = "5px";
+
+  board.forEach((c,i)=>{
+    let d = document.createElement("div");
+    d.style.width="100px";
+    d.style.height="100px";
+    d.style.background="#444";
+    d.style.display="flex";
+    d.style.alignItems="center";
+    d.style.justifyContent="center";
+    d.style.fontSize="40px";
+    d.onclick=()=>play(i);
+    d.innerText=c;
+    b.appendChild(d);
+  });
+}
+
+function play(i){
+  if(board[i]!=="" || gameOver) return;
+
+  board[i]=current;
+
+  if(checkWin()){
+    document.getElementById("status").innerText = current+" kazandı!";
+    gameOver=true;
+  } else {
+    current = current==="X"?"O":"X";
+    document.getElementById("status").innerText = "Sıra: "+current;
+  }
+
+  draw();
+}
+
+function checkWin(){
+  const w=[[0,1,2],[3,4,5],[6,7,8],
+           [0,3,6],[1,4,7],[2,5,8],
+           [0,4,8],[2,4,6]];
+
+  return w.some(a=>
+    board[a[0]] &&
+    board[a[0]]===board[a[1]] &&
+    board[a[1]]===board[a[2]]
+  );
+}
+
+</script>
+
+</body>
+</html>
