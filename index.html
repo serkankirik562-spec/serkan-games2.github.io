@@ -2,36 +2,40 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>Serkan Games PRO</title>
+<div>🎮 Serkan Games</div>
 
 <style>
 body{margin:0;font-family:Arial;background:#111;color:white}
 
-/* HEADER (DOKUNULMADI) */
 .header{
 display:flex;justify-content:space-between;
-padding:10px;background:#333;
+background:#333;
+padding:10px;
 }
 
 .menu{
-display:flex;gap:10px;padding:10px;background:#1b1b1b;
+display:flex;gap:10px;
+background:#1b1b1b;
+padding:10px;
 }
 
-.page{display:none;padding:20px}
+.page{display:none;padding:15px}
 
 .card{
-width:150px;background:#222;
-margin:10px;padding:10px;
-border-radius:10px;
+background:#222;
+padding:10px;
+margin:8px;
 display:inline-block;
+width:140px;
+border-radius:10px;
 cursor:pointer;
+text-align:center;
 }
 
-.game-box{
-width:360px;margin:auto;
+.gameBox{
 background:#1c1c1c;
 padding:15px;
-border-radius:15px;
+border-radius:10px;
 text-align:center;
 }
 
@@ -39,7 +43,9 @@ text-align:center;
 
 .cell{
 width:45px;height:45px;
-display:flex;align-items:center;justify-content:center;
+display:flex;
+align-items:center;
+justify-content:center;
 border:1px solid #555;
 cursor:pointer;
 font-size:18px;
@@ -51,31 +57,38 @@ font-size:18px;
 
 <!-- HEADER -->
 <div class="header">
-<div>🎮 Serkan Games</div>
+<div>🎮 Serkan Games 2</div>
 <input id="search" placeholder="Ara..." onkeyup="searchGame()">
-<div>⚙</div>
+<button onclick="profile()">👤 Profil</button>
 </div>
 
+<!-- LOGIN -->
+<div style="background:#222;padding:10px">
+<input id="u" placeholder="Kullanıcı adı">
+<input id="pw" placeholder="Şifre" type="password">
+<button onclick="login()">Giriş / Kayıt</button>
+<span id="userLabel"></span>
+</div>
+
+<!-- MENÜ -->
 <div class="menu">
-<button onclick="show('mini')">Mini</button>
-<button onclick="show('board')">Masa</button>
+<button onclick="show('mini')">Mini Games</button>
+<button onclick="show('board')">Masa Oyunları</button>
 </div>
 
-<!-- MINI (DOKUNULMADI) -->
+<!-- MINI -->
 <div id="mini" class="page" style="display:block">
 <div class="card game">XOX</div>
-<div class="card game">Hafıza</div>
 <div class="card game">Zar</div>
+<div class="card game">Hafıza</div>
 </div>
 
-<!-- MASA OYUNLARI -->
+<!-- BOARD -->
 <div id="board" class="page">
-
 <div class="card game">Satranç</div>
 <div class="card game">Dama</div>
 <div class="card game">UNO</div>
 <div class="card game">Yapboz</div>
-
 </div>
 
 <!-- GAME AREA -->
@@ -86,14 +99,43 @@ font-size:18px;
 
 <script>
 
-/* NAV */
+/* ================= USER SYSTEM ================= */
+
+let user = JSON.parse(localStorage.getItem("sg_user")) || {
+name:null,
+pass:null,
+scores:{},
+history:[]
+};
+
+function saveUser(){
+localStorage.setItem("sg_user",JSON.stringify(user));
+}
+
+function login(){
+user.name=u.value;
+user.pass=pw.value;
+saveUser();
+updateUI();
+}
+
+function updateUI(){
+userLabel.innerText=user.name?"👤 "+user.name:"Misafir";
+}
+
+updateUI();
+
+/* ================= NAV ================= */
+
 function show(id){
 document.querySelectorAll(".page").forEach(p=>p.style.display="none");
 document.getElementById(id).style.display="block";
 }
+
 function back(){show("mini");}
 
-/* SEARCH */
+/* ================= SEARCH ================= */
+
 function searchGame(){
 let v=search.value.toLowerCase();
 document.querySelectorAll(".game").forEach(c=>{
@@ -101,21 +143,45 @@ c.style.display=c.innerText.toLowerCase().includes(v)?"inline-block":"none";
 });
 }
 
-/* CLICK */
+/* ================= CLICK ================= */
+
 document.querySelectorAll(".game").forEach(c=>{
 c.onclick=()=>openGame(c.innerText);
 });
 
-/* OPEN */
+/* ================= TRACK ================= */
+
+function track(game){
+if(!user.name) return;
+user.history.unshift(game);
+user.history=user.history.slice(0,10);
+saveUser();
+}
+
+/* ================= SCORE ================= */
+
+function addScore(game,val){
+if(!user.name) return;
+
+if(!user.scores[game]) user.scores[game]=val;
+else user.scores[game]=Math.max(user.scores[game],val);
+
+saveUser();
+}
+
+/* ================= OPEN GAME ================= */
+
 function openGame(name){
 show("game");
+track(name);
+
 let a=gameArea;
 
-/* SATRANÇ PRO */
+/* SATRANÇ */
 if(name=="Satranç"){
 a.innerHTML=`
-<div class="game-box">
-<h3>♟ Satranç PRO</h3>
+<div class="gameBox">
+<h3>♟ Satranç AI</h3>
 <button onclick="startChess('white')">Beyaz</button>
 <button onclick="startChess('black')">Siyah</button>
 <p id="status"></p>
@@ -123,40 +189,20 @@ a.innerHTML=`
 </div>`;
 }
 
-/* DAMA */
-else if(name=="Dama"){
-startCheckers();
-}
-
-/* UNO */
-else if(name=="UNO"){
-a.innerHTML=`
-<div class="game-box">
-<p id="uno">Kart çek</p>
-<button onclick="uno()">Çek</button>
-</div>`;
-}
-
-/* PUZZLE */
-else if(name=="Yapboz"){
-startPuzzle();
-}
-
 /* OTHER */
 else{
-a.innerHTML=`<div class="game-box">${name}</div>`;
+a.innerHTML=`<div class="gameBox">${name}</div>`;
 }
 }
 
-/* ================= SATRANÇ AI PRO ================= */
+/* ================= CHESS ================= */
 
-let boardState, playerSide="white", selected=null, gameOver=false;
+let board,side="white",sel=null,over=false;
 
-function startChess(side){
-playerSide=side;
-gameOver=false;
+function startChess(s){
+side=s;over=false;
 
-boardState=[
+board=[
 "r","n","b","q","k","b","n","r",
 "p","p","p","p","p","p","p","p",
 "","","","","","","","",
@@ -167,16 +213,16 @@ boardState=[
 "R","N","B","Q","K","B","N","R"
 ];
 
-drawChess();
+draw();
 }
 
-function drawChess(){
-let b=document.getElementById("chess");
+function draw(){
+let b=chess;
 b.innerHTML="";
 b.className="grid";
 b.style.gridTemplateColumns="repeat(8,45px)";
 
-boardState.forEach((p,i)=>{
+board.forEach((p,i)=>{
 let d=document.createElement("div");
 d.className="cell";
 d.innerText=piece(p);
@@ -188,7 +234,7 @@ checkWin();
 }
 
 function piece(p){
-return {
+return{
 r:"♜",n:"♞",b:"♝",q:"♛",k:"♚",p:"♟",
 R:"♖",N:"♘",B:"♗",Q:"♕",K:"♔",P:"♙"
 }[p]||"";
@@ -196,120 +242,76 @@ R:"♖",N:"♘",B:"♗",Q:"♕",K:"♔",P:"♙"
 
 function move(i){
 
-if(gameOver) return;
+if(over) return;
 
-if(selected==null){
-if(boardState[i] && isMine(boardState[i])){
-selected=i;
-}
+if(sel==null){
+if(board[i]) sel=i;
 }else{
-boardState[i]=boardState[selected];
-boardState[selected]="";
-selected=null;
-drawChess();
-setTimeout(ai,300);
+board[i]=board[sel];
+board[sel]="";
+sel=null;
+draw();
+setTimeout(ai,200);
 }
-}
-
-function isMine(p){
-return playerSide=="white"
-? p==p.toUpperCase()
-: p==p.toLowerCase();
 }
 
 /* AI */
 function ai(){
-
-let moves=[];
+let m=[];
 
 for(let i=0;i<64;i++){
-let p=boardState[i];
-if(p && !isMine(p)){
-[-8,8,-1,1].forEach(d=>{
+if(board[i] && board[i]==board[i].toLowerCase()){
+[-1,1,8,-8].forEach(d=>{
 let t=i+d;
-if(t>=0&&t<64){
-moves.push([i,t]);
-}
+if(t>=0&&t<64) m.push([i,t]);
 });
 }
 }
 
-if(!moves.length) return;
+if(!m.length) return;
 
-let best=moves[Math.floor(Math.random()*moves.length)];
-boardState[best[1]]=boardState[best[0]];
-boardState[best[0]]="";
+let r=m[Math.floor(Math.random()*m.length)];
 
-drawChess();
+board[r[1]]=board[r[0]];
+board[r[0]]="";
+
+draw();
 }
 
 /* WIN */
 function checkWin(){
-let K=boardState.includes("K");
-let k=boardState.includes("k");
-
-if(!K){
-status.innerText="♟ Siyah Kazandı!";
-gameOver=true;
+if(!board.includes("K")){
+status.innerText="♟ Siyah kazandı";
+over=true;
 }
-if(!k){
-status.innerText="♟ Beyaz Kazandı!";
-gameOver=true;
+if(!board.includes("k")){
+status.innerText="♟ Beyaz kazandı";
+over=true;
 }
 }
 
-/* ================= DAMA ================= */
+/* ================= PROFILE ================= */
 
-function startCheckers(){
-gameArea.innerHTML=`
-<div class="game-box">
-<h3>Dama</h3>
-<div id="check"></div>
-</div>`;
+function profile(){
 
-let b=document.getElementById("check");
-b.className="grid";
-b.style.gridTemplateColumns="repeat(8,45px)";
-
-for(let i=0;i<64;i++){
-let d=document.createElement("div");
-d.className="cell";
-d.innerText=(i<24&&i%2)?"⚫":(i>39&&i%2)?"⚪":"";
-b.appendChild(d);
-}
+if(!user.name){
+alert("Giriş yap");
+return;
 }
 
-/* ================= UNO ================= */
+let t="👤 "+user.name+"\n\n🏆 Rekorlar:\n";
 
-function uno(){
-let c=["🔴1","🟢2","🔵5","+2","🔄"];
-uno.innerText=c[Math.floor(Math.random()*c.length)];
+for(let k in user.scores){
+t+=k+" : "+user.scores[k]+"\n";
 }
 
-/* ================= PUZZLE ================= */
+t+="\n🎮 Geçmiş:\n";
+user.history.forEach(h=>t+="- "+h+"\n");
 
-function startPuzzle(){
-gameArea.innerHTML=`
-<div class="game-box">
-<div id="pz"></div>
-</div>`;
-
-let p=[1,2,3,4,5,6,7,8,""].sort(()=>Math.random()-0.5);
-
-let b=document.getElementById("pz");
-b.className="grid";
-b.style.gridTemplateColumns="repeat(3,60px)";
-
-p.forEach(v=>{
-let d=document.createElement("div");
-d.className="cell";
-d.style.width="60px";
-d.style.height="60px";
-d.innerText=v;
-b.appendChild(d);
-});
+alert(t);
 }
 
 </script>
+
 </body>
 </html>
