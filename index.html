@@ -3,10 +3,10 @@ function memory(){
 let level=1;
 let cards=[];
 let opened=[];
-let time=100;
+let time=0;
 let interval;
 
-// 🧠 LEVEL ÜRET
+// 🧠 LEVEL OLUŞTUR
 function generateLevel(){
 cards=[];
 opened=[];
@@ -22,20 +22,24 @@ cards.sort(()=>Math.random()-0.5);
 // ⏱ TIMER
 function startTimer(){
 clearInterval(interval);
-time=100 + level*20;
+
+time = 80 + (level * 15); // daha dengeli süre
 
 interval=setInterval(()=>{
+
 time--;
 
-document.getElementById("timer").innerText="⏱ "+time;
+let t=document.getElementById("timer");
+if(t) t.innerText="⏱ "+time;
 
 if(time<=0){
 endGame();
 }
+
 },1000);
 }
 
-// 🎮 OYUN ÇİZ
+// 🎮 ÇİZ
 function draw(){
 
 let g=document.getElementById("game");
@@ -43,14 +47,14 @@ let g=document.getElementById("game");
 g.innerHTML=`
 <div>⏱ Süre: <span id="timer">${time}</span></div>
 <br>
-<button onclick="endGame()">🚪 Oyunu Bitir</button>
+<button onclick="window._endMemoryGame()">🚪 Bitir</button>
 <br><br>
 <div id="board"></div>
 `;
 
 let board=document.getElementById("board");
 board.style.display="grid";
-board.style.gridTemplateColumns="repeat(${level*2},50px)";
+board.style.gridTemplateColumns=`repeat(${level*2},50px)`;
 board.style.justifyContent="center";
 
 cards.forEach((c,i)=>{
@@ -63,7 +67,9 @@ d.style.display="flex";
 d.style.alignItems="center";
 d.style.justifyContent="center";
 d.style.cursor="pointer";
-d.innerText=opened.includes(i)?c:"?";
+d.style.fontSize="18px";
+
+d.innerText = opened.includes(i) ? c : "?";
 
 d.onclick=()=>{
 
@@ -72,7 +78,7 @@ if(opened.includes(i))return;
 opened.push(i);
 draw();
 
-if(opened.length==cards.length){
+if(opened.length===cards.length){
 levelUp();
 }
 };
@@ -82,10 +88,10 @@ board.appendChild(d);
 
 }
 
-// 🆙 LEVEL GEÇ
+// 🆙 LEVEL
 function levelUp(){
 
-addCoin(level*10);
+addCoin(level*12); // biraz daha dengeli ödül
 
 level++;
 
@@ -94,7 +100,7 @@ draw();
 startTimer();
 }
 
-// 🏁 OYUN BİTİR
+// 🏁 BİTİR
 function endGame(){
 
 clearInterval(interval);
@@ -103,10 +109,13 @@ let score=level*10;
 
 addCoin(score);
 
-alert("🎮 Oyun bitti! Level: "+level+" | Coin: "+score);
+alert("🎮 Bitti! Level: "+level+" | Coin: "+score);
 
 home();
 }
+
+// global fix (buton için önemli)
+window._endMemoryGame=endGame;
 
 // START
 generateLevel();
