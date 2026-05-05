@@ -1,3 +1,10 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Serkan Games</title>
+
 <style>
 body{
 margin:0;
@@ -24,11 +31,10 @@ font-weight:bold;
 color:#fff;
 }
 
-/* ORTA SAAT */
+/* SAAT */
 .clock{
 font-weight:bold;
-font-size:16px;
-margin:0 15px;
+margin:0 10px;
 }
 
 /* ARAMA */
@@ -36,38 +42,38 @@ margin:0 15px;
 padding:5px;
 border-radius:6px;
 border:1px solid #666;
-outline:none;
 background:#eee;
+outline:none;
 }
 
-/* AYARLAR */
+/* AYAR */
 .settings{
 cursor:pointer;
 font-weight:bold;
 }
 
 /* PC MOD */
-.pc-mode{
+.pc body{
 max-width:1200px;
 margin:auto;
 }
-
-/* MOBİL NORMAL */
-.mobile-mode{
-max-width:100%;
-}
 </style>
+</head>
+
+<body>
 
 <div class="top">
-  <div class="title">SERKAN GAMES</div>
 
-  <div class="clock" id="clock">00:00:00</div>
+<div class="title">SERKAN GAMES</div>
 
-  <div class="search">
-    <input type="text" placeholder="Ara...">
-  </div>
+<div class="clock" id="clock">00:00:00</div>
 
-  <div class="settings" onclick="toggleSettings()">⚙ Ayarlar</div>
+<div class="search">
+<input type="text" placeholder="Ara...">
+</div>
+
+<div class="settings" onclick="toggleMode()">⚙ Ayarlar</div>
+
 </div>
 
 <script>
@@ -81,18 +87,25 @@ String(d.getMinutes()).padStart(2,"0")+":"+
 String(d.getSeconds()).padStart(2,"0");
 },1000);
 
-// ⚙ AYAR MENÜ
-function toggleSettings(){
+// ⚙ MODE
+let pc=false;
 
-let mode=confirm("PC modu aç? (İptal = Mobil)");
+function toggleMode(){
 
-if(mode){
-document.body.classList.add("pc-mode");
-document.body.classList.remove("mobile-mode");
+pc=!pc;
+
+if(pc){
+document.body.style.maxWidth="1200px";
+document.body.style.margin="auto";
+alert("PC modu aktif");
 }else{
-document.body.classList.add("mobile-mode");
-document.body.classList.remove("pc-mode");
+document.body.style.maxWidth="100%";
+document.body.style.margin="0";
+alert("Mobil modu aktif");
 }
 }
 
 </script>
+
+</body>
+</html>
