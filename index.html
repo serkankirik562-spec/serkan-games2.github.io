@@ -2,7 +2,6 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Serkan Games</title>
 
 <style>
@@ -13,99 +12,40 @@ background:#000;
 color:#fff;
 }
 
-/* ÜST BAR */
 .top{
 display:flex;
-align-items:center;
 justify-content:space-between;
-padding:12px;
+align-items:center;
+padding:10px;
 background:#bdbdbd;
 color:#000;
 }
 
-/* SOL LOGO */
-.logo{
-font-size:22px;
-font-weight:bold;
-}
-
-/* ORTA SAAT + ARAMA */
-.center{
-display:flex;
-align-items:center;
-gap:15px;
-}
-
-/* ARAMA */
 input{
 padding:5px;
 border-radius:6px;
 border:1px solid #666;
-}
-
-/* AYAR */
-.settings{
-position:relative;
-cursor:pointer;
-font-weight:bold;
-}
-
-/* PANEL */
-.panel{
-display:none;
-position:absolute;
-right:0;
-top:30px;
-background:#222;
-color:#fff;
-padding:10px;
-border-radius:8px;
-min-width:120px;
-}
-
-button{
-width:100%;
-margin:3px 0;
-padding:6px;
-border:none;
-border-radius:5px;
-cursor:pointer;
 }
 </style>
 </head>
 
 <body>
 
-<!-- TOP BAR -->
 <div class="top">
 
-<!-- SOL -->
-<div class="logo">SERKAN GAMES</div>
+<div>SERKAN GAMES</div>
 
-<!-- ORTA -->
-<div class="center">
 <div id="clock">00:00:00</div>
-<input type="text" placeholder="Ara...">
-</div>
 
-<!-- SAĞ -->
-<div class="settings" onclick="toggle()">
-⚙ Ayarlar
-
-<div id="panel" class="panel">
-<button onclick="pc()">PC</button>
-<button onclick="mobile()">Mobil</button>
-</div>
-
+<div>
+<input type="text" placeholder="ara">
 </div>
 
 </div>
 
 <script>
 
-/////////////////////
 // SAAT
-/////////////////////
 setInterval(()=>{
 let d=new Date();
 document.getElementById("clock").innerText=
@@ -113,30 +53,6 @@ String(d.getHours()).padStart(2,"0")+":"+
 String(d.getMinutes()).padStart(2,"0")+":"+
 String(d.getSeconds()).padStart(2,"0");
 },1000);
-
-/////////////////////
-// AYAR PANEL
-/////////////////////
-function toggle(){
-let p=document.getElementById("panel");
-p.style.display = (p.style.display==="block")?"none":"block";
-}
-
-/////////////////////
-// PC MODE
-/////////////////////
-function pc(){
-document.body.style.maxWidth="1200px";
-document.body.style.margin="auto";
-}
-
-/////////////////////
-// MOBILE MODE
-/////////////////////
-function mobile(){
-document.body.style.maxWidth="100%";
-document.body.style.margin="0";
-}
 
 </script>
 
