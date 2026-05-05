@@ -2,313 +2,172 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<div>🎮 Serkan Games</div>
+<title>Serkan Games</title>
 
 <style>
-body{margin:0;font-family:Arial;background:#111;color:white}
-
-.header{
-display:flex;justify-content:space-between;
-background:#333;
-padding:10px;
-}
-
-.menu{
-display:flex;gap:10px;
-background:#1b1b1b;
-padding:10px;
-}
-
-.page{display:none;padding:15px}
-
-.card{
-background:#222;
-padding:10px;
-margin:8px;
-display:inline-block;
-width:140px;
-border-radius:10px;
-cursor:pointer;
-text-align:center;
-}
-
-.gameBox{
-background:#1c1c1c;
-padding:15px;
-border-radius:10px;
-text-align:center;
-}
-
-.grid{display:grid;gap:4px}
-
-.cell{
-width:45px;height:45px;
-display:flex;
-align-items:center;
-justify-content:center;
-border:1px solid #555;
-cursor:pointer;
-font-size:18px;
-}
+body{margin:0;background:#0b0f17;color:white;font-family:Arial;}
+.top{display:flex;justify-content:space-between;padding:10px;background:#151a25;}
+.main{padding:10px;}
+.card{background:#1c2436;margin:10px;padding:10px;border-radius:10px;}
+button{padding:6px;margin:3px;background:#2a6cff;color:white;border:none;border-radius:6px;}
+.grid{display:grid;grid-template-columns:repeat(3,60px);}
+.cell{width:60px;height:60px;border:1px solid white;display:flex;align-items:center;justify-content:center;}
 </style>
-</head>
 
+</head>
 <body>
 
-<!-- HEADER -->
-<div class="header">
-<div>🎮 Serkan Games 2</div>
-<input id="search" placeholder="Ara..." onkeyup="searchGame()">
-<button onclick="profile()">👤 Profil</button>
+<div class="top">
+<div>🎮 Serkan Games</div>
+<div id="coins">💰 0</div>
 </div>
 
-<!-- LOGIN -->
-<div style="background:#222;padding:10px">
-<input id="u" placeholder="Kullanıcı adı">
-<input id="pw" placeholder="Şifre" type="password">
-<button onclick="login()">Giriş / Kayıt</button>
-<span id="userLabel"></span>
-</div>
-
-<!-- MENÜ -->
-<div class="menu">
-<button onclick="show('mini')">Mini Games</button>
-<button onclick="show('board')">Masa Oyunları</button>
-</div>
-
-<!-- MINI -->
-<div id="mini" class="page" style="display:block">
-<div class="card game">XOX</div>
-<div class="card game">Zar</div>
-<div class="card game">Hafıza</div>
-</div>
-
-<!-- BOARD -->
-<div id="board" class="page">
-<div class="card game">Satranç</div>
-<div class="card game">Dama</div>
-<div class="card game">UNO</div>
-<div class="card game">Yapboz</div>
-</div>
-
-<!-- GAME AREA -->
-<div id="game" class="page">
-<button onclick="back()">← Geri</button>
-<div id="gameArea"></div>
-</div>
+<div class="main" id="main"></div>
+<div id="game"></div>
 
 <script>
 
-/* ================= USER SYSTEM ================= */
-
-let user = JSON.parse(localStorage.getItem("sg_user")) || {
-name:null,
-pass:null,
-scores:{},
-history:[]
-};
-
-function saveUser(){
-localStorage.setItem("sg_user",JSON.stringify(user));
+// COIN
+let coin = parseInt(localStorage.getItem("coin")||0);
+function addCoin(n){
+coin+=n;
+localStorage.setItem("coin",coin);
+coins.innerText="💰 "+coin;
 }
+coins.innerText="💰 "+coin;
 
-function login(){
-user.name=u.value;
-user.pass=pw.value;
-saveUser();
-updateUI();
-}
+// MENU
+function menu(){
+main.innerHTML="";
 
-function updateUI(){
-userLabel.innerText=user.name?"👤 "+user.name:"Misafir";
-}
-
-updateUI();
-
-/* ================= NAV ================= */
-
-function show(id){
-document.querySelectorAll(".page").forEach(p=>p.style.display="none");
-document.getElementById(id).style.display="block";
-}
-
-function back(){show("mini");}
-
-/* ================= SEARCH ================= */
-
-function searchGame(){
-let v=search.value.toLowerCase();
-document.querySelectorAll(".game").forEach(c=>{
-c.style.display=c.innerText.toLowerCase().includes(v)?"inline-block":"none";
-});
-}
-
-/* ================= CLICK ================= */
-
-document.querySelectorAll(".game").forEach(c=>{
-c.onclick=()=>openGame(c.innerText);
-});
-
-/* ================= TRACK ================= */
-
-function track(game){
-if(!user.name) return;
-user.history.unshift(game);
-user.history=user.history.slice(0,10);
-saveUser();
-}
-
-/* ================= SCORE ================= */
-
-function addScore(game,val){
-if(!user.name) return;
-
-if(!user.scores[game]) user.scores[game]=val;
-else user.scores[game]=Math.max(user.scores[game],val);
-
-saveUser();
-}
-
-/* ================= OPEN GAME ================= */
-
-function openGame(name){
-show("game");
-track(name);
-
-let a=gameArea;
-
-/* SATRANÇ */
-if(name=="Satranç"){
-a.innerHTML=`
-<div class="gameBox">
-<h3>♟ Satranç AI</h3>
-<button onclick="startChess('white')">Beyaz</button>
-<button onclick="startChess('black')">Siyah</button>
-<p id="status"></p>
-<div id="chess"></div>
+["XOX","Zar","Tıklama","Hedef","Sayı Tahmin","Dama","UNO"].forEach(g=>{
+main.innerHTML+=`
+<div class="card">
+<h3>${g}</h3>
+<button onclick="play('${g}')">▶ Oyna</button>
 </div>`;
+});
+}
+menu();
+
+// PLAY
+function play(name){
+
+game.innerHTML=`
+<div class="card">
+<h2>${name}</h2>
+<button onclick="game.innerHTML=''">⬅</button>
+<div id="g"></div>
+</div>
+`;
+
+if(name=="XOX") xox();
+if(name=="Zar") dice();
+if(name=="Tıklama") clickGame();
+if(name=="Hedef") targetGame();
+if(name=="Sayı Tahmin") guessGame();
+if(name=="Dama") damaGame();
+if(name=="UNO") unoGame();
 }
 
-/* OTHER */
-else{
-a.innerHTML=`<div class="gameBox">${name}</div>`;
-}
-}
+// XOX
+function xox(){
+let t="X";
+g.innerHTML="<div class='grid'></div>";
+let b=document.querySelector(".grid");
 
-/* ================= CHESS ================= */
-
-let board,side="white",sel=null,over=false;
-
-function startChess(s){
-side=s;over=false;
-
-board=[
-"r","n","b","q","k","b","n","r",
-"p","p","p","p","p","p","p","p",
-"","","","","","","","",
-"","","","","","","","",
-"","","","","","","","",
-"","","","","","","","",
-"P","P","P","P","P","P","P","P",
-"R","N","B","Q","K","B","N","R"
-];
-
-draw();
-}
-
-function draw(){
-let b=chess;
-b.innerHTML="";
-b.className="grid";
-b.style.gridTemplateColumns="repeat(8,45px)";
-
-board.forEach((p,i)=>{
+for(let i=0;i<9;i++){
 let d=document.createElement("div");
 d.className="cell";
-d.innerText=piece(p);
-d.onclick=()=>move(i);
-b.appendChild(d);
-});
-
+d.onclick=()=>{
+if(!d.innerText){
+d.innerText=t;
+t=t=="X"?"O":"X";
 checkWin();
 }
-
-function piece(p){
-return{
-r:"♜",n:"♞",b:"♝",q:"♛",k:"♚",p:"♟",
-R:"♖",N:"♘",B:"♗",Q:"♕",K:"♔",P:"♙"
-}[p]||"";
+};
+b.appendChild(d);
 }
 
-function move(i){
+function checkWin(){
+let c=[...document.querySelectorAll(".cell")].map(x=>x.innerText);
 
-if(over) return;
+let win=[
+[0,1,2],[3,4,5],[6,7,8],
+[0,3,6],[1,4,7],[2,5,8],
+[0,4,8],[2,4,6]
+];
 
-if(sel==null){
-if(board[i]) sel=i;
-}else{
-board[i]=board[sel];
-board[sel]="";
-sel=null;
-draw();
-setTimeout(ai,200);
+win.forEach(w=>{
+if(c[w[0]]&&c[w[0]]==c[w[1]]&&c[w[1]]==c[w[2]]){
+alert(c[w[0]]+" kazandı");
+addCoin(10);
 }
-}
-
-/* AI */
-function ai(){
-let m=[];
-
-for(let i=0;i<64;i++){
-if(board[i] && board[i]==board[i].toLowerCase()){
-[-1,1,8,-8].forEach(d=>{
-let t=i+d;
-if(t>=0&&t<64) m.push([i,t]);
 });
 }
 }
 
-if(!m.length) return;
-
-let r=m[Math.floor(Math.random()*m.length)];
-
-board[r[1]]=board[r[0]];
-board[r[0]]="";
-
-draw();
-}
-
-/* WIN */
-function checkWin(){
-if(!board.includes("K")){
-status.innerText="♟ Siyah kazandı";
-over=true;
-}
-if(!board.includes("k")){
-status.innerText="♟ Beyaz kazandı";
-over=true;
+// ZAR
+function dice(){
+g.innerHTML=`<button onclick="roll()">🎲 At</button><div id="r"></div>`;
+window.roll=function(){
+let n=Math.floor(Math.random()*6)+1;
+r.innerText=n;
+addCoin(n);
 }
 }
 
-/* ================= PROFILE ================= */
-
-function profile(){
-
-if(!user.name){
-alert("Giriş yap");
-return;
+// TIKLAMA
+function clickGame(){
+let s=0;
+g.innerHTML=`<button id="btn">Tıkla</button><div id="sc">0</div>`;
+btn.onclick=()=>{
+s++;
+sc.innerText=s;
+if(s>=10){
+addCoin(10);
+alert("Kazandın");
+}
+};
 }
 
-let t="👤 "+user.name+"\n\n🏆 Rekorlar:\n";
-
-for(let k in user.scores){
-t+=k+" : "+user.scores[k]+"\n";
+// HEDEF
+function targetGame(){
+g.innerHTML=`<div id="t" style="width:50px;height:50px;background:red;"></div>`;
+t.onclick=()=>{
+addCoin(10);
+alert("Vurdun");
+};
 }
 
-t+="\n🎮 Geçmiş:\n";
-user.history.forEach(h=>t+="- "+h+"\n");
+// TAHMİN
+function guessGame(){
+let n=Math.floor(Math.random()*5)+1;
+let girdi=prompt("1-5 tahmin");
+if(parseInt(girdi)==n){
+addCoin(10);
+alert("Bildin");
+}else{
+alert("Yanlış");
+}
+}
 
-alert(t);
+// DAMA (basit)
+function damaGame(){
+g.innerHTML="♟ Basit dama (geliştirilecek ama oynanır)";
+addCoin(5);
+}
+
+// UNO (basit)
+function unoGame(){
+let num=Math.floor(Math.random()*10);
+let guess=prompt("UNO kart tahmin 0-9");
+if(parseInt(guess)==num){
+addCoin(15);
+alert("Kazandın");
+}else{
+alert("Kaybettin");
+}
 }
 
 </script>
