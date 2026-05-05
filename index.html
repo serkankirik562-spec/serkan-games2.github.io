@@ -7,54 +7,11 @@
 <style>
 body{
 margin:0;
-font-family:Arial;
 background:#000;
-color:#fff;
-}
-
-.top{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:10px;
-background:#bdbdbd;
-color:#000;
-}
-
-input{
-padding:5px;
-border-radius:6px;
-border:1px solid #666;
 }
 </style>
+
 </head>
-
 <body>
-
-<div class="top">
-
-<div>SERKAN GAMES</div>
-
-<div id="clock">00:00:00</div>
-
-<div>
-<input type="text" placeholder="ara">
-</div>
-
-</div>
-
-<script>
-
-// SAAT
-setInterval(()=>{
-let d=new Date();
-document.getElementById("clock").innerText=
-String(d.getHours()).padStart(2,"0")+":"+
-String(d.getMinutes()).padStart(2,"0")+":"+
-String(d.getSeconds()).padStart(2,"0");
-},1000);
-
-</script>
-
 </body>
 </html>
