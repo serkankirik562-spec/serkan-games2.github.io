@@ -1,115 +1,138 @@
-function memory(){
+///////////////////////
+// 🧠 GLOBAL HELPERS //
+///////////////////////
 
-let level=1;
-let cards=[];
-let opened=[];
-let time=0;
-let interval;
-
-function generateLevel(){
-cards=[];
-opened=[];
-
-let size=level*2;
-
-for(let i=0;i<size;i++){
-cards.push(i%(size/2));
+function rand(arr){
+return arr[Math.floor(Math.random()*arr.length)];
 }
 
-cards.sort(()=>Math.random()-0.5);
+///////////////////////
+// 🧠 XOX FULL AI (MINIMAX)
+///////////////////////
+
+function xoxBestMove(board, ai, player){
+let best=-999;
+let move=-1;
+
+for(let i=0;i<9;i++){
+if(board[i]==""){
+board[i]=ai;
+let score=xoxMiniMax(board,false,ai,player,0);
+board[i]="";
+
+if(score>best){
+best=score;
+move=i;
+}
+}
+}
+return move;
 }
 
-function startTimer(){
-clearInterval(interval);
+function xoxMiniMax(board,isMax,ai,player,depth){
 
-time = 80 + level*15;
+if(xoxWin(board,ai)) return 10-depth;
+if(xoxWin(board,player)) return depth-10;
+if(board.every(x=>x!="")) return 0;
 
-interval=setInterval(()=>{
-
-time--;
-
-let t=document.getElementById("timer");
-if(t) t.innerText="⏱ "+time;
-
-if(time<=0){
-endGame();
+if(isMax){
+let best=-999;
+for(let i=0;i<9;i++){
+if(board[i]==""){
+board[i]=ai;
+best=Math.max(best,xoxMiniMax(board,false,ai,player,depth+1));
+board[i]="";
+}
+}
+return best;
+}else{
+let best=999;
+for(let i=0;i<9;i++){
+if(board[i]==""){
+board[i]=player;
+best=Math.min(best,xoxMiniMax(board,true,ai,player,depth+1));
+board[i]="";
+}
+}
+return best;
+}
 }
 
-},1000);
+function xoxWin(b,p){
+return [[0,1,2],[3,4,5],[6,7,8],
+[0,3,6],[1,4,7],[2,5,8],
+[0,4,8],[2,4,6]]
+.some(w=>w.every(i=>b[i]==p));
 }
 
-function draw(){
+///////////////////////
+// ♟ SATRANÇ AI (HEURISTIC)
+///////////////////////
 
-let g=document.getElementById("game");
+function chessEvaluate(board){
+let score=0;
 
-g.innerHTML=`
-<div>⏱ Süre: <span id="timer">${time}</span></div>
-<br>
-<button onclick="window._endMemory()">Bitir</button>
-<br><br>
-<div id="board"></div>
-`;
-
-let board=document.getElementById("board");
-
-board.style.display="grid";
-board.style.gridTemplateColumns=`repeat(${level*2},50px)`;
-board.style.justifyContent="center";
-
-cards.forEach((c,i)=>{
-
-let d=document.createElement("div");
-d.style.width="50px";
-d.style.height="50px";
-d.style.border="1px solid #444";
-d.style.display="flex";
-d.style.alignItems="center";
-d.style.justifyContent="center";
-d.innerText = opened.includes(i) ? c : "?";
-
-d.onclick=()=>{
-
-if(opened.includes(i))return;
-
-opened.push(i);
-draw();
-
-if(opened.length===cards.length){
-levelUp();
-}
-};
-
-board.appendChild(d);
+board.forEach(p=>{
+if(p=="p") score+=1;
+if(p=="n") score+=3;
+if(p=="b") score+=3;
+if(p=="q") score+=9;
+if(p=="k") score+=100;
 });
 
+return score;
 }
 
-function levelUp(){
+function chessAIMove(moves){
 
-addCoin(level*10);
+let best=null;
+let bestScore=-999;
 
-level++;
+for(let m of moves){
 
-generateLevel();
-draw();
-startTimer();
+applyMove(m);
+let s=chessEvaluate(globalBoard);
+undoMove(m);
+
+if(s>bestScore){
+bestScore=s;
+best=m;
+}
 }
 
-function endGame(){
-
-clearInterval(interval);
-
-addCoin(level*10);
-
-alert("Bitti Level: "+level);
-
-home();
+return best;
 }
 
-window._endMemory=endGame;
+///////////////////////
+// ⚫ DAMA AI (YEME ÖNCELİKLİ)
+///////////////////////
 
-generateLevel();
-draw();
-startTimer();
+function damaAI(moves){
 
+let eat=moves.filter(m=>m.eat);
+
+if(eat.length>0){
+return rand(eat);
+}
+
+// risk düşük hamle
+moves.sort((a,b)=>a.risk-b.risk);
+return moves[0];
+}
+
+///////////////////////
+// 🃏 UNO AI (KURAL + STRATEJİ)
+///////////////////////
+
+function unoAI(hand,top){
+
+let playable=hand.filter(c=>
+c.color==top.color || c.value==top.value
+);
+
+if(playable.length>0){
+return playable[0];
+}
+
+return "draw";
 }
