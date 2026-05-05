@@ -1,18 +1,46 @@
-///////////////////////
-// 🧠 GLOBAL HELPERS //
-///////////////////////
+////////////////////////////
+// 🧠 XOX FULL AI
+////////////////////////////
 
-function rand(arr){
-return arr[Math.floor(Math.random()*arr.length)];
+function xoxWin(b,p){
+return [[0,1,2],[3,4,5],[6,7,8],
+[0,3,6],[1,4,7],[2,5,8],
+[0,4,8],[2,4,6]]
+.some(w=>w.every(i=>b[i]==p));
 }
 
-///////////////////////
-// 🧠 XOX FULL AI (MINIMAX)
-///////////////////////
+function xoxMiniMax(b,isMax,ai,pl,d){
 
-function xoxBestMove(board, ai, player){
+if(xoxWin(b,ai)) return 10-d;
+if(xoxWin(b,pl)) return d-10;
+if(b.every(x=>x!="")) return 0;
+
+if(isMax){
 let best=-999;
-let move=-1;
+for(let i=0;i<9;i++){
+if(b[i]==""){
+b[i]=ai;
+best=Math.max(best,xoxMiniMax(b,false,ai,pl,d+1));
+b[i]="";
+}
+}
+return best;
+}else{
+let best=999;
+for(let i=0;i<9;i++){
+if(b[i]==""){
+b[i]=pl;
+best=Math.min(best,xoxMiniMax(b,true,ai,pl,d+1));
+b[i]="";
+}
+}
+return best;
+}
+}
+
+function xoxBestMove(board,ai,player){
+let best=-999;
+let move=0;
 
 for(let i=0;i<9;i++){
 if(board[i]==""){
@@ -29,61 +57,26 @@ move=i;
 return move;
 }
 
-function xoxMiniMax(board,isMax,ai,player,depth){
-
-if(xoxWin(board,ai)) return 10-depth;
-if(xoxWin(board,player)) return depth-10;
-if(board.every(x=>x!="")) return 0;
-
-if(isMax){
-let best=-999;
-for(let i=0;i<9;i++){
-if(board[i]==""){
-board[i]=ai;
-best=Math.max(best,xoxMiniMax(board,false,ai,player,depth+1));
-board[i]="";
-}
-}
-return best;
-}else{
-let best=999;
-for(let i=0;i<9;i++){
-if(board[i]==""){
-board[i]=player;
-best=Math.min(best,xoxMiniMax(board,true,ai,player,depth+1));
-board[i]="";
-}
-}
-return best;
-}
-}
-
-function xoxWin(b,p){
-return [[0,1,2],[3,4,5],[6,7,8],
-[0,3,6],[1,4,7],[2,5,8],
-[0,4,8],[2,4,6]]
-.some(w=>w.every(i=>b[i]==p));
-}
-
-///////////////////////
-// ♟ SATRANÇ AI (HEURISTIC)
-///////////////////////
+////////////////////////////
+// ♟ SATRANÇ AI
+////////////////////////////
 
 function chessEvaluate(board){
 let score=0;
 
-board.forEach(p=>{
+for(let p of board){
 if(p=="p") score+=1;
 if(p=="n") score+=3;
 if(p=="b") score+=3;
+if(p=="r") score+=5;
 if(p=="q") score+=9;
 if(p=="k") score+=100;
-});
+}
 
 return score;
 }
 
-function chessAIMove(moves){
+function chessAI(moves){
 
 let best=null;
 let bestScore=-999;
@@ -103,26 +96,25 @@ best=m;
 return best;
 }
 
-///////////////////////
-// ⚫ DAMA AI (YEME ÖNCELİKLİ)
-///////////////////////
+////////////////////////////
+// ⚫ DAMA AI
+////////////////////////////
 
 function damaAI(moves){
 
-let eat=moves.filter(m=>m.eat);
+let capture=moves.filter(m=>m.capture);
 
-if(eat.length>0){
-return rand(eat);
+if(capture.length>0){
+return capture[0];
 }
 
-// risk düşük hamle
 moves.sort((a,b)=>a.risk-b.risk);
 return moves[0];
 }
 
-///////////////////////
-// 🃏 UNO AI (KURAL + STRATEJİ)
-///////////////////////
+////////////////////////////
+// 🃏 UNO AI
+////////////////////////////
 
 function unoAI(hand,top){
 
