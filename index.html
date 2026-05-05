@@ -5,46 +5,61 @@
 <title>Serkan Games</title>
 
 <style>
-body {
-  margin: 0;
-  font-family: Arial;
-  background: #111;
-  color: white;
-  text-align: center;
+body{
+  margin:0;
+  font-family:Arial;
+  background:#111;
+  color:white;
 }
 
-/* HEADER */
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #000;
-  padding: 10px 15px;
+/* 🔥 ÜST BAR */
+.header{
+  width:100%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:#333;
+  padding:12px 20px;
+  box-sizing:border-box;
 }
 
-.center input {
-  padding: 6px;
-  border-radius: 6px;
-  border: none;
+.left{ font-weight:bold; }
+
+.center input{
+  width:220px;
+  padding:6px;
+  border:none;
+  border-radius:6px;
 }
 
-/* SAYFALAR */
-.page { display: none; padding: 20px; }
+.right button{
+  padding:6px 10px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+/* SAYFA */
+.page{
+  display:none;
+  text-align:center;
+  padding:20px;
+}
 
 /* XOX */
-#board {
-  display: grid;
-  grid-template-columns: repeat(3, 90px);
-  gap: 10px;
-  justify-content: center;
-  margin-top: 20px;
+#board{
+  display:grid;
+  grid-template-columns:repeat(3,90px);
+  gap:10px;
+  justify-content:center;
+  margin-top:20px;
 }
 
-.cell {
-  width: 90px;
-  height: 90px;
-  background: #222;
-  font-size: 35px;
+.cell{
+  width:90px;
+  height:90px;
+  background:#222;
+  font-size:35px;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -52,14 +67,15 @@ body {
   cursor:pointer;
 }
 
-.cell:hover { background:#333; }
-
-button {
-  margin: 8px;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
+/* GERİ TUŞU */
+.back{
+  margin-top:15px;
+  padding:10px 15px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  background:#555;
+  color:white;
 }
 </style>
 </head>
@@ -68,24 +84,26 @@ button {
 
 <!-- HEADER -->
 <div class="header">
-  <div>🎮 Serkan Games</div>
-  <div><input placeholder="Ara..."></div>
-  <div><button onclick="show('home')">Ayar</button></div>
+  <div class="left">🎮 Serkan Games</div>
+
+  <div class="center">
+    <input placeholder="Ara...">
+  </div>
+
+  <div class="right">
+    <button onclick="show('home')">⚙ Ayar</button>
+  </div>
 </div>
 
 <!-- ANA SAYFA -->
 <div id="home" class="page" style="display:block;">
+  <h2>Oyun Seç</h2>
 
-  <h2>❌⭕ XOX AI Oyunu</h2>
-
-  <p>Önce taraf seç:</p>
-
-  <button onclick="startGame('X')">Ben X olayım</button>
-  <button onclick="startGame('O')">Ben O olayım</button>
-
+  <button onclick="start('X')">Ben X olayım</button>
+  <button onclick="start('O')">Ben O olayım</button>
 </div>
 
-<!-- OYUN -->
+<!-- XOX -->
 <div id="game" class="page">
 
   <h2>XOX Yapay Zeka</h2>
@@ -94,106 +112,98 @@ button {
   <p id="status"></p>
 
   <button onclick="reset()">Reset</button>
-  <button onclick="show('home')">Ana Sayfa</button>
+  <button class="back" onclick="backHome()">← Geri</button>
 
 </div>
 
 <script>
-
-let board = ["","","","","","","","",""];
-let player = "X";
-let ai = "O";
-let turn = "X";
-let active = false;
 
 function show(id){
   document.querySelectorAll(".page").forEach(p=>p.style.display="none");
   document.getElementById(id).style.display="block";
 }
 
-function startGame(choice){
+/* 🔥 GERİ TUŞU */
+function backHome(){
+  show("home");
+}
+
+/* XOX AI */
+let board, player, ai, turn, active;
+
+function start(choice){
   player = choice;
-  ai = choice === "X" ? "O" : "X";
-  turn = "X";
-  active = true;
-  board = ["","","","","","","","",""];
+  ai = choice==="X"?"O":"X";
+
+  board=["","","","","","","","",""];
+  turn="X";
+  active=true;
+
   show("game");
   draw();
 
-  if(ai === "X") aiMove();
+  if(ai==="X") aiMove();
 }
 
 function draw(){
-  const b = document.getElementById("board");
-  b.innerHTML = "";
+  let b=document.getElementById("board");
+  b.innerHTML="";
 
   board.forEach((v,i)=>{
-    let d = document.createElement("div");
-    d.className = "cell";
-    d.innerText = v;
-    d.onclick = ()=>move(i);
+    let d=document.createElement("div");
+    d.className="cell";
+    d.innerText=v;
+    d.onclick=()=>move(i);
     b.appendChild(d);
   });
 
   document.getElementById("status").innerText =
-    active ? "Sıra: " + turn : "Oyun bitti";
+    active ? "Sıra: "+turn : "Oyun bitti";
 }
 
 function move(i){
-  if(!active || board[i] !== "" || turn !== player) return;
+  if(!active || board[i] || turn!==player) return;
 
-  board[i] = player;
-  turn = ai;
+  board[i]=player;
+  turn=ai;
 
-  if(check(player)){
-    end(player);
-    return;
-  }
+  if(check(player)){ end(player); return; }
 
   draw();
-  setTimeout(aiMove, 400);
+  setTimeout(aiMove,400);
 }
 
 function aiMove(){
   if(!active) return;
 
-  let empty = board.map((v,i)=>v===""?i:null).filter(v=>v!==null);
+  let empty=board.map((v,i)=>v===""?i:null).filter(v=>v!==null);
+  let i=empty[Math.floor(Math.random()*empty.length)];
 
-  if(empty.length === 0) return;
+  board[i]=ai;
 
-  let i = empty[Math.floor(Math.random()*empty.length)];
-  board[i] = ai;
+  if(check(ai)){ end(ai); return; }
 
-  if(check(ai)){
-    end(ai);
-    return;
-  }
-
-  turn = player;
+  turn=player;
   draw();
 }
 
 function check(p){
-  const w = [
+  const w=[
     [0,1,2],[3,4,5],[6,7,8],
     [0,3,6],[1,4,7],[2,5,8],
     [0,4,8],[2,4,6]
   ];
-
-  return w.some(c => c.every(i => board[i] === p));
+  return w.some(c=>c.every(i=>board[i]===p));
 }
 
 function end(w){
-  active = false;
+  active=false;
   draw();
-  document.getElementById("status").innerText = w + " kazandı!";
+  document.getElementById("status").innerText=w+" kazandı!";
 }
 
 function reset(){
-  board = ["","","","","","","","",""];
-  active = true;
-  turn = "X";
-  draw();
+  start(player);
 }
 
 </script>
