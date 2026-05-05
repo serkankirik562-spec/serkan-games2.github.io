@@ -22,35 +22,26 @@ background:#bdbdbd;
 color:#000;
 }
 
-/* SAĞ SERKAN GAMES */
+/* SOL BAŞLIK */
 .title{
+font-size:22px;
 font-weight:bold;
 }
 
-/* SAAT */
-.clock{
-margin-right:10px;
-font-weight:bold;
-}
-
-/* ARAMA */
-.search input{
-padding:5px;
-border-radius:6px;
-border:1px solid #666;
-}
-
-/* AYAR PANEL */
+/* AYAR */
 .settings{
-position:relative;
+font-size:18px;
+font-weight:bold;
 cursor:pointer;
+position:relative;
 }
 
+/* PANEL */
 .panel{
 display:none;
 position:absolute;
 right:0;
-top:25px;
+top:30px;
 background:#222;
 color:#fff;
 padding:10px;
@@ -59,7 +50,7 @@ border-radius:8px;
 
 button{
 margin:3px;
-padding:5px;
+padding:6px;
 border:none;
 border-radius:5px;
 cursor:pointer;
@@ -72,18 +63,10 @@ cursor:pointer;
 <!-- TOP BAR -->
 <div class="top">
 
-<!-- SAĞ: SERKAN + SAAT -->
-<div class="title">
-SERKAN GAMES
-<span class="clock" id="clock">00:00:00</span>
-</div>
+<!-- SOL -->
+<div class="title">SERKAN GAMES</div>
 
-<!-- ORTA ARAMA -->
-<div class="search">
-<input type="text" placeholder="Ara...">
-</div>
-
-<!-- AYAR -->
+<!-- SAĞ -->
 <div class="settings" onclick="toggle()">
 ⚙ Ayarlar
 
@@ -99,28 +82,19 @@ SERKAN GAMES
 
 <script>
 
-// 🕒 SAAT
-setInterval(()=>{
-let d=new Date();
-document.getElementById("clock").innerText=
-String(d.getHours()).padStart(2,"0")+":"+
-String(d.getMinutes()).padStart(2,"0")+":"+
-String(d.getSeconds()).padStart(2,"0");
-},1000);
-
-// ⚙ PANEL
+// PANEL
 function toggle(){
 let p=document.getElementById("panel");
 p.style.display = p.style.display=="block"?"none":"block";
 }
 
-// 💻 PC
+// PC
 function pc(){
 document.body.style.maxWidth="1200px";
 document.body.style.margin="auto";
 }
 
-// 📱 MOBİL
+// MOBİL
 function mobile(){
 document.body.style.maxWidth="100%";
 document.body.style.margin="0";
