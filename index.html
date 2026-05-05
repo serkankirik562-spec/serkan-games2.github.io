@@ -1,130 +1,96 @@
-////////////////////////////
-// 🧠 XOX FULL AI
-////////////////////////////
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Serkan Games</title>
 
-function xoxWin(b,p){
-return [[0,1,2],[3,4,5],[6,7,8],
-[0,3,6],[1,4,7],[2,5,8],
-[0,4,8],[2,4,6]]
-.some(w=>w.every(i=>b[i]==p));
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#bdbdbd; /* gri */
+color:#000; /* siyah yazı */
 }
 
-function xoxMiniMax(b,isMax,ai,pl,d){
-
-if(xoxWin(b,ai)) return 10-d;
-if(xoxWin(b,pl)) return d-10;
-if(b.every(x=>x!="")) return 0;
-
-if(isMax){
-let best=-999;
-for(let i=0;i<9;i++){
-if(b[i]==""){
-b[i]=ai;
-best=Math.max(best,xoxMiniMax(b,false,ai,pl,d+1));
-b[i]="";
-}
-}
-return best;
-}else{
-let best=999;
-for(let i=0;i<9;i++){
-if(b[i]==""){
-b[i]=pl;
-best=Math.min(best,xoxMiniMax(b,true,ai,pl,d+1));
-b[i]="";
-}
-}
-return best;
-}
+/* ÜST BAR */
+.top{
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:10px 15px;
+background:#bdbdbd;
+border-bottom:2px solid #999;
 }
 
-function xoxBestMove(board,ai,player){
-let best=-999;
-let move=0;
-
-for(let i=0;i<9;i++){
-if(board[i]==""){
-board[i]=ai;
-let score=xoxMiniMax(board,false,ai,player,0);
-board[i]="";
-
-if(score>best){
-best=score;
-move=i;
-}
-}
-}
-return move;
+/* SOL */
+.left{
+font-weight:bold;
+font-size:18px;
 }
 
-////////////////////////////
-// ♟ SATRANÇ AI
-////////////////////////////
-
-function chessEvaluate(board){
-let score=0;
-
-for(let p of board){
-if(p=="p") score+=1;
-if(p=="n") score+=3;
-if(p=="b") score+=3;
-if(p=="r") score+=5;
-if(p=="q") score+=9;
-if(p=="k") score+=100;
+/* ORTA SAAT */
+.clock{
+font-weight:bold;
+margin-left:20px;
 }
 
-return score;
+/* ARAMA */
+.search{
+margin-left:20px;
 }
 
-function chessAI(moves){
-
-let best=null;
-let bestScore=-999;
-
-for(let m of moves){
-
-applyMove(m);
-let s=chessEvaluate(globalBoard);
-undoMove(m);
-
-if(s>bestScore){
-bestScore=s;
-best=m;
-}
+.search input{
+padding:5px;
+border:1px solid #666;
+border-radius:5px;
+outline:none;
+background:#e0e0e0;
+color:#000;
 }
 
-return best;
+/* SAĞ AYAR */
+.right{
+font-weight:bold;
+cursor:pointer;
 }
 
-////////////////////////////
-// ⚫ DAMA AI
-////////////////////////////
+</style>
+</head>
 
-function damaAI(moves){
+<body>
 
-let capture=moves.filter(m=>m.capture);
+<div class="top">
 
-if(capture.length>0){
-return capture[0];
-}
+<!-- SOL -->
+<div class="left">Serkan Games</div>
 
-moves.sort((a,b)=>a.risk-b.risk);
-return moves[0];
-}
+<!-- ORTA -->
+<div style="display:flex;align-items:center;gap:10px;">
+<div class="clock" id="clock">00:00:00</div>
 
-////////////////////////////
-// 🃏 UNO AI
-////////////////////////////
+<div class="search">
+<input type="text" placeholder="Ara...">
+</div>
+</div>
 
-function unoAI(hand,top){
+<!-- SAĞ -->
+<div class="right">⚙ Ayarlar</div>
 
-let playable=hand.filter(c=>
-c.color==top.color || c.value==top.value
-);
+</div>
 
-if(playable.length>0){
-return playable[0];
-}
+<script>
 
-return "draw";
-}
+// 🕒 SAAT
+setInterval(()=>{
+let d=new Date();
+document.getElementById("clock").innerText=
+String(d.getHours()).padStart(2,"0")+":"+
+String(d.getMinutes()).padStart(2,"0")+":"+
+String(d.getSeconds()).padStart(2,"0");
+},1000);
+
+</script>
+
+</body>
+</html>
