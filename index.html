@@ -6,16 +6,18 @@ let opened=[];
 let time=0;
 let interval;
 
-// 🧠 LEVEL OLUŞTUR
+// 🧠 SEVİYE OLUŞTUR
 function generateLevel(){
 cards=[];
 opened=[];
+
 let size=level*2;
 
 for(let i=0;i<size;i++){
-cards.push(i% (size/2));
+cards.push(i % (size/2));
 }
 
+// shuffle
 cards.sort(()=>Math.random()-0.5);
 }
 
@@ -23,7 +25,7 @@ cards.sort(()=>Math.random()-0.5);
 function startTimer(){
 clearInterval(interval);
 
-time = 80 + (level * 15); // daha dengeli süre
+time = 80 + level*15;
 
 interval=setInterval(()=>{
 
@@ -47,12 +49,13 @@ let g=document.getElementById("game");
 g.innerHTML=`
 <div>⏱ Süre: <span id="timer">${time}</span></div>
 <br>
-<button onclick="window._endMemoryGame()">🚪 Bitir</button>
+<button onclick="window._endMemory()">🚪 Oyunu Bitir</button>
 <br><br>
 <div id="board"></div>
 `;
 
 let board=document.getElementById("board");
+
 board.style.display="grid";
 board.style.gridTemplateColumns=`repeat(${level*2},50px)`;
 board.style.justifyContent="center";
@@ -91,7 +94,7 @@ board.appendChild(d);
 // 🆙 LEVEL
 function levelUp(){
 
-addCoin(level*12); // biraz daha dengeli ödül
+addCoin(level*10);
 
 level++;
 
@@ -114,8 +117,8 @@ alert("🎮 Bitti! Level: "+level+" | Coin: "+score);
 home();
 }
 
-// global fix (buton için önemli)
-window._endMemoryGame=endGame;
+// global fix (buton için)
+window._endMemory=endGame;
 
 // START
 generateLevel();
