@@ -5,19 +5,14 @@
 <title>Serkan Games</title>
 
 <style>
-body{
-  margin:0;
-  font-family:Arial;
-  background:#111;
-  color:white;
-}
+body{margin:0;font-family:Arial;background:#111;color:white}
 
 /* HEADER */
 .header{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  padding:12px 20px;
+  padding:10px 20px;
   background:#333;
 }
 
@@ -27,7 +22,7 @@ body{
   border:none;
 }
 
-/* MENU BAR */
+/* MENU */
 .menu{
   display:flex;
   gap:10px;
@@ -43,30 +38,20 @@ body{
 }
 
 /* PAGE */
-.page{
-  display:none;
-  padding:20px;
-}
+.page{display:none;padding:20px}
 
-/* CARDS */
+/* CARD */
 .card{
-  width:180px;
+  width:160px;
   background:#222;
   padding:10px;
   margin:10px;
-  border-radius:12px;
+  border-radius:10px;
   display:inline-block;
   cursor:pointer;
 }
 
-.card img{
-  width:100%;
-  height:100px;
-  background:#444;
-  border-radius:10px;
-}
-
-/* GAME BOX */
+/* GAME */
 .game-box{
   width:320px;
   margin:auto;
@@ -81,7 +66,6 @@ body{
   display:grid;
   grid-template-columns:repeat(3,1fr);
   gap:6px;
-  margin-top:10px;
 }
 
 .cell{
@@ -94,14 +78,6 @@ body{
   font-size:30px;
   cursor:pointer;
 }
-
-/* BUTTON */
-button{
-  padding:8px 12px;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-}
 </style>
 </head>
 
@@ -112,7 +88,7 @@ button{
   <div>🎮 Serkan Games</div>
 
   <div class="search">
-    <input placeholder="Ara...">
+    <input id="search" placeholder="Oyun ara..." onkeyup="searchGame()">
   </div>
 
   <div>⚙ Ayar</div>
@@ -120,106 +96,93 @@ button{
 
 <!-- MENU -->
 <div class="menu">
-  <button onclick="show('home')">🏠 Ana</button>
   <button onclick="show('mini')">🕹 Mini Games</button>
-  <button onclick="show('boardgames')">🧩 Masa Oyunları</button>
-</div>
-
-<!-- HOME -->
-<div id="home" class="page" style="display:block;">
-  <h2>Serkan Games 🎮</h2>
-  <p>Mini oyun platformu</p>
+  <button onclick="show('board')">🧩 Masa Oyunları</button>
 </div>
 
 <!-- MINI GAMES -->
-<div id="mini" class="page">
+<div id="mini" class="page" style="display:block">
 
-  <h2>🕹 Mini Games</h2>
-
-  <div class="card" onclick="openGame('xox')">
-    <img>
-    <p>XOX AI</p>
-  </div>
-
-  <div class="card" onclick="openGame('memory')">
-    <img>
-    <p>Hafıza</p>
-  </div>
-
-  <div class="card" onclick="openGame('dice')">
-    <img>
-    <p>Zar</p>
-  </div>
+  <div class="card game">XOX</div>
+  <div class="card game">Hafıza</div>
+  <div class="card game">Zar</div>
+  <div class="card game">UNO</div>
+  <div class="card game">Yapboz</div>
 
 </div>
 
-<!-- MASA OYUNLARI -->
-<div id="boardgames" class="page">
+<!-- BOARD GAMES -->
+<div id="board" class="page">
 
-  <h2>🧩 Masa Oyunları</h2>
-
-  <div class="card" onclick="openGame('xox')">
-    <img>
-    <p>XOX</p>
-  </div>
+  <div class="card game">Satranç</div>
+  <div class="card game">Dama</div>
 
 </div>
 
 <!-- GAME AREA -->
 <div id="game" class="page">
-
   <button onclick="back()">← Geri</button>
   <div id="gameArea"></div>
-
 </div>
 
 <script>
 
-/* SAYFA */
+/* PAGE */
 function show(id){
   document.querySelectorAll(".page").forEach(p=>p.style.display="none");
   document.getElementById(id).style.display="block";
 }
 
-/* GERİ */
 function back(){
   show("mini");
 }
 
-/* OYUN AÇ */
-function openGame(type){
+/* SEARCH */
+function searchGame(){
+  let input=document.getElementById("search").value.toLowerCase();
+  let cards=document.querySelectorAll(".game");
+
+  cards.forEach(c=>{
+    if(c.innerText.toLowerCase().includes(input)){
+      c.style.display="inline-block";
+    } else {
+      c.style.display="none";
+    }
+  });
+}
+
+/* CLICK */
+document.querySelectorAll(".game").forEach(card=>{
+  card.onclick=()=>openGame(card.innerText);
+});
+
+/* OPEN GAME */
+function openGame(name){
 
   show("game");
 
   let area=document.getElementById("gameArea");
 
-  if(type=="xox"){
-    area.innerHTML=`
-      <div class="game-box">
-        <h3>XOX AI</h3>
-        <div id="board"></div>
-      </div>
-    `;
+  if(name=="XOX"){
+    area.innerHTML=`<div class="game-box"><div id="board"></div></div>`;
     startXOX();
   }
 
-  if(type=="memory"){
-    area.innerHTML="<div class='game-box'>Hafıza (bağlı)</div>";
-  }
-
-  if(type=="dice"){
-    area.innerHTML="<div class='game-box'>Zar (bağlı)</div>";
+  else{
+    area.innerHTML=`
+      <div class="game-box">
+        <h3>${name}</h3>
+        <p>Yakında eklenecek</p>
+      </div>
+    `;
   }
 }
 
-/* ================= XOX ================= */
-
-let board, turn="X", active;
+/* XOX */
+let boardArr;
 
 function startXOX(){
-  board=["","","","","","","","",""];
-  turn="X";
-  active=true;
+  boardArr=["","","","","","","","",""];
   draw();
 }
 
@@ -227,7 +190,7 @@ function draw(){
   let b=document.getElementById("board");
   b.innerHTML="";
 
-  board.forEach((v,i)=>{
+  boardArr.forEach((v,i)=>{
     let d=document.createElement("div");
     d.className="cell";
     d.innerText=v;
@@ -237,27 +200,18 @@ function draw(){
 }
 
 function move(i){
-  if(!active || board[i]) return;
+  if(boardArr[i]) return;
 
-  board[i]="X";
-
-  if(check("X")){ alert("Kazandın"); active=false; return; }
+  boardArr[i]="X";
 
   aiMove();
   draw();
 }
 
 function aiMove(){
-  let empty=board.map((v,i)=>v==""?i:null).filter(v=>v!==null);
-  let i=empty[Math.floor(Math.random()*empty.length)];
-  board[i]="O";
-
-  if(check("O")){ alert("AI kazandı"); active=false; }
-}
-
-function check(p){
-  const w=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-  return w.some(c=>c.every(i=>board[i]==p));
+  let empty=boardArr.map((v,i)=>v==""?i:null).filter(v=>v!=null);
+  let r=empty[Math.floor(Math.random()*empty.length)];
+  if(r!=undefined) boardArr[r]="O";
 }
 
 </script>
