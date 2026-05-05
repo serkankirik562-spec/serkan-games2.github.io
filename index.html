@@ -2,197 +2,193 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>Serkan Games</title>
+<title>Serkan Games Full Pro</title>
 
 <style>
-body{margin:0;font-family:Arial;background:#0b0f17;color:#fff;}
-.topbar{display:flex;justify-content:space-between;padding:10px;background:#151a25;}
-.main{padding:10px;}
-.card{background:#1c2436;margin:10px;padding:10px;border-radius:10px;}
-button{background:#2a6cff;color:#fff;border:0;padding:6px;border-radius:6px;cursor:pointer;margin:3px;}
+body{margin:0;font-family:Arial;background:#0e1117;color:#fff;}
+.top{display:flex;justify-content:space-between;padding:10px;background:#151a25;}
+button{margin:3px;padding:6px;border:0;border-radius:6px;background:#2a6cff;color:#fff;}
+.card{display:inline-block;width:140px;margin:10px;padding:10px;background:#1c2436;border-radius:10px;text-align:center;}
 .grid{display:grid;grid-template-columns:repeat(3,60px);}
-.cell{width:60px;height:60px;border:1px solid #fff;display:flex;align-items:center;justify-content:center;font-size:20px;}
-.premium{background:linear-gradient(45deg,#4a7dff,#00c3ff);}
+.cell{width:60px;height:60px;border:1px solid #444;display:flex;align-items:center;justify-content:center;}
 </style>
-
 </head>
 <body>
 
-<div class="topbar">
-<div>🎮 Serkan Games</div>
-<div id="coinBox">💰 0</div>
+<div class="top">
+<div>🎮 Serkan Games PRO</div>
+<div>
+<button onclick="show('home')">🏠</button>
+<button onclick="show('store')">🏪</button>
+<button onclick="show('lib')">📚</button>
+<button onclick="show('profile')">👤</button>
+</div>
+<div id="hud"></div>
 </div>
 
-<div class="main" id="main"></div>
-<div id="game"></div>
+<div id="page"></div>
 
 <script>
 
-// ===== USER =====
-let user = JSON.parse(localStorage.getItem("user")) || {coins:0,owned:[]};
+// ================= USER =================
+let user=JSON.parse(localStorage.getItem("u"))||{
+coin:0,xp:0,level:1,rank:"Bronze",owned:[]
+};
 
-// ===== SAVE =====
-function save(){
-localStorage.setItem("user",JSON.stringify(user));
+function save(){localStorage.setItem("u",JSON.stringify(user));}
+function hud(){hud.innerText=`💰${user.coin} ⭐${user.level} 🏅${user.rank}`;}
+function addCoin(c){user.coin+=c;save();hud();}
+function addXP(x){
+user.xp+=x;
+if(user.xp>user.level*50){
+user.xp=0;
+user.level++;
+}
+if(user.level>15)user.rank="Diamond";
+else if(user.level>10)user.rank="Gold";
+else if(user.level>5)user.rank="Silver";
+save();hud();
 }
 
-// ===== COIN =====
-function addCoin(n){
-user.coins+=n;
-save();
-updateUI();
+// ================= GAMES =================
+const games=[
+{name:"XOX",price:10,coin:10,xp:20},
+{name:"Zar",price:5,coin:5,xp:5},
+{name:"Satranç",price:30,coin:30,xp:50}
+];
+
+// ================= DAILY =================
+function daily(){
+let last=localStorage.getItem("d");
+if(last && Date.now()-last<86400000){
+alert("⏳ Alındı");return;
+}
+addCoin(20);addXP(10);
+localStorage.setItem("d",Date.now());
+alert("🎁 +20 coin");
 }
 
-function updateUI(){
-coinBox.innerText="💰 "+user.coins;
-}
-updateUI();
-
-// ===== GAMES =====
-const mini=["XOX","Zar","Tıklama","Hedef","Tahmin"];
-const premium=[{name:"Yarış",price:50},{name:"FPS",price:100},{name:"Satranç",price:150}];
-
-// ===== MENU =====
-function loadStore(){
-
-main.innerHTML="<h2>🎲 Mini Games</h2>";
-
-mini.forEach(g=>{
-main.innerHTML+=`
-<div class="card">
-<h3>${g}</h3>
-<button onclick="play('${g}')">▶</button>
-</div>`;
-});
-
-main.innerHTML+="<h2>💎 Paralı Oyunlar</h2>";
-
-premium.forEach(g=>{
-let owned=user.owned.includes(g.name);
-
-main.innerHTML+=`
-<div class="card premium">
-<h3>${g.name}</h3>
-<p>${g.price} coin</p>
-
-${owned
-? `<button onclick="play('${g.name}')">▶ Oyna</button>`
-: `<button onclick="buy('${g.name}',${g.price})">💰 Satın Al</button>`
+// ================= NAV =================
+function show(p){
+if(p=="home")home();
+if(p=="store")store();
+if(p=="lib")lib();
+if(p=="profile")profile();
 }
 
-</div>`;
-});
-}
-loadStore();
+show("home");
 
-// ===== BUY =====
-function buy(name,price){
-
-if(user.coins<price){
-alert("❌ Yetersiz coin");
-return;
-}
-
-user.coins-=price;
-if(!user.owned.includes(name)) user.owned.push(name);
-
-save();
-updateUI();
-loadStore();
-
-alert("✔ Satın alındı: "+name);
-}
-
-// ===== PLAY =====
-function play(name){
-
-game.innerHTML=`
-<div class="card">
-<h2>${name}</h2>
-<button onclick="game.innerHTML=''">⬅</button>
-<div id="g"></div>
-</div>
+// ================= HOME =================
+function home(){
+page.innerHTML=`
+<button onclick="daily()">🎁 Günlük</button>
+<div class="card"><button onclick="xox()">XOX</button></div>
+<div class="card"><button onclick="zar()">Zar</button></div>
 `;
-
-if(name=="XOX") xox();
-if(name=="Zar") zar();
-if(name=="Tıklama") clicker();
-if(name=="Hedef") target();
-if(name=="Tahmin") guess();
-if(name=="Yarış") race();
-if(name=="FPS") fps();
-if(name=="Satranç") chess();
 }
 
-// ===== XOX =====
+// ================= STORE =================
+function store(){
+page.innerHTML="<h2>🏪 Mağaza</h2>";
+games.forEach(g=>{
+let o=user.owned.includes(g.name);
+page.innerHTML+=`
+<div class="card">
+<h4>${g.name}</h4>
+<p>${g.price}💰</p>
+${o?`<button onclick="play('${g.name}')">▶</button>`:
+`<button onclick="buy('${g.name}')">Satın Al</button>`}
+</div>`;
+});
+}
+
+function buy(n){
+let g=games.find(x=>x.name==n);
+if(user.coin<g.price){alert("❌ Yetersiz");return;}
+user.coin-=g.price;
+user.owned.push(n);
+save();hud();store();
+}
+
+// ================= LIB =================
+function lib(){
+page.innerHTML="<h2>📚 Kütüphane</h2>";
+user.owned.forEach(g=>{
+page.innerHTML+=`<div class="card"><button onclick="play('${g}')">${g}</button></div>`;
+});
+}
+
+// ================= PROFILE =================
+function profile(){
+page.innerHTML=`
+<div class="card">
+💰${user.coin}<br>
+⭐${user.level}<br>
+🏅${user.rank}
+</div>`;
+}
+
+// ================= PLAY =================
+function play(n){
+if(n=="XOX")xox();
+if(n=="Zar")zar();
+if(n=="Satranç")chess();
+}
+
+// ================= REWARD ENGINE =================
+function reward(name,res){
+let g=games.find(x=>x.name==name);
+if(res=="win"){addCoin(g.coin);addXP(g.xp);}
+if(res=="lose"){addCoin(1);addXP(2);}
+if(res=="draw"){addCoin(5);addXP(5);}
+}
+
+// ================= XOX =================
 function xox(){
-let t="X";
-g.innerHTML="<div class='grid'></div>";
-let b=document.querySelector(".grid");
+let b=["","","","","","","","",""];
+let p="X",ai="O";
+
+page.innerHTML="<div class='grid'></div><p id='m'></p>";
+let grid=document.querySelector(".grid");
 
 for(let i=0;i<9;i++){
-let d=document.createElement("div");
-d.className="cell";
-d.onclick=()=>{
-if(!d.innerText){
-d.innerText=t;
-t=t=="X"?"O":"X";
-addCoin(1);
-}
+let c=document.createElement("div");
+c.className="cell";
+c.onclick=()=>{
+if(b[i])return;
+b[i]=p;c.innerText=p;
+if(win(b,p)){reward("XOX","win");m.innerText="Kazandın";return;}
+aiMove();
 };
-b.appendChild(d);
+grid.appendChild(c);
+}
+
+function aiMove(){
+let e=b.map((v,i)=>v==""?i:null).filter(x=>x!=null);
+let m=e[Math.random()*e.length|0];
+b[m]=ai;grid.children[m].innerText=ai;
+if(win(b,ai)){reward("XOX","lose");m.innerText="Kaybettin";}
+}
+
+function win(b,p){
+return [[0,1,2],[3,4,5],[6,7,8]].some(w=>w.every(i=>b[i]==p));
 }
 }
 
-// ===== ZAR =====
+// ================= ZAR =================
 function zar(){
-g.innerHTML=`<button onclick="roll()">🎲</button><div id="r"></div>`;
-window.roll=()=>{
-let n=Math.floor(Math.random()*6)+1;
-r.innerText=n;
-addCoin(n);
-};
+let n=Math.random()*6|0+1;
+reward("Zar","win");
+alert("🎲 "+n);
 }
 
-// ===== CLICK =====
-function clicker(){
-let s=0;
-g.innerHTML=`<button id="b">Tıkla</button><div id="sc">0</div>`;
-b.onclick=()=>{
-s++;
-sc.innerText=s;
-if(s>=10) addCoin(10);
-};
-}
-
-// ===== TARGET =====
-function target(){
-g.innerHTML=`<div id="t" style="width:50px;height:50px;background:red;"></div>`;
-t.onclick=()=>addCoin(10);
-}
-
-// ===== GUESS =====
-function guess(){
-let n=Math.floor(Math.random()*5)+1;
-let g1=prompt("Tahmin 1-5");
-if(parseInt(g1)==n) addCoin(10);
-}
-
-// ===== RACE =====
-function race(){
-g.innerHTML="🏎 Oyunu oynuyorsun...";
-setTimeout(()=>addCoin(20),3000);
-}
-
-// ===== FPS =====
-function fps(){
-g.innerHTML=`<button onclick="addCoin(5)">Vur</button>`;
-}
-
-// ===== CHESS =====
+// ================= CHESS (AI BASIT) =================
 function chess(){
-g.innerHTML="♟ Satranç (basit demo)";
+reward("Satranç","draw");
+alert("♟ Satranç bitti (AI demo)");
 }
+
+hud();
 
 </script>
 
