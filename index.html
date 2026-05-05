@@ -2,44 +2,134 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>Serkan Games Store</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Serkan Games</title>
 
 <style>
 body{margin:0;font-family:Arial;background:#0e1117;color:#fff;}
-.top{display:flex;justify-content:space-between;padding:10px;background:#151a25;}
-button{margin:3px;padding:6px;border:0;border-radius:6px;background:#2a6cff;color:#fff;}
-.section{padding:10px;}
-.row{display:flex;flex-wrap:wrap;}
-.card{width:140px;margin:10px;padding:10px;background:#1c2436;border-radius:10px;text-align:center;}
-.lock{background:#3a1c1c;}
+
+.top{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:10px;
+background:#151a25;
+flex-wrap:wrap;
+}
+
+.center{
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:5px;
+flex:1;
+}
+
+input{
+padding:6px;
+border-radius:6px;
+border:none;
+width:200px;
+}
+
+.tabs{
+position:fixed;
+bottom:0;
+left:0;
+right:0;
+display:flex;
+background:#151a25;
+}
+
+.tabs button{
+flex:1;
+padding:10px;
+border:none;
+background:#2a6cff;
+color:#fff;
+}
+
+.card{
+display:inline-block;
+width:140px;
+margin:10px;
+padding:10px;
+background:#1c2436;
+border-radius:10px;
+text-align:center;
+}
 </style>
 </head>
+
 <body>
 
+<!-- TOP BAR -->
 <div class="top">
-<div>🎮 Serkan Games</div>
+
+<div style="width:80px;"></div>
+
+<div class="center">
+<div style="font-size:20px;font-weight:bold;">🎮 Serkan Games</div>
+
+<input type="text" placeholder="🔍 Oyun ara..." oninput="searchGames(this.value)">
+</div>
+
 <div>
+<button onclick="toggleSettings()">⚙</button>
+</div>
+
+</div>
+
+<!-- CONTENT -->
+<div id="page" style="padding-bottom:60px;"></div>
+
+<!-- BOTTOM TABS -->
+<div class="tabs">
 <button onclick="show('mini')">🟢 Mini</button>
 <button onclick="show('board')">♟ Masa</button>
 <button onclick="show('premium')">🔴 Premium</button>
 </div>
-</div>
-
-<div id="page" class="section"></div>
 
 <script>
 
-// ================= OYUNLAR =================
+// ================= USER =================
+let coin=0;
+
+function addCoin(x){
+coin+=x;
+console.log("💰 Coin:",coin);
+}
+
+// ================= SETTINGS =================
+function toggleSettings(){
+let mode=prompt("Ayarlar:\n1-PC\n2-Mobil\nSeç:");
+
+if(mode=="1")alert("💻 PC modu seçildi");
+if(mode=="2")alert("📱 Mobil modu seçildi");
+}
+
+// ================= GAMES =================
+
+// 🟢 MINI GAMES
 const miniGames=[
-"XOX","Zar","Taş Kağıt","Hız Testi","Bellek","Refleks","Sayı Tahmin","Renk Yakala"
+{name:"XOX",reward:10},
+{name:"Refleks",reward:20},
+{name:"Bellek",reward:15},
+{name:"Sayı Tahmin",reward:25},
+{name:"Renk Yakala",reward:30}
 ];
 
+// ♟ MASA OYUNLARI
 const boardGames=[
-"XOX AI","Satranç","Dama"
+{name:"XOX AI",reward:10},
+{name:"Dama",reward:20},
+{name:"Satranç",reward:30}
 ];
 
+// 🔴 PREMIUM (boş)
 const premiumGames=[
-"Minecraft Clone","Car Racing 3D","FPS Demo","Survival Arena","Open World Demo"
+{name:"Kilitsiz Oyun Yok"}
 ];
 
 // ================= NAV =================
@@ -47,76 +137,49 @@ show("mini");
 
 function show(type){
 
-if(type=="mini")mini();
-if(type=="board")board();
-if(type=="premium")premium();
+if(type=="mini")render(miniGames);
+if(type=="board")render(boardGames);
+if(type=="premium")render(premiumGames);
 }
 
-// ================= MINI =================
-function mini(){
+// ================= RENDER =================
+function render(list){
 
-page.innerHTML="<h2>🟢 Mini Games (Ücretsiz)</h2><div class='row'>";
+let html="";
 
-miniGames.forEach(g=>{
-page.innerHTML+=`
-<div class="card">
-<h4>${g}</h4>
-<button onclick="play('${g}')">Oyna</button>
-</div>`;
+list.forEach(g=>{
+html+=`
+<div class="card" onclick="play('${g.name}',${g.reward})">
+<h4>${g.name}</h4>
+<p>💰 +${g.reward}</p>
+<button>Oyna</button>
+</div>
+`;
 });
 
-page.innerHTML+="</div>";
-}
-
-// ================= BOARD =================
-function board(){
-
-page.innerHTML="<h2>♟ Masa Oyunları</h2><div class='row'>";
-
-boardGames.forEach(g=>{
-page.innerHTML+=`
-<div class="card">
-<h4>${g}</h4>
-<button onclick="play('${g}')">Oyna</button>
-</div>`;
-});
-
-page.innerHTML+="</div>";
-}
-
-// ================= PREMIUM =================
-function premium(){
-
-page.innerHTML="<h2>🔴 Premium Oyunlar</h2><div class='row'>";
-
-premiumGames.forEach(g=>{
-page.innerHTML+=`
-<div class="card lock">
-<h4>${g}</h4>
-<p>🔒 Kilitli</p>
-<button onclick="alert('Premium gerekli')">Satın Al</button>
-</div>`;
-});
-
-page.innerHTML+="</div>";
+page.innerHTML=html;
 }
 
 // ================= PLAY =================
-function play(name){
+function play(name,reward){
 
-if(name=="XOX")alert("XOX başlıyor");
-if(name=="Zar")alert("Zar atılıyor");
-if(name=="Satranç")alert("Satranç AI başlıyor");
-if(name=="Taş Kağıt")alert("Taş Kağıt oynanıyor");
-if(name=="Hız Testi")alert("Refleks testi");
-if(name=="Bellek")alert("Hafıza oyunu");
-if(name=="Refleks")alert("Refleks oyunu");
-if(name=="Sayı Tahmin")alert("Sayı tahmin");
-if(name=="Renk Yakala")alert("Renk oyunu");
+addCoin(reward);
 
-if(name=="XOX AI")alert("AI XOX");
-if(name=="Dama")alert("Dama oyunu");
+alert(name+" oynandı 🎮 +"+reward+" coin");
+}
 
-// premium
-if(name.includes("3D")||name.includes("FPS")||name.includes("Open")){
-alert
+// ================= SEARCH =================
+function searchGames(text){
+
+text=text.toLowerCase();
+
+document.querySelectorAll(".card").forEach(c=>{
+c.style.display=c.innerText.toLowerCase().includes(text)?"inline-block":"none";
+});
+
+}
+
+</script>
+
+</body>
+</html>
