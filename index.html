@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Serkan Games</title>
 
 <style>
-body{margin:0;font-family:Arial;background:#0e1117;color:#fff;}
+body{margin:0;font-family:Arial;background:#0e1117;color:#fff}
 
+/* TOP BAR (DEĞİŞMEDİ) */
 .top{
 display:flex;
 justify-content:space-between;
@@ -33,21 +33,26 @@ border:none;
 width:200px;
 }
 
-.tabs{
-position:fixed;
-bottom:0;
-left:0;
-right:0;
-display:flex;
-background:#151a25;
+/* ALT PANEL */
+.panel{
+padding:10px;
+text-align:center;
 }
 
-.tabs button{
-flex:1;
-padding:10px;
-border:none;
+.tabs{
+display:flex;
+justify-content:center;
+gap:5px;
+margin:10px 0;
+}
+
+button{
+padding:6px;
+border:0;
+border-radius:6px;
 background:#2a6cff;
 color:#fff;
+cursor:pointer;
 }
 
 .card{
@@ -81,55 +86,60 @@ text-align:center;
 
 </div>
 
-<!-- CONTENT -->
-<div id="page" style="padding-bottom:60px;"></div>
+<!-- COIN -->
+<div class="panel">
+💰 Coin: <span id="coin">0</span>
+</div>
 
-<!-- BOTTOM TABS -->
+<!-- TABS -->
 <div class="tabs">
 <button onclick="show('mini')">🟢 Mini</button>
 <button onclick="show('board')">♟ Masa</button>
 <button onclick="show('premium')">🔴 Premium</button>
 </div>
 
+<!-- CONTENT -->
+<div id="page" class="panel"></div>
+
 <script>
 
-// ================= USER =================
+// ================= COIN =================
 let coin=0;
 
 function addCoin(x){
 coin+=x;
-console.log("💰 Coin:",coin);
+document.getElementById("coin").innerText=coin;
 }
 
-// ================= SETTINGS =================
+// ================= AYAR =================
 function toggleSettings(){
-let mode=prompt("Ayarlar:\n1-PC\n2-Mobil\nSeç:");
+let m=prompt("Ayarlar:\n1-PC\n2-Mobil");
 
-if(mode=="1")alert("💻 PC modu seçildi");
-if(mode=="2")alert("📱 Mobil modu seçildi");
+if(m=="1")alert("💻 PC modu");
+if(m=="2")alert("📱 Mobil modu");
 }
 
-// ================= GAMES =================
+// ================= OYUNLAR =================
 
-// 🟢 MINI GAMES
 const miniGames=[
 {name:"XOX",reward:10},
 {name:"Refleks",reward:20},
 {name:"Bellek",reward:15},
 {name:"Sayı Tahmin",reward:25},
-{name:"Renk Yakala",reward:30}
+{name:"Renk Yakala",reward:30},
+{name:"Taş Kağıt",reward:10}
 ];
 
-// ♟ MASA OYUNLARI
 const boardGames=[
 {name:"XOX AI",reward:10},
 {name:"Dama",reward:20},
 {name:"Satranç",reward:30}
 ];
 
-// 🔴 PREMIUM (boş)
 const premiumGames=[
-{name:"Kilitsiz Oyun Yok"}
+{name:"Minecraft Style",locked:true},
+{name:"FPS Demo",locked:true},
+{name:"Car Racing 3D",locked:true}
 ];
 
 // ================= NAV =================
@@ -137,44 +147,50 @@ show("mini");
 
 function show(type){
 
-if(type=="mini")render(miniGames);
-if(type=="board")render(boardGames);
-if(type=="premium")render(premiumGames);
-}
+let list=[];
 
-// ================= RENDER =================
-function render(list){
+if(type=="mini")list=miniGames;
+if(type=="board")list=boardGames;
+if(type=="premium")list=premiumGames;
 
 let html="";
 
 list.forEach(g=>{
+
 html+=`
-<div class="card" onclick="play('${g.name}',${g.reward})">
+<div class="card">
 <h4>${g.name}</h4>
-<p>💰 +${g.reward}</p>
-<button>Oyna</button>
+<p>💰 +${g.reward||0}</p>
+<button onclick="play('${g.name}',${g.reward||0},${g.locked||false})">
+Oyna
+</button>
 </div>
 `;
+
 });
 
 page.innerHTML=html;
 }
 
-// ================= PLAY =================
-function play(name,reward){
+// ================= OYUN =================
+function play(name,reward,locked){
+
+if(locked){
+alert("🔒 Premium oyun");
+return;
+}
 
 addCoin(reward);
-
-alert(name+" oynandı 🎮 +"+reward+" coin");
+alert(name+" oynandı +"+reward+" coin");
 }
 
 // ================= SEARCH =================
-function searchGames(text){
+function searchGames(t){
 
-text=text.toLowerCase();
+t=t.toLowerCase();
 
 document.querySelectorAll(".card").forEach(c=>{
-c.style.display=c.innerText.toLowerCase().includes(text)?"inline-block":"none";
+c.style.display=c.innerText.toLowerCase().includes(t)?"inline-block":"none";
 });
 
 }
