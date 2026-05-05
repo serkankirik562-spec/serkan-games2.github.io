@@ -6,26 +6,30 @@
 
 <style>
 body {
+  margin: 0;
   font-family: Arial;
   background: #111;
   color: white;
   text-align: center;
 }
 
-/* MENÜ */
-#menu button {
-  padding: 10px 20px;
-  margin: 10px;
-  font-size: 18px;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
+/* HEADER */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #000;
+  padding: 10px 15px;
 }
 
-/* SAYFA GİZLEME */
-.page {
-  display: none;
+.center input {
+  padding: 6px;
+  border-radius: 6px;
+  border: none;
 }
+
+/* SAYFALAR */
+.page { display: none; padding: 20px; }
 
 /* XOX */
 #board {
@@ -41,116 +45,156 @@ body {
   height: 90px;
   background: #222;
   font-size: 35px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  border-radius: 10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:10px;
+  cursor:pointer;
 }
 
-.cell:hover {
-  background: #333;
+.cell:hover { background:#333; }
+
+button {
+  margin: 8px;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
 }
 </style>
 </head>
 
 <body>
 
-<h1>🎮 Serkan Oyun Sitesi</h1>
-
-<!-- MENÜ -->
-<div id="menu">
-  <button onclick="showPage('home')">🏠 Ana Sayfa</button>
-  <button onclick="showPage('xox')">❌⭕ XOX Oyunu</button>
+<!-- HEADER -->
+<div class="header">
+  <div>🎮 Serkan Games</div>
+  <div><input placeholder="Ara..."></div>
+  <div><button onclick="show('home')">Ayar</button></div>
 </div>
 
 <!-- ANA SAYFA -->
 <div id="home" class="page" style="display:block;">
-  <h2>Hoşgeldin!</h2>
-  <p>Oyun seç ve oyna 🚀</p>
+
+  <h2>❌⭕ XOX AI Oyunu</h2>
+
+  <p>Önce taraf seç:</p>
+
+  <button onclick="startGame('X')">Ben X olayım</button>
+  <button onclick="startGame('O')">Ben O olayım</button>
+
 </div>
 
-<!-- XOX SAYFA -->
-<div id="xox" class="page">
+<!-- OYUN -->
+<div id="game" class="page">
 
-  <h2>XOX Oyunu</h2>
+  <h2>XOX Yapay Zeka</h2>
 
   <div id="board"></div>
-  <p id="status">Sıra: X</p>
-  <button onclick="resetGame()">Yeniden Başla</button>
+  <p id="status"></p>
+
+  <button onclick="reset()">Reset</button>
+  <button onclick="show('home')">Ana Sayfa</button>
 
 </div>
 
 <script>
 
-// SAYFA GEÇİŞ
-function showPage(page) {
-  document.querySelectorAll(".page").forEach(p => p.style.display = "none");
-  document.getElementById(page).style.display = "block";
-}
-
-// XOX OYUNU
 let board = ["","","","","","","","",""];
-let currentPlayer = "X";
-let gameActive = true;
+let player = "X";
+let ai = "O";
+let turn = "X";
+let active = false;
 
-const boardDiv = document.getElementById("board");
-const statusText = document.getElementById("status");
+function show(id){
+  document.querySelectorAll(".page").forEach(p=>p.style.display="none");
+  document.getElementById(id).style.display="block";
+}
 
-function createBoard() {
-  boardDiv.innerHTML = "";
-  board.forEach((cell, i) => {
-    let div = document.createElement("div");
-    div.classList.add("cell");
-    div.innerText = cell;
-    div.onclick = () => play(i);
-    boardDiv.appendChild(div);
+function startGame(choice){
+  player = choice;
+  ai = choice === "X" ? "O" : "X";
+  turn = "X";
+  active = true;
+  board = ["","","","","","","","",""];
+  show("game");
+  draw();
+
+  if(ai === "X") aiMove();
+}
+
+function draw(){
+  const b = document.getElementById("board");
+  b.innerHTML = "";
+
+  board.forEach((v,i)=>{
+    let d = document.createElement("div");
+    d.className = "cell";
+    d.innerText = v;
+    d.onclick = ()=>move(i);
+    b.appendChild(d);
   });
+
+  document.getElementById("status").innerText =
+    active ? "Sıra: " + turn : "Oyun bitti";
 }
 
-function play(i) {
-  if (board[i] !== "" || !gameActive) return;
+function move(i){
+  if(!active || board[i] !== "" || turn !== player) return;
 
-  board[i] = currentPlayer;
-  createBoard();
+  board[i] = player;
+  turn = ai;
 
-  if (checkWin()) {
-    statusText.innerText = currentPlayer + " kazandı!";
-    gameActive = false;
+  if(check(player)){
+    end(player);
     return;
   }
 
-  if (!board.includes("")) {
-    statusText.innerText = "Berabere!";
-    gameActive = false;
+  draw();
+  setTimeout(aiMove, 400);
+}
+
+function aiMove(){
+  if(!active) return;
+
+  let empty = board.map((v,i)=>v===""?i:null).filter(v=>v!==null);
+
+  if(empty.length === 0) return;
+
+  let i = empty[Math.floor(Math.random()*empty.length)];
+  board[i] = ai;
+
+  if(check(ai)){
+    end(ai);
     return;
   }
 
-  currentPlayer = currentPlayer === "X" ? "O" : "X";
-  statusText.innerText = "Sıra: " + currentPlayer;
+  turn = player;
+  draw();
 }
 
-function checkWin() {
-  const wins = [
+function check(p){
+  const w = [
     [0,1,2],[3,4,5],[6,7,8],
     [0,3,6],[1,4,7],[2,5,8],
     [0,4,8],[2,4,6]
   ];
 
-  return wins.some(c =>
-    c.every(i => board[i] === currentPlayer)
-  );
+  return w.some(c => c.every(i => board[i] === p));
 }
 
-function resetGame() {
+function end(w){
+  active = false;
+  draw();
+  document.getElementById("status").innerText = w + " kazandı!";
+}
+
+function reset(){
   board = ["","","","","","","","",""];
-  currentPlayer = "X";
-  gameActive = true;
-  statusText.innerText = "Sıra: X";
-  createBoard();
+  active = true;
+  turn = "X";
+  draw();
 }
-
-createBoard();
 
 </script>
 
