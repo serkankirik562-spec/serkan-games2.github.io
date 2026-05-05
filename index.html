@@ -16,11 +16,18 @@ body{
 .header{
   display:flex;
   justify-content:space-between;
-  padding:12px;
+  align-items:center;
+  padding:12px 20px;
   background:#333;
 }
 
-/* MENU */
+.search input{
+  padding:6px;
+  border-radius:6px;
+  border:none;
+}
+
+/* MENU BAR */
 .menu{
   display:flex;
   gap:10px;
@@ -39,6 +46,24 @@ body{
 .page{
   display:none;
   padding:20px;
+}
+
+/* CARDS */
+.card{
+  width:180px;
+  background:#222;
+  padding:10px;
+  margin:10px;
+  border-radius:12px;
+  display:inline-block;
+  cursor:pointer;
+}
+
+.card img{
+  width:100%;
+  height:100px;
+  background:#444;
+  border-radius:10px;
 }
 
 /* GAME BOX */
@@ -70,18 +95,6 @@ body{
   cursor:pointer;
 }
 
-/* MEMORY */
-.card{
-  width:60px;
-  height:60px;
-  background:#222;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  margin:5px;
-  cursor:pointer;
-}
-
 /* BUTTON */
 button{
   padding:8px 12px;
@@ -94,76 +107,123 @@ button{
 
 <body>
 
+<!-- HEADER -->
 <div class="header">
   <div>🎮 Serkan Games</div>
-  <div>Ayar</div>
+
+  <div class="search">
+    <input placeholder="Ara...">
+  </div>
+
+  <div>⚙ Ayar</div>
 </div>
 
+<!-- MENU -->
 <div class="menu">
   <button onclick="show('home')">🏠 Ana</button>
-  <button onclick="show('xoxMenu')">❌⭕ XOX</button>
-  <button onclick="show('memoryMenu')">🧠 Hafıza</button>
-  <button onclick="show('diceMenu')">🎲 Zar</button>
+  <button onclick="show('mini')">🕹 Mini Games</button>
+  <button onclick="show('boardgames')">🧩 Masa Oyunları</button>
 </div>
 
 <!-- HOME -->
 <div id="home" class="page" style="display:block;">
-  <h2>Mini Oyun Platformu 🎮</h2>
+  <h2>Serkan Games 🎮</h2>
+  <p>Mini oyun platformu</p>
 </div>
 
-<!-- XOX MENU -->
-<div id="xoxMenu" class="page">
-  <h2>XOX Oyunu</h2>
-  <button onclick="startXOX()">▶ Oyna</button>
+<!-- MINI GAMES -->
+<div id="mini" class="page">
+
+  <h2>🕹 Mini Games</h2>
+
+  <div class="card" onclick="openGame('xox')">
+    <img>
+    <p>XOX AI</p>
+  </div>
+
+  <div class="card" onclick="openGame('memory')">
+    <img>
+    <p>Hafıza</p>
+  </div>
+
+  <div class="card" onclick="openGame('dice')">
+    <img>
+    <p>Zar</p>
+  </div>
+
 </div>
 
-<!-- MEMORY MENU -->
-<div id="memoryMenu" class="page">
-  <h2>Hafıza Oyunu</h2>
-  <button onclick="startMemory()">▶ Oyna</button>
-</div>
+<!-- MASA OYUNLARI -->
+<div id="boardgames" class="page">
 
-<!-- DICE MENU -->
-<div id="diceMenu" class="page">
-  <h2>Zar Oyunu</h2>
-  <button onclick="startDice()">▶ Oyna</button>
+  <h2>🧩 Masa Oyunları</h2>
+
+  <div class="card" onclick="openGame('xox')">
+    <img>
+    <p>XOX</p>
+  </div>
+
 </div>
 
 <!-- GAME AREA -->
 <div id="game" class="page">
+
   <button onclick="back()">← Geri</button>
   <div id="gameArea"></div>
+
 </div>
 
 <script>
 
-/* PAGE SYSTEM */
+/* SAYFA */
 function show(id){
   document.querySelectorAll(".page").forEach(p=>p.style.display="none");
   document.getElementById(id).style.display="block";
 }
 
+/* GERİ */
 function back(){
-  show("home");
+  show("mini");
+}
+
+/* OYUN AÇ */
+function openGame(type){
+
+  show("game");
+
+  let area=document.getElementById("gameArea");
+
+  if(type=="xox"){
+    area.innerHTML=`
+      <div class="game-box">
+        <h3>XOX AI</h3>
+        <div id="board"></div>
+      </div>
+    `;
+    startXOX();
+  }
+
+  if(type=="memory"){
+    area.innerHTML="<div class='game-box'>Hafıza (bağlı)</div>";
+  }
+
+  if(type=="dice"){
+    area.innerHTML="<div class='game-box'>Zar (bağlı)</div>";
+  }
 }
 
 /* ================= XOX ================= */
-let board, player="X", ai="O", turn, active;
+
+let board, turn="X", active;
 
 function startXOX(){
-  show("game");
-
   board=["","","","","","","","",""];
   turn="X";
   active=true;
-
-  drawXOX();
+  draw();
 }
 
-function drawXOX(){
-  let area=document.getElementById("gameArea");
-  area.innerHTML=`<div class="game-box"><div id="board"></div></div>`;
-
+function draw(){
   let b=document.getElementById("board");
   b.innerHTML="";
 
@@ -178,106 +238,26 @@ function drawXOX(){
 
 function move(i){
   if(!active || board[i]) return;
-  if(turn!="X") return;
 
   board[i]="X";
 
   if(check("X")){ alert("Kazandın"); active=false; return; }
 
-  turn="O";
-  drawXOX();
-
-  setTimeout(aiMove,300);
+  aiMove();
+  draw();
 }
 
 function aiMove(){
   let empty=board.map((v,i)=>v==""?i:null).filter(v=>v!==null);
   let i=empty[Math.floor(Math.random()*empty.length)];
-
   board[i]="O";
 
-  if(check("O")){ alert("AI kazandı"); active=false; return; }
-
-  turn="X";
-  drawXOX();
+  if(check("O")){ alert("AI kazandı"); active=false; }
 }
 
 function check(p){
   const w=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
   return w.some(c=>c.every(i=>board[i]==p));
-}
-
-/* ================= MEMORY ================= */
-let mem=[], first=null, lock=false;
-
-function startMemory(){
-  show("game");
-
-  let items=["🚗","🚀","🐶"];
-  mem=[...items,...items];
-
-  mem.sort(()=>Math.random()-0.5);
-
-  let area=document.getElementById("gameArea");
-  area.innerHTML=`<div class="game-box" id="memBox"></div>`;
-
-  let box=document.getElementById("memBox");
-  box.innerHTML="";
-
-  mem.forEach((e,i)=>{
-    let d=document.createElement("div");
-    d.className="card";
-    d.innerText="?";
-    d.onclick=()=>flip(d,e);
-    box.appendChild(d);
-  });
-}
-
-function flip(card,val){
-  if(lock || card.innerText!="?") return;
-
-  card.innerText=val;
-
-  if(!first){
-    first={card,val};
-  } else {
-    lock=true;
-
-    if(first.val==val){
-      first=null;
-      lock=false;
-    } else {
-      setTimeout(()=>{
-        card.innerText="?";
-        first.card.innerText="?";
-        first=null;
-        lock=false;
-      },600);
-    }
-  }
-}
-
-/* ================= DICE ================= */
-let score=0;
-
-function startDice(){
-  show("game");
-
-  let area=document.getElementById("gameArea");
-
-  area.innerHTML=`
-    <div class="game-box">
-      <h2>🎲 Zar</h2>
-      <button onclick="roll()">At</button>
-      <p id="diceOut">Skor: 0</p>
-    </div>
-  `;
-}
-
-function roll(){
-  let r=Math.floor(Math.random()*6)+1;
-  score+=r;
-  document.getElementById("diceOut").innerText="Skor: "+score;
 }
 
 </script>
