@@ -5,149 +5,152 @@
 <title>Serkan Games</title>
 
 <style>
-body{
-  margin:0;
-  font-family:Arial;
-  background:#f2f2f2;
+body {
+  font-family: Arial;
+  background: #111;
+  color: white;
+  text-align: center;
 }
 
-/* TOP BAR */
-.topbar{
-  background:#777;
-  color:white;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:10px 15px;
-  position:relative;
+/* MENÜ */
+#menu button {
+  padding: 10px 20px;
+  margin: 10px;
+  font-size: 18px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
 }
 
-/* LEFT LOGO */
-.logo{
-  font-weight:bold;
-  font-size:18px;
+/* SAYFA GİZLEME */
+.page {
+  display: none;
 }
 
-/* CENTER SEARCH */
-.search input{
-  padding:6px;
-  border:none;
-  border-radius:5px;
-  width:200px;
+/* XOX */
+#board {
+  display: grid;
+  grid-template-columns: repeat(3, 90px);
+  gap: 10px;
+  justify-content: center;
+  margin-top: 20px;
 }
 
-/* SETTINGS */
-.settings{
-  font-size:22px;
-  cursor:pointer;
+.cell {
+  width: 90px;
+  height: 90px;
+  background: #222;
+  font-size: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 10px;
 }
 
-/* MENU */
-.dropdown{
-  display:none;
-  position:absolute;
-  right:10px;
-  top:45px;
-  background:white;
-  color:black;
-  border-radius:8px;
-  overflow:hidden;
-  min-width:150px;
-}
-
-.dropdown div{
-  padding:10px;
-  display:flex;
-  justify-content:space-between;
-  cursor:pointer;
-}
-
-.dropdown div:hover{
-  background:#eee;
-}
-
-.dot{
-  width:10px;
-  height:10px;
-  border-radius:50%;
-  background:transparent;
-}
-
-.active-dot{
-  background:green;
-}
-
-/* EMPTY AREA */
-.container{
-  text-align:center;
-  margin-top:120px;
-  color:#555;
+.cell:hover {
+  background: #333;
 }
 </style>
 </head>
 
 <body>
 
-<!-- TOP BAR -->
-<div class="topbar">
+<h1>🎮 Serkan Oyun Sitesi</h1>
 
-  <div class="logo">🎮 Serkan Games</div>
-
-  <div class="search">
-    <input type="text" placeholder="Oyun ara...">
-  </div>
-
-  <div class="settings" onclick="toggleMenu()">⚙️</div>
-
-  <div class="dropdown" id="dropdown">
-
-    <div onclick="setMode('pc')">
-      💻 PC
-      <span class="dot" id="pcDot"></span>
-    </div>
-
-    <div onclick="setMode('mobile')">
-      📱 Mobil
-      <span class="dot" id="mobileDot"></span>
-    </div>
-
-  </div>
-
+<!-- MENÜ -->
+<div id="menu">
+  <button onclick="showPage('home')">🏠 Ana Sayfa</button>
+  <button onclick="showPage('xox')">❌⭕ XOX Oyunu</button>
 </div>
 
-<!-- EMPTY HOME -->
-<div class="container">
-  <h1>🎮 Serkan Games</h1>
-  <p>Oyunlar yakında eklenecek...</p>
+<!-- ANA SAYFA -->
+<div id="home" class="page" style="display:block;">
+  <h2>Hoşgeldin!</h2>
+  <p>Oyun seç ve oyna 🚀</p>
+</div>
+
+<!-- XOX SAYFA -->
+<div id="xox" class="page">
+
+  <h2>XOX Oyunu</h2>
+
+  <div id="board"></div>
+  <p id="status">Sıra: X</p>
+  <button onclick="resetGame()">Yeniden Başla</button>
+
 </div>
 
 <script>
 
-let dropdown = document.getElementById("dropdown");
-
-/* MENU */
-function toggleMenu(){
-  dropdown.style.display =
-    dropdown.style.display === "block" ? "none" : "block";
+// SAYFA GEÇİŞ
+function showPage(page) {
+  document.querySelectorAll(".page").forEach(p => p.style.display = "none");
+  document.getElementById(page).style.display = "block";
 }
 
-/* MODE */
-function setMode(mode){
+// XOX OYUNU
+let board = ["","","","","","","","",""];
+let currentPlayer = "X";
+let gameActive = true;
 
-  document.getElementById("pcDot").classList.remove("active-dot");
-  document.getElementById("mobileDot").classList.remove("active-dot");
+const boardDiv = document.getElementById("board");
+const statusText = document.getElementById("status");
 
-  if(mode === "pc"){
-    document.getElementById("pcDot").classList.add("active-dot");
-  } else {
-    document.getElementById("mobileDot").classList.add("active-dot");
+function createBoard() {
+  boardDiv.innerHTML = "";
+  board.forEach((cell, i) => {
+    let div = document.createElement("div");
+    div.classList.add("cell");
+    div.innerText = cell;
+    div.onclick = () => play(i);
+    boardDiv.appendChild(div);
+  });
+}
+
+function play(i) {
+  if (board[i] !== "" || !gameActive) return;
+
+  board[i] = currentPlayer;
+  createBoard();
+
+  if (checkWin()) {
+    statusText.innerText = currentPlayer + " kazandı!";
+    gameActive = false;
+    return;
   }
 
-  dropdown.style.display = "none";
+  if (!board.includes("")) {
+    statusText.innerText = "Berabere!";
+    gameActive = false;
+    return;
+  }
+
+  currentPlayer = currentPlayer === "X" ? "O" : "X";
+  statusText.innerText = "Sıra: " + currentPlayer;
 }
 
-/* DEFAULT */
-document.getElementById("pcDot").classList.add("active-dot");
+function checkWin() {
+  const wins = [
+    [0,1,2],[3,4,5],[6,7,8],
+    [0,3,6],[1,4,7],[2,5,8],
+    [0,4,8],[2,4,6]
+  ];
+
+  return wins.some(c =>
+    c.every(i => board[i] === currentPlayer)
+  );
+}
+
+function resetGame() {
+  board = ["","","","","","","","",""];
+  currentPlayer = "X";
+  gameActive = true;
+  statusText.innerText = "Sıra: X";
+  createBoard();
+}
+
+createBoard();
 
 </script>
 
