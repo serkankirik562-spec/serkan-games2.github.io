@@ -2,6 +2,7 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Serkan Games</title>
 
 <style>
@@ -17,18 +18,18 @@ color:#fff;
 display:flex;
 align-items:center;
 justify-content:space-between;
-padding:10px;
+padding:12px;
 background:#bdbdbd;
 color:#000;
 }
 
-/* SOL BAŞLIK */
+/* SOL BÜYÜK BAŞLIK */
 .title{
-font-size:22px;
+font-size:24px;
 font-weight:bold;
 }
 
-/* AYAR */
+/* SAĞ AYAR */
 .settings{
 font-size:18px;
 font-weight:bold;
@@ -36,20 +37,23 @@ cursor:pointer;
 position:relative;
 }
 
-/* PANEL */
+/* AYAR PANEL */
 .panel{
 display:none;
 position:absolute;
 right:0;
-top:30px;
+top:35px;
 background:#222;
 color:#fff;
 padding:10px;
 border-radius:8px;
+min-width:120px;
 }
 
 button{
-margin:3px;
+display:block;
+width:100%;
+margin:4px 0;
 padding:6px;
 border:none;
 border-radius:5px;
@@ -63,17 +67,14 @@ cursor:pointer;
 <!-- TOP BAR -->
 <div class="top">
 
-<!-- SOL -->
 <div class="title">SERKAN GAMES</div>
 
-<!-- SAĞ -->
 <div class="settings" onclick="toggle()">
 ⚙ Ayarlar
 
 <div id="panel" class="panel">
-<p>Mod Seç</p>
-<button onclick="pc()">PC</button>
-<button onclick="mobile()">Mobil</button>
+<button onclick="setPC()">PC</button>
+<button onclick="setMobile()">Mobil</button>
 </div>
 
 </div>
@@ -82,20 +83,20 @@ cursor:pointer;
 
 <script>
 
-// PANEL
+// PANEL AÇ/KAPA
 function toggle(){
 let p=document.getElementById("panel");
-p.style.display = p.style.display=="block"?"none":"block";
+p.style.display = (p.style.display==="block") ? "none" : "block";
 }
 
-// PC
-function pc(){
+// PC MODE
+function setPC(){
 document.body.style.maxWidth="1200px";
 document.body.style.margin="auto";
 }
 
-// MOBİL
-function mobile(){
+// MOBILE MODE
+function setMobile(){
 document.body.style.maxWidth="100%";
 document.body.style.margin="0";
 }
