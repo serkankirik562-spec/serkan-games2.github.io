@@ -16,225 +16,153 @@ body{
 .header{
   display:flex;
   justify-content:space-between;
-  align-items:center;
-  background:#333;
   padding:12px 20px;
+  background:#333;
 }
 
-.left{ font-weight:bold; }
-
-.center input{
-  padding:6px;
-  border-radius:6px;
-  border:none;
-}
-
-.right button{
-  padding:6px 10px;
-  border:none;
-  border-radius:6px;
-}
-
-/* OYUN KUTUSU */
-.game-box{
-  width:320px;
-  margin:40px auto;
-  background:#1b1b1b;
-  padding:15px;
-  border-radius:15px;
-  box-shadow:0 0 10px rgba(255,255,255,0.1);
-}
-
-/* XOX TAHTA */
-#board{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:8px;
-  margin-top:15px;
-}
-
-.cell{
-  width:90px;
-  height:90px;
-  background:#222;
-  font-size:35px;
+/* ANA LAYOUT */
+.container{
   display:flex;
-  align-items:center;
-  justify-content:center;
+  height:calc(100vh - 50px);
+}
+
+/* SOL LİSTE */
+.left{
+  width:30%;
+  background:#1b1b1b;
+  overflow-y:auto;
+  padding:10px;
+}
+
+.game-card{
+  display:flex;
+  gap:10px;
+  padding:10px;
+  margin-bottom:10px;
+  background:#222;
   border-radius:10px;
   cursor:pointer;
+  align-items:center;
 }
 
-/* ALT YAZI */
-.play-text{
+.game-card img{
+  width:60px;
+  height:60px;
+  background:#444;
+  border-radius:8px;
+}
+
+/* SAĞ İNCELEME */
+.right{
+  width:70%;
+  padding:20px;
+}
+
+.preview{
+  background:#222;
+  padding:15px;
+  border-radius:15px;
+}
+
+.preview img{
+  width:100%;
+  max-width:400px;
+  border-radius:10px;
+  background:#444;
+}
+
+/* BUTON */
+button{
+  padding:10px 15px;
   margin-top:10px;
-  font-size:14px;
-  opacity:0.7;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  background:orange;
 }
 </style>
 </head>
 
 <body>
 
-<!-- HEADER -->
 <div class="header">
-  <div class="left">🎮 Serkan Games</div>
-
-  <div class="center">
-    <input placeholder="Ara...">
-  </div>
-
-  <div class="right">
-    <button onclick="reset()">Reset</button>
-  </div>
+  <div>🎮 Serkan Games</div>
+  <div>Ayar</div>
 </div>
 
-<!-- 🔥 OYUN KUTUSU -->
-<div class="game-box">
+<div class="container">
 
-  <h3>❌⭕ XOX Yapay Zeka</h3>
+  <!-- 🔥 SOL MENÜ -->
+  <div class="left">
 
-  <div id="board"></div>
+    <div class="game-card" onclick="openGame('xox')">
+      <img src="https://via.placeholder.com/60">
+      <div>XOX Oyunu</div>
+    </div>
 
-  <div class="play-text">👇 Oyna</div>
+    <div class="game-card" onclick="openGame('memory')">
+      <img src="https://via.placeholder.com/60">
+      <div>Hafıza Oyunu</div>
+    </div>
 
-  <p id="status"></p>
+    <div class="game-card" onclick="openGame('dice')">
+      <img src="https://via.placeholder.com/60">
+      <div>Zar Oyunu</div>
+    </div>
+
+  </div>
+
+  <!-- 🔥 SAĞ İNCELEME -->
+  <div class="right">
+
+    <div class="preview" id="preview">
+
+      <h2>Oyun Seç</h2>
+      <p>Soldan bir oyun seç</p>
+
+    </div>
+
+  </div>
 
 </div>
 
 <script>
 
-/* OYUN */
-let board=["","","","","","","","",""];
-let player="X";
-let ai="O";
-let turn="X";
-let active=true;
+function openGame(game){
 
-function draw(){
-  let b=document.getElementById("board");
-  b.innerHTML="";
+  let box = document.getElementById("preview");
 
-  board.forEach((v,i)=>{
-    let d=document.createElement("div");
-    d.className="cell";
-    d.innerText=v;
-    d.onclick=()=>move(i);
-    b.appendChild(d);
-  });
-
-  document.getElementById("status").innerText =
-    active ? "Sıra: "+turn : "Oyun bitti";
-}
-
-/* 🔥 AKILLI AI */
-function aiMove(){
-
-  let bestScore=-999;
-  let moveIndex=null;
-
-  for(let i=0;i<9;i++){
-    if(board[i]==""){
-
-      board[i]=ai;
-      let score=minimax(board,0,false);
-      board[i]="";
-
-      if(score>bestScore){
-        bestScore=score;
-        moveIndex=i;
-      }
-    }
+  if(game=="xox"){
+    box.innerHTML=`
+      <h2>❌⭕ XOX Oyunu</h2>
+      <img src="https://via.placeholder.com/400x200"><br>
+      <p>XOX yapay zekâ oyunu. X veya O seç ve oyna.</p>
+      <button onclick="play('xox')">▶ Oyna</button>
+    `;
   }
 
-  board[moveIndex]=ai;
-
-  if(check(ai)){
-    end(ai);
-    return;
+  if(game=="memory"){
+    box.innerHTML=`
+      <h2>🧠 Hafıza Oyunu</h2>
+      <img src="https://via.placeholder.com/400x200"><br>
+      <p>Kartları eşleştir ve hafızanı test et.</p>
+      <button onclick="play('memory')">▶ Oyna</button>
+    `;
   }
 
-  turn=player;
-  draw();
-}
-
-/* 🔥 MINIMAX (GERÇEK AI) */
-function minimax(b,depth,isMax){
-
-  if(check(ai)) return 10-depth;
-  if(check(player)) return depth-10;
-  if(!b.includes("")) return 0;
-
-  if(isMax){
-    let best=-999;
-
-    for(let i=0;i<9;i++){
-      if(b[i]==""){
-        b[i]=ai;
-        best=Math.max(best,minimax(b,depth+1,false));
-        b[i]="";
-      }
-    }
-    return best;
-  } else {
-    let best=999;
-
-    for(let i=0;i<9;i++){
-      if(b[i]==""){
-        b[i]=player;
-        best=Math.min(best,minimax(b,depth+1,true));
-        b[i]="";
-      }
-    }
-    return best;
+  if(game=="dice"){
+    box.innerHTML=`
+      <h2>🎲 Zar Oyunu</h2>
+      <img src="https://via.placeholder.com/400x200"><br>
+      <p>Zar at ve skor topla.</p>
+      <button onclick="play('dice')">▶ Oyna</button>
+    `;
   }
 }
 
-/* HAMLE */
-function move(i){
-  if(!active || board[i]!="") return;
-  if(turn!==player) return;
-
-  board[i]=player;
-
-  if(check(player)){
-    end(player);
-    return;
-  }
-
-  turn=ai;
-  draw();
-  setTimeout(aiMove,300);
+function play(game){
+  alert(game + " oyunu açılıyor (buraya gerçek oyun bağlanacak)");
 }
-
-/* KAZANMA */
-function check(p){
-  const w=[
-    [0,1,2],[3,4,5],[6,7,8],
-    [0,3,6],[1,4,7],[2,5,8],
-    [0,4,8],[2,4,6]
-  ];
-
-  return w.some(c=>c.every(i=>board[i]===p));
-}
-
-function end(w){
-  active=false;
-  draw();
-  document.getElementById("status").innerText=w+" kazandı!";
-}
-
-function reset(){
-  board=["","","","","","","","",""];
-  player="X";
-  ai="O";
-  turn="X";
-  active=true;
-  draw();
-}
-
-/* BAŞLAT */
-draw();
 
 </script>
 
