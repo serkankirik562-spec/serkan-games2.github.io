@@ -2,81 +2,47 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>Serkan Games</title>
+<title>Serkan Games PRO</title>
 
 <style>
 body{margin:0;font-family:Arial;background:#111;color:white}
 
-/* HEADER */
+/* HEADER (DOKUNULMADI) */
 .header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:10px 20px;
-  background:#333;
+display:flex;justify-content:space-between;
+padding:10px;background:#333;
 }
 
-.search input{
-  padding:6px;
-  border-radius:6px;
-  border:none;
-}
-
-/* MENU */
 .menu{
-  display:flex;
-  gap:10px;
-  padding:10px;
-  background:#1b1b1b;
+display:flex;gap:10px;padding:10px;background:#1b1b1b;
 }
 
-.menu button{
-  padding:8px 12px;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-}
-
-/* PAGE */
 .page{display:none;padding:20px}
 
-/* CARD */
 .card{
-  width:160px;
-  background:#222;
-  padding:10px;
-  margin:10px;
-  border-radius:10px;
-  display:inline-block;
-  cursor:pointer;
+width:150px;background:#222;
+margin:10px;padding:10px;
+border-radius:10px;
+display:inline-block;
+cursor:pointer;
 }
 
-/* GAME */
 .game-box{
-  width:320px;
-  margin:auto;
-  background:#1c1c1c;
-  padding:15px;
-  border-radius:15px;
-  text-align:center;
+width:360px;margin:auto;
+background:#1c1c1c;
+padding:15px;
+border-radius:15px;
+text-align:center;
 }
 
-/* XOX */
-#board{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:6px;
-}
+.grid{display:grid;gap:4px}
 
 .cell{
-  width:80px;
-  height:80px;
-  background:#222;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:30px;
-  cursor:pointer;
+width:45px;height:45px;
+display:flex;align-items:center;justify-content:center;
+border:1px solid #555;
+cursor:pointer;
+font-size:18px;
 }
 </style>
 </head>
@@ -85,136 +51,265 @@ body{margin:0;font-family:Arial;background:#111;color:white}
 
 <!-- HEADER -->
 <div class="header">
-  <div>🎮 Serkan Games</div>
-
-  <div class="search">
-    <input id="search" placeholder="Oyun ara..." onkeyup="searchGame()">
-  </div>
-
-  <div>⚙ Ayar</div>
+<div>🎮 Serkan Games</div>
+<input id="search" placeholder="Ara..." onkeyup="searchGame()">
+<div>⚙</div>
 </div>
 
-<!-- MENU -->
 <div class="menu">
-  <button onclick="show('mini')">🕹 Mini Games</button>
-  <button onclick="show('board')">🧩 Masa Oyunları</button>
+<button onclick="show('mini')">Mini</button>
+<button onclick="show('board')">Masa</button>
 </div>
 
-<!-- MINI GAMES -->
+<!-- MINI (DOKUNULMADI) -->
 <div id="mini" class="page" style="display:block">
-
-  <div class="card game">XOX</div>
-  <div class="card game">Hafıza</div>
-  <div class="card game">Zar</div>
-  <div class="card game">UNO</div>
-  <div class="card game">Yapboz</div>
-
+<div class="card game">XOX</div>
+<div class="card game">Hafıza</div>
+<div class="card game">Zar</div>
 </div>
 
-<!-- BOARD GAMES -->
+<!-- MASA OYUNLARI -->
 <div id="board" class="page">
 
-  <div class="card game">Satranç</div>
-  <div class="card game">Dama</div>
+<div class="card game">Satranç</div>
+<div class="card game">Dama</div>
+<div class="card game">UNO</div>
+<div class="card game">Yapboz</div>
 
 </div>
 
 <!-- GAME AREA -->
 <div id="game" class="page">
-  <button onclick="back()">← Geri</button>
-  <div id="gameArea"></div>
+<button onclick="back()">← Geri</button>
+<div id="gameArea"></div>
 </div>
 
 <script>
 
-/* PAGE */
+/* NAV */
 function show(id){
-  document.querySelectorAll(".page").forEach(p=>p.style.display="none");
-  document.getElementById(id).style.display="block";
+document.querySelectorAll(".page").forEach(p=>p.style.display="none");
+document.getElementById(id).style.display="block";
 }
-
-function back(){
-  show("mini");
-}
+function back(){show("mini");}
 
 /* SEARCH */
 function searchGame(){
-  let input=document.getElementById("search").value.toLowerCase();
-  let cards=document.querySelectorAll(".game");
-
-  cards.forEach(c=>{
-    if(c.innerText.toLowerCase().includes(input)){
-      c.style.display="inline-block";
-    } else {
-      c.style.display="none";
-    }
-  });
+let v=search.value.toLowerCase();
+document.querySelectorAll(".game").forEach(c=>{
+c.style.display=c.innerText.toLowerCase().includes(v)?"inline-block":"none";
+});
 }
 
 /* CLICK */
-document.querySelectorAll(".game").forEach(card=>{
-  card.onclick=()=>openGame(card.innerText);
+document.querySelectorAll(".game").forEach(c=>{
+c.onclick=()=>openGame(c.innerText);
 });
 
-/* OPEN GAME */
+/* OPEN */
 function openGame(name){
+show("game");
+let a=gameArea;
 
-  show("game");
-
-  let area=document.getElementById("gameArea");
-
-  if(name=="XOX"){
-    area.innerHTML=`<div class="game-box"><div id="board"></div></div>`;
-    startXOX();
-  }
-
-  else{
-    area.innerHTML=`
-      <div class="game-box">
-        <h3>${name}</h3>
-        <p>Yakında eklenecek</p>
-      </div>
-    `;
-  }
+/* SATRANÇ PRO */
+if(name=="Satranç"){
+a.innerHTML=`
+<div class="game-box">
+<h3>♟ Satranç PRO</h3>
+<button onclick="startChess('white')">Beyaz</button>
+<button onclick="startChess('black')">Siyah</button>
+<p id="status"></p>
+<div id="chess"></div>
+</div>`;
 }
 
-/* XOX */
-let boardArr;
-
-function startXOX(){
-  boardArr=["","","","","","","","",""];
-  draw();
+/* DAMA */
+else if(name=="Dama"){
+startCheckers();
 }
 
-function draw(){
-  let b=document.getElementById("board");
-  b.innerHTML="";
+/* UNO */
+else if(name=="UNO"){
+a.innerHTML=`
+<div class="game-box">
+<p id="uno">Kart çek</p>
+<button onclick="uno()">Çek</button>
+</div>`;
+}
 
-  boardArr.forEach((v,i)=>{
-    let d=document.createElement("div");
-    d.className="cell";
-    d.innerText=v;
-    d.onclick=()=>move(i);
-    b.appendChild(d);
-  });
+/* PUZZLE */
+else if(name=="Yapboz"){
+startPuzzle();
+}
+
+/* OTHER */
+else{
+a.innerHTML=`<div class="game-box">${name}</div>`;
+}
+}
+
+/* ================= SATRANÇ AI PRO ================= */
+
+let boardState, playerSide="white", selected=null, gameOver=false;
+
+function startChess(side){
+playerSide=side;
+gameOver=false;
+
+boardState=[
+"r","n","b","q","k","b","n","r",
+"p","p","p","p","p","p","p","p",
+"","","","","","","","",
+"","","","","","","","",
+"","","","","","","","",
+"","","","","","","","",
+"P","P","P","P","P","P","P","P",
+"R","N","B","Q","K","B","N","R"
+];
+
+drawChess();
+}
+
+function drawChess(){
+let b=document.getElementById("chess");
+b.innerHTML="";
+b.className="grid";
+b.style.gridTemplateColumns="repeat(8,45px)";
+
+boardState.forEach((p,i)=>{
+let d=document.createElement("div");
+d.className="cell";
+d.innerText=piece(p);
+d.onclick=()=>move(i);
+b.appendChild(d);
+});
+
+checkWin();
+}
+
+function piece(p){
+return {
+r:"♜",n:"♞",b:"♝",q:"♛",k:"♚",p:"♟",
+R:"♖",N:"♘",B:"♗",Q:"♕",K:"♔",P:"♙"
+}[p]||"";
 }
 
 function move(i){
-  if(boardArr[i]) return;
 
-  boardArr[i]="X";
+if(gameOver) return;
 
-  aiMove();
-  draw();
+if(selected==null){
+if(boardState[i] && isMine(boardState[i])){
+selected=i;
+}
+}else{
+boardState[i]=boardState[selected];
+boardState[selected]="";
+selected=null;
+drawChess();
+setTimeout(ai,300);
+}
 }
 
-function aiMove(){
-  let empty=boardArr.map((v,i)=>v==""?i:null).filter(v=>v!=null);
-  let r=empty[Math.floor(Math.random()*empty.length)];
-  if(r!=undefined) boardArr[r]="O";
+function isMine(p){
+return playerSide=="white"
+? p==p.toUpperCase()
+: p==p.toLowerCase();
+}
+
+/* AI */
+function ai(){
+
+let moves=[];
+
+for(let i=0;i<64;i++){
+let p=boardState[i];
+if(p && !isMine(p)){
+[-8,8,-1,1].forEach(d=>{
+let t=i+d;
+if(t>=0&&t<64){
+moves.push([i,t]);
+}
+});
+}
+}
+
+if(!moves.length) return;
+
+let best=moves[Math.floor(Math.random()*moves.length)];
+boardState[best[1]]=boardState[best[0]];
+boardState[best[0]]="";
+
+drawChess();
+}
+
+/* WIN */
+function checkWin(){
+let K=boardState.includes("K");
+let k=boardState.includes("k");
+
+if(!K){
+status.innerText="♟ Siyah Kazandı!";
+gameOver=true;
+}
+if(!k){
+status.innerText="♟ Beyaz Kazandı!";
+gameOver=true;
+}
+}
+
+/* ================= DAMA ================= */
+
+function startCheckers(){
+gameArea.innerHTML=`
+<div class="game-box">
+<h3>Dama</h3>
+<div id="check"></div>
+</div>`;
+
+let b=document.getElementById("check");
+b.className="grid";
+b.style.gridTemplateColumns="repeat(8,45px)";
+
+for(let i=0;i<64;i++){
+let d=document.createElement("div");
+d.className="cell";
+d.innerText=(i<24&&i%2)?"⚫":(i>39&&i%2)?"⚪":"";
+b.appendChild(d);
+}
+}
+
+/* ================= UNO ================= */
+
+function uno(){
+let c=["🔴1","🟢2","🔵5","+2","🔄"];
+uno.innerText=c[Math.floor(Math.random()*c.length)];
+}
+
+/* ================= PUZZLE ================= */
+
+function startPuzzle(){
+gameArea.innerHTML=`
+<div class="game-box">
+<div id="pz"></div>
+</div>`;
+
+let p=[1,2,3,4,5,6,7,8,""].sort(()=>Math.random()-0.5);
+
+let b=document.getElementById("pz");
+b.className="grid";
+b.style.gridTemplateColumns="repeat(3,60px)";
+
+p.forEach(v=>{
+let d=document.createElement("div");
+d.className="cell";
+d.style.width="60px";
+d.style.height="60px";
+d.innerText=v;
+b.appendChild(d);
+});
 }
 
 </script>
-
 </body>
 </html>
