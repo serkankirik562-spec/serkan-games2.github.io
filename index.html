@@ -1,289 +1,116 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Serkan Games</title>
+function memory(){
 
-<style>
-body{margin:0;font-family:Arial;background:#0e1117;color:#fff}
+let level=1;
+let cards=[];
+let opened=[];
+let time=100;
+let interval;
 
-.top{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:10px;
-background:#151a25;
+// 🧠 LEVEL ÜRET
+function generateLevel(){
+cards=[];
+opened=[];
+let size=level*2;
+
+for(let i=0;i<size;i++){
+cards.push(i% (size/2));
 }
 
-.center{
-flex:1;
-text-align:center;
-font-weight:bold;
-font-size:18px;
+cards.sort(()=>Math.random()-0.5);
 }
 
-.card{
-display:inline-block;
-width:150px;
-margin:10px;
-padding:10px;
-background:#1c2436;
-border-radius:10px;
-text-align:center;
+// ⏱ TIMER
+function startTimer(){
+clearInterval(interval);
+time=100 + level*20;
+
+interval=setInterval(()=>{
+time--;
+
+document.getElementById("timer").innerText="⏱ "+time;
+
+if(time<=0){
+endGame();
+}
+},1000);
 }
 
-button{
-padding:6px;
-border:none;
-border-radius:6px;
-background:#2a6cff;
-color:#fff;
-cursor:pointer;
-}
-</style>
-</head>
+// 🎮 OYUN ÇİZ
+function draw(){
 
-<body>
-
-<div class="top">
-<div>🎮</div>
-<div class="center">Serkan Games</div>
-<div>🏠</div>
-</div>
-
-<div style="text-align:center;margin:10px;">
-💰 Coin: <span id="coin">0</span>
-</div>
-
-<div id="page" style="text-align:center;"></div>
-
-<script>
-
-let coin=0;
-function addCoin(x){
-coin+=x;
-document.getElementById("coin").innerText=coin;
-}
-
-// ================= OYUN LİSTESİ =================
-const games=[
-{name:"XOX",type:"mini",reward:10},
-{name:"Refleks",type:"mini",reward:20},
-{name:"Sayı Tahmin",type:"mini",reward:15},
-{name:"Taş Kağıt",type:"mini",reward:10},
-{name:"Hafıza",type:"mini",reward:25},
-{name:"Dama",type:"board",reward:20},
-{name:"Premium",type:"premium",reward:0}
-];
-
-// ================= MENÜ =================
-home();
-
-function home(){
-
-page.innerHTML="";
-
-games.forEach(g=>{
-
-let locked=g.type=="premium";
-
-page.innerHTML+=`
-<div class="card">
-<h3>${g.name}</h3>
-
-${locked
-? "<p>🔒 Kilitli</p>"
-: "<p>💰 +"+g.reward+"</p>"}
-
-<button onclick="play('${g.name}','${g.type}',${g.reward})">
-${locked?"Kilitli":"Oyna"}
-</button>
-
-</div>
-`;
-
-});
-
-}
-
-// ================= OYUN ROUTER =================
-function play(name,type,reward){
-
-// 🔴 PREMIUM KONTROL
-if(type=="premium"){
-alert("🔒 Premium alan kilitli");
-return;
-}
-
-page.innerHTML=`
-<h2>${name}</h2>
-<div id="game"></div>
-<br>
-<button onclick="home()">⬅ Geri</button>
-`;
-
-// yönlendirme
-if(name=="XOX") return xox();
-if(name=="Refleks") return reflex();
-if(name=="Sayı Tahmin") return guess();
-if(name=="Taş Kağıt") return tkt();
-if(name=="Hafıza") return memory();
-if(name=="Dama") return dama();
-
-}
-
-// ================= XOX =================
-function xox(){
-
-let b=["","","","","","","","",""];
-let p="X",ai="O";
 let g=document.getElementById("game");
 
-g.style.display="grid";
-g.style.gridTemplateColumns="repeat(3,60px)";
-g.style.justifyContent="center";
+g.innerHTML=`
+<div>⏱ Süre: <span id="timer">${time}</span></div>
+<br>
+<button onclick="endGame()">🚪 Oyunu Bitir</button>
+<br><br>
+<div id="board"></div>
+`;
 
-function draw(){
-g.innerHTML="";
-b.forEach((v,i)=>{
+let board=document.getElementById("board");
+board.style.display="grid";
+board.style.gridTemplateColumns="repeat(${level*2},50px)";
+board.style.justifyContent="center";
+
+cards.forEach((c,i)=>{
 
 let d=document.createElement("div");
-d.style.width="60px";
-d.style.height="60px";
+d.style.width="50px";
+d.style.height="50px";
 d.style.border="1px solid #444";
 d.style.display="flex";
 d.style.alignItems="center";
 d.style.justifyContent="center";
 d.style.cursor="pointer";
-d.innerText=v;
+d.innerText=opened.includes(i)?c:"?";
 
 d.onclick=()=>{
 
-if(b[i]!="")return;
+if(opened.includes(i))return;
 
-b[i]=p;
+opened.push(i);
 draw();
 
-if(check(p)){
-addCoin(10);
-alert("🎉 Kazandın +10 coin");
-home();
-return;
+if(opened.length==cards.length){
+levelUp();
 }
-
-aiMove();
 };
 
-g.appendChild(d);
+board.appendChild(d);
 });
+
 }
 
-function aiMove(){
-let empty=b.map((v,i)=>v==""?i:null).filter(x=>x!=null);
-let m=empty[Math.random()*empty.length|0];
-b[m]=ai;
+// 🆙 LEVEL GEÇ
+function levelUp(){
+
+addCoin(level*10);
+
+level++;
+
+generateLevel();
 draw();
+startTimer();
+}
 
-if(check(ai)){
-alert("🤖 Kaybettin");
+// 🏁 OYUN BİTİR
+function endGame(){
+
+clearInterval(interval);
+
+let score=level*10;
+
+addCoin(score);
+
+alert("🎮 Oyun bitti! Level: "+level+" | Coin: "+score);
+
 home();
 }
-}
 
-function check(p){
-return [[0,1,2],[3,4,5],[6,7,8],
-[0,3,6],[1,4,7],[2,5,8],
-[0,4,8],[2,4,6]]
-.some(w=>w.every(i=>b[i]==p));
-}
-
+// START
+generateLevel();
 draw();
-}
-
-// ================= REFLEKS =================
-function reflex(){
-
-let start=Date.now();
-
-game.innerHTML=`
-<button style="padding:20px;font-size:18px;" onclick="end()">BAS!</button>
-`;
-
-window.end=function(){
-
-let t=Date.now()-start;
-
-if(t<1000){
-addCoin(20);
-alert("🔥 +20 coin");
-}else{
-addCoin(5);
-alert("👍 +5 coin");
-}
-
-home();
-};
+startTimer();
 
 }
-
-// ================= SAYI =================
-function guess(){
-
-let n=Math.floor(Math.random()*5)+1;
-
-game.innerHTML=`
-<input id="inp">
-<button onclick="check()">Tahmin</button>
-`;
-
-window.check=function(){
-
-let v=document.getElementById("inp").value;
-
-if(v==n){
-addCoin(15);
-alert("🎉 +15 coin");
-}else{
-alert("❌ "+n);
-}
-
-home();
-};
-
-}
-
-// ================= TAŞ KAĞIT =================
-function tkt(){
-
-game.innerHTML=`
-<button onclick="play()">Oyna</button>
-`;
-
-window.play=function(){
-let r=["taş","kağıt","makas"][Math.random()*3|0];
-addCoin(10);
-alert("Sonuç: "+r+" +10 coin");
-home();
-};
-
-}
-
-// ================= HAFIZA =================
-function memory(){
-addCoin(25);
-alert("🧠 Hafıza +25 coin");
-home();
-}
-
-// ================= DAMA =================
-function dama(){
-addCoin(20);
-alert("♟ Dama +20 coin");
-home();
-}
-
-</script>
-
-</body>
-</html>
