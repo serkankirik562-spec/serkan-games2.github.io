@@ -1,43 +1,98 @@
 <style>
-/* GENEL SAYFA */
 body{
 margin:0;
 font-family:Arial;
-background:#000; /* alt kısım siyah */
+background:#000;
 color:#fff;
 }
 
-/* ÜST BAR (DEĞİŞMEZ - GRİ KALIR) */
+/* ÜST BAR */
 .top{
 display:flex;
-justify-content:space-between;
 align-items:center;
+justify-content:space-between;
 padding:10px;
-background:#bdbdbd; /* gri */
+background:#bdbdbd;
 color:#000;
 border-bottom:2px solid #999;
 }
 
-/* ORTA ALAN vs */
-.center{
-flex:1;
-text-align:center;
+/* SOL BAŞLIK */
+.title{
+font-size:22px;
+font-weight:bold;
+color:#fff;
 }
 
-input{
-padding:6px;
+/* ORTA SAAT */
+.clock{
+font-weight:bold;
+font-size:16px;
+margin:0 15px;
+}
+
+/* ARAMA */
+.search input{
+padding:5px;
 border-radius:6px;
 border:1px solid #666;
-background:#e0e0e0;
-color:#000;
+outline:none;
+background:#eee;
 }
 
-button{
-padding:6px;
-border:none;
-border-radius:6px;
-background:#2a6cff;
-color:#fff;
+/* AYARLAR */
+.settings{
 cursor:pointer;
+font-weight:bold;
 }
-  </style>
+
+/* PC MOD */
+.pc-mode{
+max-width:1200px;
+margin:auto;
+}
+
+/* MOBİL NORMAL */
+.mobile-mode{
+max-width:100%;
+}
+</style>
+
+<div class="top">
+  <div class="title">SERKAN GAMES</div>
+
+  <div class="clock" id="clock">00:00:00</div>
+
+  <div class="search">
+    <input type="text" placeholder="Ara...">
+  </div>
+
+  <div class="settings" onclick="toggleSettings()">⚙ Ayarlar</div>
+</div>
+
+<script>
+
+// 🕒 SAAT
+setInterval(()=>{
+let d=new Date();
+document.getElementById("clock").innerText=
+String(d.getHours()).padStart(2,"0")+":"+
+String(d.getMinutes()).padStart(2,"0")+":"+
+String(d.getSeconds()).padStart(2,"0");
+},1000);
+
+// ⚙ AYAR MENÜ
+function toggleSettings(){
+
+let mode=confirm("PC modu aç? (İptal = Mobil)");
+
+if(mode){
+document.body.classList.add("pc-mode");
+document.body.classList.remove("mobile-mode");
+}else{
+document.body.classList.add("mobile-mode");
+document.body.classList.remove("pc-mode");
+}
+}
+
+</script>
