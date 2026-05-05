@@ -3,19 +3,105 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title></title>
 
 <style>
-html, body {
-margin: 0;
-padding: 0;
-width: 100%;
-height: 100%;
-background: #000; /* tamamen siyah */
+body{
+margin:0;
+background:#000;
+color:#fff;
+font-family:Arial;
+}
+
+/* ÜST BAR */
+.top{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:10px;
+background:#888; /* gri */
+color:#fff;      /* yazılar beyaz */
+}
+
+/* ARAMA */
+input{
+padding:5px;
+border-radius:6px;
+border:none;
+}
+
+/* AYAR */
+.settings{
+cursor:pointer;
+position:relative;
+font-weight:bold;
+}
+
+/* PANEL */
+.panel{
+display:none;
+position:absolute;
+right:0;
+top:30px;
+background:#222;
+color:#fff;
+padding:10px;
+border-radius:8px;
+}
+
+button{
+display:block;
+width:100%;
+margin:5px 0;
+padding:6px;
+border:none;
+border-radius:5px;
+cursor:pointer;
 }
 </style>
 
 </head>
 <body>
-</body>
-</html>
+
+<!-- ÜST BAR -->
+<div class="top">
+
+<div>SERKAN GAMES</div>
+
+<div id="clock">00:00:00</div>
+
+<div>
+<input type="text" placeholder="ara">
+</div>
+
+<div class="settings" onclick="toggle()">
+⚙
+
+<div id="panel" class="panel">
+<button onclick="pc()">PC</button>
+<button onclick="mobile()">Mobil</button>
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+// SAAT
+setInterval(()=>{
+let d=new Date();
+document.getElementById("clock").innerText=
+String(d.getHours()).padStart(2,"0")+":"+
+String(d.getMinutes()).padStart(2,"0")+":"+
+String(d.getSeconds()).padStart(2,"0");
+},1000);
+
+// PANEL
+function toggle(){
+let p=document.getElementById("panel");
+p.style.display = p.style.display==="block"?"none":"block";
+}
+
+// PC
+function pc(){
+document.body.style.maxWidth="1200
