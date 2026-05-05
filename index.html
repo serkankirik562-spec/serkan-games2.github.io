@@ -1,193 +1,3 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Serkan Games</title>
-
-<style>
-body{margin:0;font-family:Arial;background:#0e1117;color:#fff}
-
-.top{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:10px;
-background:#151a25;
-}
-
-.center{
-text-align:center;
-flex:1;
-font-weight:bold;
-}
-
-.card{
-display:inline-block;
-width:150px;
-margin:10px;
-padding:10px;
-background:#1c2436;
-border-radius:10px;
-text-align:center;
-}
-
-button{
-padding:6px;
-border:none;
-border-radius:6px;
-background:#2a6cff;
-color:#fff;
-cursor:pointer;
-}
-</style>
-</head>
-
-<body>
-
-<!-- TOP -->
-<div class="top">
-<div id="clock">--:--:--</div>
-<div class="center">Serkan Games</div>
-<div>💰 <span id="coin">0</span></div>
-</div>
-
-<div id="page" style="text-align:center;"></div>
-
-<script>
-
-let coin=0;
-
-function addCoin(x){
-coin+=x;
-document.getElementById("coin").innerText=coin;
-}
-
-// 🕒 SAAT
-setInterval(()=>{
-let d=new Date();
-document.getElementById("clock").innerText=
-d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
-},1000);
-
-// ================= OYUNLAR =================
-const games=[
-{name:"XOX",reward:10},
-{name:"Hafıza",reward:20}
-];
-
-home();
-
-function home(){
-
-let page=document.getElementById("page");
-page.innerHTML="";
-
-games.forEach(g=>{
-page.innerHTML+=`
-<div class="card">
-<h3>${g.name}</h3>
-<p>💰 +${g.reward}</p>
-<button onclick="play('${g.name}',${g.reward})">Oyna</button>
-</div>`;
-});
-
-}
-
-// ================= ROUTER =================
-function play(name,reward){
-
-let page=document.getElementById("page");
-
-page.innerHTML=`
-<h2>${name}</h2>
-<div id="game"></div>
-<br>
-<button onclick="home()">⬅ Geri</button>
-`;
-
-if(name=="XOX") xox();
-if(name=="Hafıza") memory();
-
-}
-
-// ================= XOX =================
-function xox(){
-
-let b=["","","","","","","","",""];
-let p="X",ai="O";
-
-let g=document.getElementById("game");
-
-g.style.display="grid";
-g.style.gridTemplateColumns="repeat(3,60px)";
-g.style.justifyContent="center";
-
-function draw(){
-g.innerHTML="";
-
-b.forEach((v,i)=>{
-
-let d=document.createElement("div");
-d.style.width="60px";
-d.style.height="60px";
-d.style.border="1px solid #444";
-d.style.display="flex";
-d.style.alignItems="center";
-d.style.justifyContent="center";
-d.style.cursor="pointer";
-d.innerText=v;
-
-d.onclick=()=>{
-
-if(b[i]!="")return;
-
-b[i]=p;
-draw();
-
-if(check(p)){
-addCoin(10);
-alert("Kazandın +10 coin");
-home();
-return;
-}
-
-aiMove();
-};
-
-g.appendChild(d);
-});
-}
-
-function aiMove(){
-
-let empty=[];
-for(let i=0;i<9;i++){
-if(b[i]=="") empty.push(i);
-}
-
-let m=empty[Math.floor(Math.random()*empty.length)];
-b[m]=ai;
-
-draw();
-
-if(check(ai)){
-alert("Kaybettin");
-home();
-}
-}
-
-function check(p){
-return [[0,1,2],[3,4,5],[6,7,8],
-[0,3,6],[1,4,7],[2,5,8],
-[0,4,8],[2,4,6]]
-.some(w=>w.every(i=>b[i]==p));
-}
-
-draw();
-}
-
-// ================= MEMORY (LEVEL + TIMER) =================
 function memory(){
 
 let level=1;
@@ -196,7 +6,7 @@ let opened=[];
 let time=0;
 let interval;
 
-function generate(){
+function generateLevel(){
 cards=[];
 opened=[];
 
@@ -210,20 +20,19 @@ cards.sort(()=>Math.random()-0.5);
 }
 
 function startTimer(){
-
 clearInterval(interval);
 
-time=80 + level*15;
+time = 80 + level*15;
 
 interval=setInterval(()=>{
 
 time--;
 
 let t=document.getElementById("timer");
-if(t) t.innerText=time;
+if(t) t.innerText="⏱ "+time;
 
 if(time<=0){
-end();
+endGame();
 }
 
 },1000);
@@ -236,7 +45,7 @@ let g=document.getElementById("game");
 g.innerHTML=`
 <div>⏱ Süre: <span id="timer">${time}</span></div>
 <br>
-<button onclick="window.__end()">Bitir</button>
+<button onclick="window._endMemory()">Bitir</button>
 <br><br>
 <div id="board"></div>
 `;
@@ -256,7 +65,7 @@ d.style.border="1px solid #444";
 d.style.display="flex";
 d.style.alignItems="center";
 d.style.justifyContent="center";
-d.innerText=opened.includes(i)?c:"?";
+d.innerText = opened.includes(i) ? c : "?";
 
 d.onclick=()=>{
 
@@ -265,8 +74,8 @@ if(opened.includes(i))return;
 opened.push(i);
 draw();
 
-if(opened.length==cards.length){
-next();
+if(opened.length===cards.length){
+levelUp();
 }
 };
 
@@ -275,36 +84,32 @@ board.appendChild(d);
 
 }
 
-function next(){
+function levelUp(){
 
 addCoin(level*10);
+
 level++;
 
-generate();
+generateLevel();
 draw();
 startTimer();
 }
 
-function end(){
+function endGame(){
 
 clearInterval(interval);
 
 addCoin(level*10);
 
-alert("Oyun bitti Level:"+level);
+alert("Bitti Level: "+level);
 
 home();
 }
 
-window.__end=end;
+window._endMemory=endGame;
 
-generate();
+generateLevel();
 draw();
 startTimer();
 
 }
-
-</script>
-
-</body>
-</html>
