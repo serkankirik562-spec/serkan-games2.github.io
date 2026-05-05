@@ -2,7 +2,6 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Serkan Games</title>
 
 <style>
@@ -16,69 +15,74 @@ color:#fff;
 /* ÜST BAR */
 .top{
 display:flex;
-align-items:center;
 justify-content:space-between;
+align-items:center;
 padding:10px;
 background:#bdbdbd;
 color:#000;
-border-bottom:2px solid #999;
 }
 
-/* SOL BAŞLIK */
-.title{
-font-size:22px;
-font-weight:bold;
+/* TAB BAR */
+.tabs{
+display:flex;
+justify-content:center;
+gap:10px;
+padding:10px;
+background:#111;
+}
+
+.tab{
+padding:8px 12px;
+background:#333;
 color:#fff;
-}
-
-/* SAAT */
-.clock{
-font-weight:bold;
-margin:0 10px;
-}
-
-/* ARAMA */
-.search input{
-padding:5px;
 border-radius:6px;
-border:1px solid #666;
-background:#eee;
-outline:none;
-}
-
-/* AYAR */
-.settings{
 cursor:pointer;
-font-weight:bold;
 }
 
-/* PC MOD */
-.pc body{
-max-width:1200px;
-margin:auto;
+.tab.active{
+background:#2a6cff;
+}
+
+/* OYUN ALANI */
+#page{
+padding:20px;
+text-align:center;
+}
+
+.card{
+display:inline-block;
+margin:10px;
+padding:15px;
+background:#1c1c1c;
+border-radius:10px;
+cursor:pointer;
 }
 </style>
 </head>
 
 <body>
 
+<!-- TOP -->
 <div class="top">
-
-<div class="title">SERKAN GAMES</div>
-
-<div class="clock" id="clock">00:00:00</div>
-
-<div class="search">
-<input type="text" placeholder="Ara...">
+<div>SERKAN GAMES</div>
+<div id="clock">00:00:00</div>
+<div>💰 <span id="coin">0</span></div>
 </div>
 
-<div class="settings" onclick="toggleMode()">⚙ Ayarlar</div>
-
+<!-- TABLAR -->
+<div class="tabs">
+<div class="tab active" onclick="showTab('mini')">🎮 Mini Games</div>
+<div class="tab" onclick="showTab('board')">♟ Masa Oyunları</div>
 </div>
+
+<!-- OYUNLAR -->
+<div id="page"></div>
 
 <script>
 
+//////////////////////
 // 🕒 SAAT
+//////////////////////
 setInterval(()=>{
 let d=new Date();
 document.getElementById("clock").innerText=
@@ -87,23 +91,95 @@ String(d.getMinutes()).padStart(2,"0")+":"+
 String(d.getSeconds()).padStart(2,"0");
 },1000);
 
-// ⚙ MODE
-let pc=false;
+//////////////////////
+// 💰 COIN SİSTEMİ
+//////////////////////
+let coin = JSON.parse(localStorage.getItem("coin")) || 0;
 
-function toggleMode(){
+function updateCoin(){
+document.getElementById("coin").innerText = coin;
+localStorage.setItem("coin", coin);
+}
 
-pc=!pc;
+function addCoin(amount){
+coin += amount;
+updateCoin();
+}
 
-if(pc){
-document.body.style.maxWidth="1200px";
-document.body.style.margin="auto";
-alert("PC modu aktif");
-}else{
-document.body.style.maxWidth="100%";
-document.body.style.margin="0";
-alert("Mobil modu aktif");
+updateCoin();
+
+//////////////////////
+// 🎮 TAB SİSTEMİ
+//////////////////////
+function showTab(type){
+
+document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+
+if(type=="mini"){
+document.querySelectorAll(".tab")[0].classList.add("active");
+homeMini();
+}
+
+if(type=="board"){
+document.querySelectorAll(".tab")[1].classList.add("active");
+homeBoard();
 }
 }
+
+//////////////////////
+// 🎮 MINI GAMES
+//////////////////////
+function homeMini(){
+document.getElementById("page").innerHTML=`
+<div class="card" onclick="play('xox')">XOX</div>
+<div class="card" onclick="play('memory')">Memory</div>
+<div class="card" onclick="play('reflex')">Refleks</div>
+`;
+}
+
+//////////////////////
+// ♟ MASA OYUNLARI
+//////////////////////
+function homeBoard(){
+document.getElementById("page").innerHTML=`
+<div class="card" onclick="play('chess')">Satranç</div>
+<div class="card" onclick="play('checkers')">Dama</div>
+<div class="card" onclick="play('uno')">UNO</div>
+`;
+}
+
+//////////////////////
+// 🎮 OYUN ÖDÜL SİSTEMİ
+//////////////////////
+function reward(game){
+
+if(game=="xox") addCoin(10);
+if(game=="memory") addCoin(20);
+if(game=="reflex") addCoin(15);
+
+if(game=="chess") addCoin(30);
+if(game=="checkers") addCoin(25);
+if(game=="uno") addCoin(20);
+}
+
+//////////////////////
+// 🎮 OYUN ROUTER (DEMO)
+//////////////////////
+function play(name){
+
+document.getElementById("page").innerHTML=`
+<h2>${name}</h2>
+<br>
+<button onclick="reward('${name}');homeMini();homeBoard();">Kazandım (+coin)</button>
+<br><br>
+<button onclick="homeMini();homeBoard()">⬅ Geri</button>
+`;
+}
+
+//////////////////////
+// START
+//////////////////////
+homeMini();
 
 </script>
 
