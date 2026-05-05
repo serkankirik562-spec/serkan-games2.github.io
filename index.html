@@ -12,7 +12,7 @@ background:#000;
 color:#fff;
 }
 
-/* ÜST BAR */
+/* TOP BAR */
 .top{
 display:flex;
 justify-content:space-between;
@@ -22,7 +22,17 @@ background:#bdbdbd;
 color:#000;
 }
 
-/* TAB BAR */
+.title{
+font-weight:bold;
+font-size:18px;
+}
+
+/* COIN */
+.coin{
+font-weight:bold;
+}
+
+/* TAB */
 .tabs{
 display:flex;
 justify-content:center;
@@ -34,7 +44,6 @@ background:#111;
 .tab{
 padding:8px 12px;
 background:#333;
-color:#fff;
 border-radius:6px;
 cursor:pointer;
 }
@@ -43,7 +52,7 @@ cursor:pointer;
 background:#2a6cff;
 }
 
-/* OYUN ALANI */
+/* PAGE */
 #page{
 padding:20px;
 text-align:center;
@@ -57,6 +66,12 @@ background:#1c1c1c;
 border-radius:10px;
 cursor:pointer;
 }
+
+/* PC MODE */
+.pc-mode{
+max-width:1200px;
+margin:auto;
+}
 </style>
 </head>
 
@@ -64,24 +79,24 @@ cursor:pointer;
 
 <!-- TOP -->
 <div class="top">
-<div>SERKAN GAMES</div>
+<div class="title">SERKAN GAMES</div>
 <div id="clock">00:00:00</div>
-<div>💰 <span id="coin">0</span></div>
+<div class="coin">💰 <span id="coin">0</span></div>
 </div>
 
-<!-- TABLAR -->
+<!-- TAB -->
 <div class="tabs">
 <div class="tab active" onclick="showTab('mini')">🎮 Mini Games</div>
 <div class="tab" onclick="showTab('board')">♟ Masa Oyunları</div>
+<div class="tab">⭐ Premium</div>
 </div>
 
-<!-- OYUNLAR -->
 <div id="page"></div>
 
 <script>
 
 //////////////////////
-// 🕒 SAAT
+// SAAT
 //////////////////////
 setInterval(()=>{
 let d=new Date();
@@ -92,93 +107,158 @@ String(d.getSeconds()).padStart(2,"0");
 },1000);
 
 //////////////////////
-// 💰 COIN SİSTEMİ
+// COIN
 //////////////////////
-let coin = JSON.parse(localStorage.getItem("coin")) || 0;
+let coin=0;
 
-function updateCoin(){
-document.getElementById("coin").innerText = coin;
-localStorage.setItem("coin", coin);
-}
-
-function addCoin(amount){
-coin += amount;
-updateCoin();
-}
-
-updateCoin();
-
-//////////////////////
-// 🎮 TAB SİSTEMİ
-//////////////////////
-function showTab(type){
-
-document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
-
-if(type=="mini"){
-document.querySelectorAll(".tab")[0].classList.add("active");
-homeMini();
-}
-
-if(type=="board"){
-document.querySelectorAll(".tab")[1].classList.add("active");
-homeBoard();
-}
+function addCoin(x){
+coin+=x;
+document.getElementById("coin").innerText=coin;
 }
 
 //////////////////////
-// 🎮 MINI GAMES
+// TAB
+//////////////////////
+function showTab(t){
+if(t=="mini") homeMini();
+if(t=="board") homeBoard();
+}
+
+//////////////////////
+// MINI GAMES
 //////////////////////
 function homeMini(){
 document.getElementById("page").innerHTML=`
-<div class="card" onclick="play('xox')">XOX</div>
-<div class="card" onclick="play('memory')">Memory</div>
-<div class="card" onclick="play('reflex')">Refleks</div>
+<div class="card" onclick="xox()">XOX</div>
+<div class="card">Hafıza</div>
 `;
 }
 
 //////////////////////
-// ♟ MASA OYUNLARI
+// MASA OYUNLARI
 //////////////////////
 function homeBoard(){
 document.getElementById("page").innerHTML=`
-<div class="card" onclick="play('chess')">Satranç</div>
-<div class="card" onclick="play('checkers')">Dama</div>
-<div class="card" onclick="play('uno')">UNO</div>
+<div class="card">Tenis</div>
+<div class="card">Bowling</div>
 `;
 }
 
 //////////////////////
-// 🎮 OYUN ÖDÜL SİSTEMİ
+// XOX (ULTRA AI)
 //////////////////////
-function reward(game){
+let board=["","","","","","","","",""];
 
-if(game=="xox") addCoin(10);
-if(game=="memory") addCoin(20);
-if(game=="reflex") addCoin(15);
+function xox(){
+board=["","","","","","","","",""];
 
-if(game=="chess") addCoin(30);
-if(game=="checkers") addCoin(25);
-if(game=="uno") addCoin(20);
+draw();
+}
+
+function draw(){
+let html="<h3>XOX AI</h3><div style='display:grid;grid-template-columns:repeat(3,80px);justify-content:center;'>";
+
+for(let i=0;i<9;i++){
+html+=`<div onclick="move(${i})"
+style="width:80px;height:80px;border:1px solid #444;display:flex;align-items:center;justify-content:center;font-size:24px;">
+${board[i]}</div>`;
+}
+
+html+="</div><br><button onclick='homeMini()'>Geri</button>";
+
+document.getElementById("page").innerHTML=html;
+}
+
+function move(i){
+if(board[i]!="")return;
+
+board[i]="X";
+
+if(win("X")){
+addCoin(10);
+alert("Kazandın +10");
+homeMini();
+return;
+}
+
+aiMove();
+
+if(win("O")){
+alert("AI kazandı");
+homeMini();
+return;
+}
+
+draw();
+}
+
+function aiMove(){
+
+let best=-999;
+let move=0;
+
+for(let i=0;i<9;i++){
+if(board[i]==""){
+board[i]="O";
+let score=minimax(false);
+board[i]="";
+
+if(score>best){
+best=score;
+move=i;
+}
+}
+}
+
+board[move]="O";
+}
+
+function minimax(isMax){
+if(win("O")) return 10;
+if(win("X")) return -10;
+if(board.every(x=>x!="")) return 0;
+
+if(isMax){
+let best=-999;
+for(let i=0;i<9;i++){
+if(board[i]==""){
+board[i]="O";
+best=Math.max(best,minimax(false));
+board[i]="";
+}
+}
+return best;
+}else{
+let best=999;
+for(let i=0;i<9;i++){
+if(board[i]==""){
+board[i]="X";
+best=Math.min(best,minimax(true));
+board[i]="";
+}
+}
+return best;
+}
+}
+
+function win(p){
+let w=[[0,1,2],[3,4,5],[6,7,8],
+[0,3,6],[1,4,7],[2,5,8],
+[0,4,8],[2,4,6]];
+
+return w.some(c=>c.every(i=>board[i]==p));
 }
 
 //////////////////////
-// 🎮 OYUN ROUTER (DEMO)
+// START REWARD RULES
 //////////////////////
-function play(name){
+function gameResult(type){
 
-document.getElementById("page").innerHTML=`
-<h2>${name}</h2>
-<br>
-<button onclick="reward('${name}');homeMini();homeBoard();">Kazandım (+coin)</button>
-<br><br>
-<button onclick="homeMini();homeBoard()">⬅ Geri</button>
-`;
+if(type=="win") addCoin(10);
+if(type=="draw") addCoin(5);
+if(type=="none") addCoin(1);
 }
 
-//////////////////////
-// START
-//////////////////////
 homeMini();
 
 </script>
