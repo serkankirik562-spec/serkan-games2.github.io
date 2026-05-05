@@ -22,12 +22,18 @@ background:#bdbdbd;
 color:#000;
 }
 
-/* SAĞ LOGO */
-.right-title{
+/* SAĞ SERKAN GAMES */
+.title{
 font-weight:bold;
 }
 
-/* ORTA ARAMA */
+/* SAAT */
+.clock{
+margin-right:10px;
+font-weight:bold;
+}
+
+/* ARAMA */
 .search input{
 padding:5px;
 border-radius:6px;
@@ -66,42 +72,55 @@ cursor:pointer;
 <!-- TOP BAR -->
 <div class="top">
 
-<!-- SOL BOŞ -->
-<div></div>
+<!-- SAĞ: SERKAN + SAAT -->
+<div class="title">
+SERKAN GAMES
+<span class="clock" id="clock">00:00:00</span>
+</div>
 
 <!-- ORTA ARAMA -->
 <div class="search">
 <input type="text" placeholder="Ara...">
 </div>
 
-<!-- SAĞ: SERKAN + AYAR -->
+<!-- AYAR -->
 <div class="settings" onclick="toggle()">
-<span class="right-title">SERKAN GAMES ⚙</span>
+⚙ Ayarlar
 
 <div id="panel" class="panel">
 <p>Mod Seç</p>
 <button onclick="pc()">PC</button>
 <button onclick="mobile()">Mobil</button>
 </div>
+
 </div>
 
 </div>
 
 <script>
 
-// PANEL
+// 🕒 SAAT
+setInterval(()=>{
+let d=new Date();
+document.getElementById("clock").innerText=
+String(d.getHours()).padStart(2,"0")+":"+
+String(d.getMinutes()).padStart(2,"0")+":"+
+String(d.getSeconds()).padStart(2,"0");
+},1000);
+
+// ⚙ PANEL
 function toggle(){
 let p=document.getElementById("panel");
 p.style.display = p.style.display=="block"?"none":"block";
 }
 
-// PC
+// 💻 PC
 function pc(){
 document.body.style.maxWidth="1200px";
 document.body.style.margin="auto";
 }
 
-// MOBİL
+// 📱 MOBİL
 function mobile(){
 document.body.style.maxWidth="100%";
 document.body.style.margin="0";
