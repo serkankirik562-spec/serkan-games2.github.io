@@ -12,254 +12,100 @@ background:#000;
 color:#fff;
 }
 
-/* TOP BAR */
+/* ÜST BAR */
 .top{
 display:flex;
-justify-content:space-between;
 align-items:center;
+justify-content:space-between;
 padding:10px;
 background:#bdbdbd;
 color:#000;
 }
 
-.title{
-font-weight:bold;
-font-size:18px;
-}
-
-/* COIN */
-.coin{
+/* SAĞ LOGO */
+.right-title{
 font-weight:bold;
 }
 
-/* TAB */
-.tabs{
-display:flex;
-justify-content:center;
-gap:10px;
-padding:10px;
-background:#111;
-}
-
-.tab{
-padding:8px 12px;
-background:#333;
+/* ORTA ARAMA */
+.search input{
+padding:5px;
 border-radius:6px;
+border:1px solid #666;
+}
+
+/* AYAR PANEL */
+.settings{
+position:relative;
 cursor:pointer;
 }
 
-.tab.active{
-background:#2a6cff;
+.panel{
+display:none;
+position:absolute;
+right:0;
+top:25px;
+background:#222;
+color:#fff;
+padding:10px;
+border-radius:8px;
 }
 
-/* PAGE */
-#page{
-padding:20px;
-text-align:center;
-}
-
-.card{
-display:inline-block;
-margin:10px;
-padding:15px;
-background:#1c1c1c;
-border-radius:10px;
+button{
+margin:3px;
+padding:5px;
+border:none;
+border-radius:5px;
 cursor:pointer;
-}
-
-/* PC MODE */
-.pc-mode{
-max-width:1200px;
-margin:auto;
 }
 </style>
 </head>
 
 <body>
 
-<!-- TOP -->
+<!-- TOP BAR -->
 <div class="top">
-<div class="title">SERKAN GAMES</div>
-<div id="clock">00:00:00</div>
-<div class="coin">💰 <span id="coin">0</span></div>
+
+<!-- SOL BOŞ -->
+<div></div>
+
+<!-- ORTA ARAMA -->
+<div class="search">
+<input type="text" placeholder="Ara...">
 </div>
 
-<!-- TAB -->
-<div class="tabs">
-<div class="tab active" onclick="showTab('mini')">🎮 Mini Games</div>
-<div class="tab" onclick="showTab('board')">♟ Masa Oyunları</div>
-<div class="tab">⭐ Premium</div>
+<!-- SAĞ: SERKAN + AYAR -->
+<div class="settings" onclick="toggle()">
+<span class="right-title">SERKAN GAMES ⚙</span>
+
+<div id="panel" class="panel">
+<p>Mod Seç</p>
+<button onclick="pc()">PC</button>
+<button onclick="mobile()">Mobil</button>
+</div>
 </div>
 
-<div id="page"></div>
+</div>
 
 <script>
 
-//////////////////////
-// SAAT
-//////////////////////
-setInterval(()=>{
-let d=new Date();
-document.getElementById("clock").innerText=
-String(d.getHours()).padStart(2,"0")+":"+
-String(d.getMinutes()).padStart(2,"0")+":"+
-String(d.getSeconds()).padStart(2,"0");
-},1000);
-
-//////////////////////
-// COIN
-//////////////////////
-let coin=0;
-
-function addCoin(x){
-coin+=x;
-document.getElementById("coin").innerText=coin;
+// PANEL
+function toggle(){
+let p=document.getElementById("panel");
+p.style.display = p.style.display=="block"?"none":"block";
 }
 
-//////////////////////
-// TAB
-//////////////////////
-function showTab(t){
-if(t=="mini") homeMini();
-if(t=="board") homeBoard();
+// PC
+function pc(){
+document.body.style.maxWidth="1200px";
+document.body.style.margin="auto";
 }
 
-//////////////////////
-// MINI GAMES
-//////////////////////
-function homeMini(){
-document.getElementById("page").innerHTML=`
-<div class="card" onclick="xox()">XOX</div>
-<div class="card">Hafıza</div>
-`;
+// MOBİL
+function mobile(){
+document.body.style.maxWidth="100%";
+document.body.style.margin="0";
 }
-
-//////////////////////
-// MASA OYUNLARI
-//////////////////////
-function homeBoard(){
-document.getElementById("page").innerHTML=`
-<div class="card">Tenis</div>
-<div class="card">Bowling</div>
-`;
-}
-
-//////////////////////
-// XOX (ULTRA AI)
-//////////////////////
-let board=["","","","","","","","",""];
-
-function xox(){
-board=["","","","","","","","",""];
-
-draw();
-}
-
-function draw(){
-let html="<h3>XOX AI</h3><div style='display:grid;grid-template-columns:repeat(3,80px);justify-content:center;'>";
-
-for(let i=0;i<9;i++){
-html+=`<div onclick="move(${i})"
-style="width:80px;height:80px;border:1px solid #444;display:flex;align-items:center;justify-content:center;font-size:24px;">
-${board[i]}</div>`;
-}
-
-html+="</div><br><button onclick='homeMini()'>Geri</button>";
-
-document.getElementById("page").innerHTML=html;
-}
-
-function move(i){
-if(board[i]!="")return;
-
-board[i]="X";
-
-if(win("X")){
-addCoin(10);
-alert("Kazandın +10");
-homeMini();
-return;
-}
-
-aiMove();
-
-if(win("O")){
-alert("AI kazandı");
-homeMini();
-return;
-}
-
-draw();
-}
-
-function aiMove(){
-
-let best=-999;
-let move=0;
-
-for(let i=0;i<9;i++){
-if(board[i]==""){
-board[i]="O";
-let score=minimax(false);
-board[i]="";
-
-if(score>best){
-best=score;
-move=i;
-}
-}
-}
-
-board[move]="O";
-}
-
-function minimax(isMax){
-if(win("O")) return 10;
-if(win("X")) return -10;
-if(board.every(x=>x!="")) return 0;
-
-if(isMax){
-let best=-999;
-for(let i=0;i<9;i++){
-if(board[i]==""){
-board[i]="O";
-best=Math.max(best,minimax(false));
-board[i]="";
-}
-}
-return best;
-}else{
-let best=999;
-for(let i=0;i<9;i++){
-if(board[i]==""){
-board[i]="X";
-best=Math.min(best,minimax(true));
-board[i]="";
-}
-}
-return best;
-}
-}
-
-function win(p){
-let w=[[0,1,2],[3,4,5],[6,7,8],
-[0,3,6],[1,4,7],[2,5,8],
-[0,4,8],[2,4,6]];
-
-return w.some(c=>c.every(i=>board[i]==p));
-}
-
-//////////////////////
-// START REWARD RULES
-//////////////////////
-function gameResult(type){
-
-if(type=="win") addCoin(10);
-if(type=="draw") addCoin(5);
-if(type=="none") addCoin(1);
-}
-
-homeMini();
 
 </script>
 
