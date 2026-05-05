@@ -12,47 +12,45 @@ body{
   color:white;
 }
 
-/* 🔥 ÜST BAR */
+/* HEADER */
 .header{
-  width:100%;
   display:flex;
   justify-content:space-between;
   align-items:center;
   background:#333;
   padding:12px 20px;
-  box-sizing:border-box;
 }
 
 .left{ font-weight:bold; }
 
 .center input{
-  width:220px;
   padding:6px;
-  border:none;
   border-radius:6px;
+  border:none;
 }
 
 .right button{
   padding:6px 10px;
   border:none;
   border-radius:6px;
-  cursor:pointer;
 }
 
-/* SAYFA */
-.page{
-  display:none;
-  text-align:center;
-  padding:20px;
+/* OYUN KUTUSU */
+.game-box{
+  width:320px;
+  margin:40px auto;
+  background:#1b1b1b;
+  padding:15px;
+  border-radius:15px;
+  box-shadow:0 0 10px rgba(255,255,255,0.1);
 }
 
-/* XOX */
+/* XOX TAHTA */
 #board{
   display:grid;
-  grid-template-columns:repeat(3,90px);
-  gap:10px;
-  justify-content:center;
-  margin-top:20px;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin-top:15px;
 }
 
 .cell{
@@ -67,15 +65,11 @@ body{
   cursor:pointer;
 }
 
-/* GERİ TUŞU */
-.back{
-  margin-top:15px;
-  padding:10px 15px;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-  background:#555;
-  color:white;
+/* ALT YAZI */
+.play-text{
+  margin-top:10px;
+  font-size:14px;
+  opacity:0.7;
 }
 </style>
 </head>
@@ -91,59 +85,31 @@ body{
   </div>
 
   <div class="right">
-    <button onclick="show('home')">⚙ Ayar</button>
+    <button onclick="reset()">Reset</button>
   </div>
 </div>
 
-<!-- ANA SAYFA -->
-<div id="home" class="page" style="display:block;">
-  <h2>Oyun Seç</h2>
+<!-- 🔥 OYUN KUTUSU -->
+<div class="game-box">
 
-  <button onclick="start('X')">Ben X olayım</button>
-  <button onclick="start('O')">Ben O olayım</button>
-</div>
-
-<!-- XOX -->
-<div id="game" class="page">
-
-  <h2>XOX Yapay Zeka</h2>
+  <h3>❌⭕ XOX Yapay Zeka</h3>
 
   <div id="board"></div>
-  <p id="status"></p>
 
-  <button onclick="reset()">Reset</button>
-  <button class="back" onclick="backHome()">← Geri</button>
+  <div class="play-text">👇 Oyna</div>
+
+  <p id="status"></p>
 
 </div>
 
 <script>
 
-function show(id){
-  document.querySelectorAll(".page").forEach(p=>p.style.display="none");
-  document.getElementById(id).style.display="block";
-}
-
-/* 🔥 GERİ TUŞU */
-function backHome(){
-  show("home");
-}
-
-/* XOX AI */
-let board, player, ai, turn, active;
-
-function start(choice){
-  player = choice;
-  ai = choice==="X"?"O":"X";
-
-  board=["","","","","","","","",""];
-  turn="X";
-  active=true;
-
-  show("game");
-  draw();
-
-  if(ai==="X") aiMove();
-}
+/* OYUN */
+let board=["","","","","","","","",""];
+let player="X";
+let ai="O";
+let turn="X";
+let active=true;
 
 function draw(){
   let b=document.getElementById("board");
@@ -161,38 +127,94 @@ function draw(){
     active ? "Sıra: "+turn : "Oyun bitti";
 }
 
-function move(i){
-  if(!active || board[i] || turn!==player) return;
-
-  board[i]=player;
-  turn=ai;
-
-  if(check(player)){ end(player); return; }
-
-  draw();
-  setTimeout(aiMove,400);
-}
-
+/* 🔥 AKILLI AI */
 function aiMove(){
-  if(!active) return;
 
-  let empty=board.map((v,i)=>v===""?i:null).filter(v=>v!==null);
-  let i=empty[Math.floor(Math.random()*empty.length)];
+  let bestScore=-999;
+  let moveIndex=null;
 
-  board[i]=ai;
+  for(let i=0;i<9;i++){
+    if(board[i]==""){
 
-  if(check(ai)){ end(ai); return; }
+      board[i]=ai;
+      let score=minimax(board,0,false);
+      board[i]="";
+
+      if(score>bestScore){
+        bestScore=score;
+        moveIndex=i;
+      }
+    }
+  }
+
+  board[moveIndex]=ai;
+
+  if(check(ai)){
+    end(ai);
+    return;
+  }
 
   turn=player;
   draw();
 }
 
+/* 🔥 MINIMAX (GERÇEK AI) */
+function minimax(b,depth,isMax){
+
+  if(check(ai)) return 10-depth;
+  if(check(player)) return depth-10;
+  if(!b.includes("")) return 0;
+
+  if(isMax){
+    let best=-999;
+
+    for(let i=0;i<9;i++){
+      if(b[i]==""){
+        b[i]=ai;
+        best=Math.max(best,minimax(b,depth+1,false));
+        b[i]="";
+      }
+    }
+    return best;
+  } else {
+    let best=999;
+
+    for(let i=0;i<9;i++){
+      if(b[i]==""){
+        b[i]=player;
+        best=Math.min(best,minimax(b,depth+1,true));
+        b[i]="";
+      }
+    }
+    return best;
+  }
+}
+
+/* HAMLE */
+function move(i){
+  if(!active || board[i]!="") return;
+  if(turn!==player) return;
+
+  board[i]=player;
+
+  if(check(player)){
+    end(player);
+    return;
+  }
+
+  turn=ai;
+  draw();
+  setTimeout(aiMove,300);
+}
+
+/* KAZANMA */
 function check(p){
   const w=[
     [0,1,2],[3,4,5],[6,7,8],
     [0,3,6],[1,4,7],[2,5,8],
     [0,4,8],[2,4,6]
   ];
+
   return w.some(c=>c.every(i=>board[i]===p));
 }
 
@@ -203,8 +225,16 @@ function end(w){
 }
 
 function reset(){
-  start(player);
+  board=["","","","","","","","",""];
+  player="X";
+  ai="O";
+  turn="X";
+  active=true;
+  draw();
 }
+
+/* BAŞLAT */
+draw();
 
 </script>
 
