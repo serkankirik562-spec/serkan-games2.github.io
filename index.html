@@ -5,21 +5,22 @@
 <title>Serkan Games</title>
 
 <style>
-body{margin:0;background:#0b0f17;color:white;font-family:Arial;}
-.top{display:flex;justify-content:space-between;padding:10px;background:#151a25;}
+body{margin:0;font-family:Arial;background:#0b0f17;color:#fff;}
+.topbar{display:flex;justify-content:space-between;padding:10px;background:#151a25;}
 .main{padding:10px;}
 .card{background:#1c2436;margin:10px;padding:10px;border-radius:10px;}
-button{padding:6px;margin:3px;background:#2a6cff;color:white;border:none;border-radius:6px;}
+button{background:#2a6cff;color:#fff;border:0;padding:6px;border-radius:6px;cursor:pointer;margin:3px;}
 .grid{display:grid;grid-template-columns:repeat(3,60px);}
-.cell{width:60px;height:60px;border:1px solid white;display:flex;align-items:center;justify-content:center;}
+.cell{width:60px;height:60px;border:1px solid #fff;display:flex;align-items:center;justify-content:center;font-size:20px;}
+.premium{background:linear-gradient(45deg,#4a7dff,#00c3ff);}
 </style>
 
 </head>
 <body>
 
-<div class="top">
+<div class="topbar">
 <div>🎮 Serkan Games</div>
-<div id="coins">💰 0</div>
+<div id="coinBox">💰 0</div>
 </div>
 
 <div class="main" id="main"></div>
@@ -27,30 +28,82 @@ button{padding:6px;margin:3px;background:#2a6cff;color:white;border:none;border-
 
 <script>
 
-// COIN
-let coin = parseInt(localStorage.getItem("coin")||0);
-function addCoin(n){
-coin+=n;
-localStorage.setItem("coin",coin);
-coins.innerText="💰 "+coin;
+// ===== USER =====
+let user = JSON.parse(localStorage.getItem("user")) || {coins:0,owned:[]};
+
+// ===== SAVE =====
+function save(){
+localStorage.setItem("user",JSON.stringify(user));
 }
-coins.innerText="💰 "+coin;
 
-// MENU
-function menu(){
-main.innerHTML="";
+// ===== COIN =====
+function addCoin(n){
+user.coins+=n;
+save();
+updateUI();
+}
 
-["XOX","Zar","Tıklama","Hedef","Sayı Tahmin","Dama","UNO"].forEach(g=>{
+function updateUI(){
+coinBox.innerText="💰 "+user.coins;
+}
+updateUI();
+
+// ===== GAMES =====
+const mini=["XOX","Zar","Tıklama","Hedef","Tahmin"];
+const premium=[{name:"Yarış",price:50},{name:"FPS",price:100},{name:"Satranç",price:150}];
+
+// ===== MENU =====
+function loadStore(){
+
+main.innerHTML="<h2>🎲 Mini Games</h2>";
+
+mini.forEach(g=>{
 main.innerHTML+=`
 <div class="card">
 <h3>${g}</h3>
-<button onclick="play('${g}')">▶ Oyna</button>
+<button onclick="play('${g}')">▶</button>
+</div>`;
+});
+
+main.innerHTML+="<h2>💎 Paralı Oyunlar</h2>";
+
+premium.forEach(g=>{
+let owned=user.owned.includes(g.name);
+
+main.innerHTML+=`
+<div class="card premium">
+<h3>${g.name}</h3>
+<p>${g.price} coin</p>
+
+${owned
+? `<button onclick="play('${g.name}')">▶ Oyna</button>`
+: `<button onclick="buy('${g.name}',${g.price})">💰 Satın Al</button>`
+}
+
 </div>`;
 });
 }
-menu();
+loadStore();
 
-// PLAY
+// ===== BUY =====
+function buy(name,price){
+
+if(user.coins<price){
+alert("❌ Yetersiz coin");
+return;
+}
+
+user.coins-=price;
+if(!user.owned.includes(name)) user.owned.push(name);
+
+save();
+updateUI();
+loadStore();
+
+alert("✔ Satın alındı: "+name);
+}
+
+// ===== PLAY =====
 function play(name){
 
 game.innerHTML=`
@@ -62,15 +115,16 @@ game.innerHTML=`
 `;
 
 if(name=="XOX") xox();
-if(name=="Zar") dice();
-if(name=="Tıklama") clickGame();
-if(name=="Hedef") targetGame();
-if(name=="Sayı Tahmin") guessGame();
-if(name=="Dama") damaGame();
-if(name=="UNO") unoGame();
+if(name=="Zar") zar();
+if(name=="Tıklama") clicker();
+if(name=="Hedef") target();
+if(name=="Tahmin") guess();
+if(name=="Yarış") race();
+if(name=="FPS") fps();
+if(name=="Satranç") chess();
 }
 
-// XOX
+// ===== XOX =====
 function xox(){
 let t="X";
 g.innerHTML="<div class='grid'></div>";
@@ -83,91 +137,61 @@ d.onclick=()=>{
 if(!d.innerText){
 d.innerText=t;
 t=t=="X"?"O":"X";
-checkWin();
+addCoin(1);
 }
 };
 b.appendChild(d);
 }
-
-function checkWin(){
-let c=[...document.querySelectorAll(".cell")].map(x=>x.innerText);
-
-let win=[
-[0,1,2],[3,4,5],[6,7,8],
-[0,3,6],[1,4,7],[2,5,8],
-[0,4,8],[2,4,6]
-];
-
-win.forEach(w=>{
-if(c[w[0]]&&c[w[0]]==c[w[1]]&&c[w[1]]==c[w[2]]){
-alert(c[w[0]]+" kazandı");
-addCoin(10);
-}
-});
-}
 }
 
-// ZAR
-function dice(){
-g.innerHTML=`<button onclick="roll()">🎲 At</button><div id="r"></div>`;
-window.roll=function(){
+// ===== ZAR =====
+function zar(){
+g.innerHTML=`<button onclick="roll()">🎲</button><div id="r"></div>`;
+window.roll=()=>{
 let n=Math.floor(Math.random()*6)+1;
 r.innerText=n;
 addCoin(n);
-}
+};
 }
 
-// TIKLAMA
-function clickGame(){
+// ===== CLICK =====
+function clicker(){
 let s=0;
-g.innerHTML=`<button id="btn">Tıkla</button><div id="sc">0</div>`;
-btn.onclick=()=>{
+g.innerHTML=`<button id="b">Tıkla</button><div id="sc">0</div>`;
+b.onclick=()=>{
 s++;
 sc.innerText=s;
-if(s>=10){
-addCoin(10);
-alert("Kazandın");
-}
+if(s>=10) addCoin(10);
 };
 }
 
-// HEDEF
-function targetGame(){
+// ===== TARGET =====
+function target(){
 g.innerHTML=`<div id="t" style="width:50px;height:50px;background:red;"></div>`;
-t.onclick=()=>{
-addCoin(10);
-alert("Vurdun");
-};
+t.onclick=()=>addCoin(10);
 }
 
-// TAHMİN
-function guessGame(){
+// ===== GUESS =====
+function guess(){
 let n=Math.floor(Math.random()*5)+1;
-let girdi=prompt("1-5 tahmin");
-if(parseInt(girdi)==n){
-addCoin(10);
-alert("Bildin");
-}else{
-alert("Yanlış");
-}
+let g1=prompt("Tahmin 1-5");
+if(parseInt(g1)==n) addCoin(10);
 }
 
-// DAMA (basit)
-function damaGame(){
-g.innerHTML="♟ Basit dama (geliştirilecek ama oynanır)";
-addCoin(5);
+// ===== RACE =====
+function race(){
+g.innerHTML="🏎 Oyunu oynuyorsun...";
+setTimeout(()=>addCoin(20),3000);
 }
 
-// UNO (basit)
-function unoGame(){
-let num=Math.floor(Math.random()*10);
-let guess=prompt("UNO kart tahmin 0-9");
-if(parseInt(guess)==num){
-addCoin(15);
-alert("Kazandın");
-}else{
-alert("Kaybettin");
+// ===== FPS =====
+function fps(){
+g.innerHTML=`<button onclick="addCoin(5)">Vur</button>`;
 }
+
+// ===== CHESS =====
+function chess(){
+g.innerHTML="♟ Satranç (basit demo)";
 }
 
 </script>
