@@ -55,7 +55,7 @@ cursor:pointer;
 font-weight:bold;
 }
 
-/* INTRO */
+/* INTRO TEXT */
 .intro{
 position:fixed;
 top:0;left:0;
@@ -68,17 +68,15 @@ z-index:100;
 animation:fadeOut 1.5s ease 3s forwards;
 }
 
-.logo{
-width:180px;
-height:180px;
-background:url('logo.png') center/contain no-repeat;
-animation:spinOnly 2.5s ease-in-out;
+.intro h1{
+font-size:40px;
+letter-spacing:2px;
+animation:fadeIn 1s ease;
 }
 
-@keyframes spinOnly{
-0%{transform:rotate(0deg) scale(0.3);opacity:0;}
-40%{opacity:1;}
-100%{transform:rotate(720deg) scale(1);opacity:1;}
+@keyframes fadeIn{
+from{opacity:0; transform:scale(0.8);}
+to{opacity:1; transform:scale(1);}
 }
 
 @keyframes fadeOut{
@@ -158,54 +156,50 @@ border-radius:8px;
 }
 
 </style></head>
-<body><!-- 1: INTRO --><div class="intro" id="intro">
-  <div class="logo"></div>
-</div><!-- 2: SEÇİM --><div class="choose-screen" id="chooseScreen">
+<body><!-- INTRO TEXT --><div class="intro" id="intro">
+  <h1>Serkan Games</h1>
+</div><!-- SEÇİM --><div class="choose-screen" id="chooseScreen">
   <div class="choice-buttons">
     <button onclick="selectMode('mobile')">📱 Mobil</button>
     <button onclick="selectMode('pc')">💻 PC</button>
   </div>
-</div><!-- 3: TOP BAR --><div class="top-bar">
+</div><!-- TOP BAR --><div class="top-bar">
   <h1>Serkan Games</h1>
   <div class="tools">
     <div id="clock"></div>
     <input placeholder="Ara...">
     <button>⚙️</button>
   </div>
-</div><!-- 4-5-6: GAME HUB --><div id="gameHub"></div><script>
+</div><!-- GAME HUB --><div id="gameHub"></div><script>
 
-// 1 SAAT
 function updateClock(){
   document.getElementById("clock").innerText = new Date().toLocaleTimeString();
 }
 setInterval(updateClock,1000);
 updateClock();
 
-// INTRO -> CHOOSE
+// intro -> seçim
 setTimeout(()=>{
   document.getElementById("chooseScreen").style.display="flex";
 },3000);
 
-// PLATFORM SEÇİMİ
 function selectMode(mode){
   document.getElementById("chooseScreen").style.display="none";
   document.getElementById("gameHub").style.display="flex";
-  loadGames(mode);
+  loadGames();
 }
 
-// 6 OYUN SİSTEMİ (STEAM TARZI)
 const games = [
   {name:"Yıkıcı Oyun", img:"https://via.placeholder.com/300x180", high:true},
   {name:"Cyber Racer", img:"https://via.placeholder.com/300x180", high:true},
-  {name:"Shadow War", img:"https://via.placeholder.com/300x180", high:true},
-  {name:"Mini Test (gizli)", img:"https://via.placeholder.com/300x180", high:false}
+  {name:"Shadow War", img:"https://via.placeholder.com/300x180", high:true}
 ];
 
-function loadGames(mode){
+function loadGames(){
   let hub = document.getElementById("gameHub");
   hub.innerHTML="";
 
-  games.filter(g=>g.high).forEach(g=>{
+  games.forEach(g=>{
     hub.innerHTML += `
       <div class="card" onclick="openGame('${g.name}')">
         <img src="${g.img}">
