@@ -2,8 +2,6 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Serkan Games</title>
 
 <style>
@@ -14,7 +12,7 @@ background:#0f172a;
 color:white;
 }
 
-/* TEK ÜST BAR */
+/* NAVBAR */
 .navbar{
 display:flex;
 justify-content:space-between;
@@ -23,55 +21,78 @@ padding:12px;
 background:#1e293b;
 position:fixed;
 top:0;
-left:0;
 width:100%;
 z-index:1000;
 }
 
-.logo{
-font-size:20px;
-font-weight:bold;
-}
-
-.menu a{
-margin:0 8px;
-color:white;
-text-decoration:none;
-}
+.logo{font-weight:bold;}
 
 #search{
 padding:6px;
 border-radius:8px;
 border:none;
-outline:none;
 }
 
-.clock{
-margin-right:20px;
+.money{
 color:#38bdf8;
-font-weight:bold;
+margin-right:10px;
 }
 
-/* İÇERİK */
-.content{
+/* OYUN KARTLARI */
+.games{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
 padding-top:80px;
-text-align:center;
+gap:10px;
+padding:80px 10px 10px;
 }
 
 .card{
 background:#1e293b;
-margin:20px;
-padding:20px;
-border-radius:15px;
+padding:15px;
+border-radius:12px;
+text-align:center;
+cursor:pointer;
 }
 
-/* ÖZEL GÜN KARTI */
-.special{
-margin:20px;
-padding:20px;
-background:#111827;
+/* MODAL */
+#gameModal{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:#000000ee;
+display:none;
+z-index:9999;
+}
+
+#modalContent{
+width:90%;
+height:90%;
+margin:2% auto;
+background:#1e293b;
 border-radius:15px;
-text-align:center;
+position:relative;
+}
+
+#closeBtn{
+position:absolute;
+top:10px;
+right:15px;
+font-size:25px;
+cursor:pointer;
+}
+
+/* PROFILE */
+#profileBox{
+display:none;
+position:fixed;
+top:60px;
+right:10px;
+background:#1e293b;
+padding:10px;
+border-radius:10px;
 }
 </style>
 </head>
@@ -80,66 +101,66 @@ text-align:center;
 
 <!-- NAVBAR -->
 <div class="navbar">
+<div class="logo">🎮 Serkan Games</div>
 
-<div class="logo" id="logoText">🎮 Serkan Games</div>
+<input id="search" placeholder="Oyun ara...">
 
-<input type="text" id="search" placeholder="Oyun ara...">
+<div>
+<span class="money">💰 <span id="money">0</span></span>
+<span onclick="toggleProfile()" style="cursor:pointer;">Serkan ▼</span>
+</div>
+</div>
 
-<div class="clock" id="clock">00:00:00</div>
+<!-- PROFİL -->
+<div id="profileBox">
+<p>🏆 Kazan: +10</p>
+<p>🤝 Beraberlik: +5</p>
+<p>❌ Kaybet: +1</p>
+<button onclick="toggleProfile()">Kapat</button>
+</div>
 
-<div class="menu">
-<a href="#">Ana Sayfa</a>
-<a href="#">Ayarlar</a>
+<!-- OYUNLAR -->
+<div class="games">
+
+<div class="card" onclick="openGame('xox.html')">
+<h3>❌⭕ XOX AI</h3>
+</div>
+
+<div class="card" onclick="openGame('araba-oyunu.html')">
+<h3>🚗 Araba Oyunu</h3>
 </div>
 
 </div>
 
-<!-- İÇERİK -->
-<div class="content">
-
-<div class="card">
-<h2>Oyunlar</h2>
-<p>Buradan oyunlarını oynayabilirsin</p>
+<!-- MODAL -->
+<div id="gameModal">
+<div id="modalContent">
+<div id="closeBtn" onclick="closeGame()">❌</div>
+<iframe id="gameFrame" style="width:100%;height:100%;border:none;"></iframe>
 </div>
-
 </div>
 
 <script>
 
-//// SAAT
-function clock(){
-let d = new Date();
-document.getElementById("clock").innerText =
-d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
-}
-setInterval(clock,1000);
-clock();
+// PARA
+let money = localStorage.getItem("money") || 0;
+document.getElementById("money").innerText = money;
 
-//// ÖZEL GÜNLER
-let today = new Date();
-let gun = today.getDate();
-let ay = today.getMonth()+1;
-
-if(gun==10 && ay==11){
-document.getElementById("logoText").innerText = "🇹🇷 10 Kasım";
+// MODAL
+function openGame(url){
+document.getElementById("gameModal").style.display="block";
+document.getElementById("gameFrame").src=url;
 }
 
-if(gun==23 && ay==4){
-document.getElementById("logoText").innerText = "🇹🇷 23 Nisan";
+function closeGame(){
+document.getElementById("gameModal").style.display="none";
+document.getElementById("gameFrame").src="";
 }
 
-if(gun==18 && ay==3){
-document.getElementById("logoText").innerText =
-"🕊️ Şehitlerimizi Anıyoruz";
-
-let div = document.createElement("div");
-div.className="special";
-div.innerHTML=`
-<h2>Şehitlerimiz İçin</h2>
-<p>Tüm şehitlerimize rahmet diliyoruz 🤍</p>
-<p><b>Fatiha okunması niyetiyle...</b></p>
-`;
-document.body.appendChild(div);
+// PROFİL
+function toggleProfile(){
+let p = document.getElementById("profileBox");
+p.style.display = p.style.display=="block" ? "none":"block";
 }
 
 </script>
