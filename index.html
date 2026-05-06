@@ -1,169 +1,183 @@
-<!DOCTYPE html>
-<html lang="tr">
+<!DOCTYPE html><html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>Serkan Games</title>
-
-<style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Serkan Games</title><style>
 body{
 margin:0;
-font-family:Arial;
-background:#0f172a;
-color:white;
+background:linear-gradient(135deg,#000,#001a33);
+color:#fff;
+font-family:Arial, sans-serif;
+overflow:hidden;
 }
 
-/* NAVBAR */
-.navbar{
+/* ÜST BAR */
+.top-bar{
 display:flex;
 justify-content:space-between;
 align-items:center;
-padding:12px;
-background:#1e293b;
+padding:10px 15px;
+background:rgba(0,0,0,0.6);
+backdrop-filter: blur(6px);
 position:fixed;
 top:0;
-width:100%;
-z-index:1000;
+left:0;
+right:0;
+z-index:10;
 }
 
-.logo{font-weight:bold;}
-
-#search{
-padding:6px;
-border-radius:8px;
-border:none;
+.top-bar h1{
+margin:0;
+font-size:18px;
+letter-spacing:1px;
 }
 
-.money{
-color:#38bdf8;
-margin-right:10px;
-}
-
-/* OYUN KARTLARI */
-.games{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-padding-top:80px;
+.tools{
+display:flex;
 gap:10px;
-padding:80px 10px 10px;
+align-items:center;
 }
 
-.card{
-background:#1e293b;
-padding:15px;
-border-radius:12px;
-text-align:center;
+input{
+padding:6px;
+border-radius:6px;
+border:none;
+outline:none;
+}
+
+button{
+padding:6px 10px;
+border:none;
+border-radius:6px;
 cursor:pointer;
 }
 
-/* MODAL */
-#gameModal{
+#clock{
+font-weight:bold;
+}
+
+/* GİRİŞ LOGO */
+.intro{
 position:fixed;
 top:0;
 left:0;
 width:100%;
 height:100%;
-background:#000000ee;
-display:none;
-z-index:9999;
+display:flex;
+justify-content:center;
+align-items:center;
+background:radial-gradient(circle,#001a33,#000);
+z-index:100;
+animation:fadeOut 2s ease 3s forwards;
 }
 
-#modalContent{
-width:90%;
-height:90%;
-margin:2% auto;
-background:#1e293b;
-border-radius:15px;
-position:relative;
+.logo{
+width:180px;
+height:180px;
+background:url('logo.png') center/contain no-repeat;
+animation:spinIn 3s ease;
 }
 
-#closeBtn{
-position:absolute;
-top:10px;
-right:15px;
-font-size:25px;
-cursor:pointer;
+@keyframes spinIn{
+0%{transform:translateY(-200px) rotate(0deg) scale(0.2);opacity:0;}
+50%{opacity:1;}
+100%{transform:translateY(0) rotate(360deg) scale(1);opacity:1;}
 }
 
-/* PROFILE */
-#profileBox{
-display:none;
+@keyframes fadeOut{
+to{opacity:0;visibility:hidden;}
+}
+
+/* SEÇİM EKRANI */
+.choose-screen{
 position:fixed;
-top:60px;
-right:10px;
-background:#1e293b;
-padding:10px;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.9);
+z-index:90;
+display:none;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+gap:20px;
+}
+
+.choose-screen h2{
+margin-bottom:10px;
+}
+
+.choice-buttons{
+display:flex;
+gap:20px;
+}
+
+.choice-buttons button{
+padding:20px 30px;
+font-size:18px;
+border-radius:12px;
+background:#001a33;
+color:#fff;
+border:1px solid #444;
+transition:0.3s;
+}
+
+.choice-buttons button:hover{
+background:#004080;
+transform:scale(1.1);
+}
+
+/* ANA İÇERİK */
+.content{
+margin-top:70px;
+padding:20px;
+}
+
+.card{
+background:rgba(255,255,255,0.05);
+padding:15px;
 border-radius:10px;
-}
-</style>
-</head>
-
-<body>
-
-<!-- NAVBAR -->
-<div class="navbar">
-<div class="logo">🎮 Serkan Games</div>
-
-<input id="search" placeholder="Oyun ara...">
-
-<div>
-<span class="money">💰 <span id="money">0</span></span>
-<span onclick="toggleProfile()" style="cursor:pointer;">Serkan ▼</span>
-</div>
-</div>
-
-<!-- PROFİL -->
-<div id="profileBox">
-<p>🏆 Kazan: +10</p>
-<p>🤝 Beraberlik: +5</p>
-<p>❌ Kaybet: +1</p>
-<button onclick="toggleProfile()">Kapat</button>
-</div>
-
-<!-- OYUNLAR -->
-<div class="games">
-
-<div class="card" onclick="openGame('xox.html')">
-<h3>❌⭕ XOX AI</h3>
-</div>
-
-<div class="card" onclick="openGame('araba-oyunu.html')">
-<h3>🚗 Araba Oyunu</h3>
-</div>
-
-</div>
-
-<!-- MODAL -->
-<div id="gameModal">
-<div id="modalContent">
-<div id="closeBtn" onclick="closeGame()">❌</div>
-<iframe id="gameFrame" style="width:100%;height:100%;border:none;"></iframe>
-</div>
-</div>
-
-<script>
-
-// PARA
-let money = localStorage.getItem("money") || 0;
-document.getElementById("money").innerText = money;
-
-// MODAL
-function openGame(url){
-document.getElementById("gameModal").style.display="block";
-document.getElementById("gameFrame").src=url;
+margin-bottom:10px;
 }
 
-function closeGame(){
-document.getElementById("gameModal").style.display="none";
-document.getElementById("gameFrame").src="";
+</style></head>
+<body><!-- GİRİŞ --><div class="intro">
+  <div class="logo"></div>
+</div><!-- SEÇİM EKRANI --><div class="choose-screen" id="chooseScreen">
+  <h2>Platform Seç</h2>
+  <div class="choice-buttons">
+    <button onclick="selectMode('mobile')">📱 Mobil / Tablet</button>
+    <button onclick="selectMode('pc')">💻 PC</button>
+  </div>
+</div><!-- ÜST BAR --><div class="top-bar">
+  <h1>Serkan Games</h1>  <div class="tools">
+    <div id="clock"></div>
+    <input type="text" placeholder="Ara...">
+    <button>⚙️</button>
+  </div>
+</div><!-- İÇERİK --><div class="content" id="content">
+  <div class="card">Oyun alanı hazır 🎮</div>
+</div><script>
+// saat
+function updateClock(){
+let d=new Date();
+document.getElementById("clock").innerText = d.toLocaleTimeString();
 }
+setInterval(updateClock,1000);
+updateClock();
 
-// PROFİL
-function toggleProfile(){
-let p = document.getElementById("profileBox");
-p.style.display = p.style.display=="block" ? "none":"block";
+// intro bitince seçim ekranı aç
+setTimeout(()=>{
+  document.getElementById("chooseScreen").style.display = "flex";
+},3000);
+
+function selectMode(mode){
+  document.getElementById("chooseScreen").style.display = "none";
+  document.getElementById("content").innerHTML = 
+    mode === 'mobile' 
+    ? '<div class="card">📱 Mobil mod aktif - Dokunmatik kontroller hazır</div>'
+    : '<div class="card">💻 PC mod aktif - Klavye kontrolleri hazır</div>';
 }
-
-</script>
-
-</body>
+</script></body>
 </html>
