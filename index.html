@@ -68,20 +68,24 @@ justify-content:center;
 align-items:center;
 background:radial-gradient(circle,#001a33,#000);
 z-index:100;
-animation:fadeOut 2s ease 3s forwards;
 }
 
 .logo{
 width:180px;
 height:180px;
 background:url('logo.png') center/contain no-repeat;
-animation:spinIn 3s ease;
+animation:spinOnly 2.5s ease-in-out;
 }
 
-@keyframes spinIn{
-0%{transform:translateY(-200px) rotate(0deg) scale(0.2);opacity:0;}
-50%{opacity:1;}
-100%{transform:translateY(0) rotate(360deg) scale(1);opacity:1;}
+@keyframes spinOnly{
+0%{transform:rotate(0deg) scale(0.3);opacity:0;}
+40%{opacity:1;}
+100%{transform:rotate(720deg) scale(1);opacity:1;}
+}
+
+/* fade çıkış */
+.fade-out{
+animation:fadeOut 1.5s forwards;
 }
 
 @keyframes fadeOut{
@@ -128,21 +132,8 @@ background:#004080;
 transform:scale(1.1);
 }
 
-/* ANA İÇERİK */
-.content{
-margin-top:70px;
-padding:20px;
-}
-
-.card{
-background:rgba(255,255,255,0.05);
-padding:15px;
-border-radius:10px;
-margin-bottom:10px;
-}
-
 </style></head>
-<body><!-- GİRİŞ --><div class="intro">
+<body><!-- GİRİŞ --><div class="intro" id="intro">
   <div class="logo"></div>
 </div><!-- SEÇİM EKRANI --><div class="choose-screen" id="chooseScreen">
   <h2>Platform Seç</h2>
@@ -156,8 +147,6 @@ margin-bottom:10px;
     <input type="text" placeholder="Ara...">
     <button>⚙️</button>
   </div>
-</div><!-- İÇERİK --><div class="content" id="content">
-  <div class="card">Oyun alanı hazır 🎮</div>
 </div><script>
 // saat
 function updateClock(){
@@ -167,17 +156,23 @@ document.getElementById("clock").innerText = d.toLocaleTimeString();
 setInterval(updateClock,1000);
 updateClock();
 
-// intro bitince seçim ekranı aç
+// intro bitince düzgün geçiş
+const intro = document.getElementById("intro");
+const choose = document.getElementById("chooseScreen");
+
 setTimeout(()=>{
-  document.getElementById("chooseScreen").style.display = "flex";
+  intro.classList.add("fade-out");
+
+  setTimeout(()=>{
+    intro.style.display = "none";
+    choose.style.display = "flex";
+  },1500);
+
 },3000);
 
 function selectMode(mode){
-  document.getElementById("chooseScreen").style.display = "none";
-  document.getElementById("content").innerHTML = 
-    mode === 'mobile' 
-    ? '<div class="card">📱 Mobil mod aktif - Dokunmatik kontroller hazır</div>'
-    : '<div class="card">💻 PC mod aktif - Klavye kontrolleri hazır</div>';
+  choose.style.display = "none";
+  alert(mode === 'mobile' ? '📱 Mobil mod seçildi' : '💻 PC mod seçildi');
 }
 </script></body>
 </html>
