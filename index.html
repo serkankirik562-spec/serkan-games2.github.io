@@ -4,119 +4,142 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>Serkan Games</title>
+
 <style>
 body{
 margin:0;
-background:#000;
-color:#fff;
 font-family:Arial;
+background:#0f172a;
+color:white;
 }
 
-/* ÜST BAR */
-.top{
+/* TEK ÜST BAR */
+.navbar{
 display:flex;
 justify-content:space-between;
 align-items:center;
-padding:10px;
-background:#888;
-color:#fff;
+padding:12px;
+background:#1e293b;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+z-index:1000;
 }
 
-/* ARAMA */
-input{
-padding:5px;
-border-radius:6px;
-border:none;
+.logo{
+font-size:20px;
+font-weight:bold;
 }
 
-/* AYAR */
-.settings{
-cursor:pointer;
-position:relative;
+.menu a{
+margin:0 8px;
+color:white;
+text-decoration:none;
 }
 
-/* PANEL */
-.panel{
-display:none;
-position:absolute;
-right:0;
-top:30px;
-background:#222;
-color:#fff;
-padding:10px;
+#search{
+padding:6px;
 border-radius:8px;
+border:none;
+outline:none;
 }
 
-button{
-display:block;
-margin:5px 0;
-padding:5px;
-border:none;
-border-radius:5px;
-cursor:pointer;
+.clock{
+margin-right:20px;
+color:#38bdf8;
+font-weight:bold;
+}
+
+/* İÇERİK */
+.content{
+padding-top:80px;
+text-align:center;
+}
+
+.card{
+background:#1e293b;
+margin:20px;
+padding:20px;
+border-radius:15px;
+}
+
+/* ÖZEL GÜN KARTI */
+.special{
+margin:20px;
+padding:20px;
+background:#111827;
+border-radius:15px;
+text-align:center;
 }
 </style>
-
 </head>
+
 <body>
 
-<!-- TOP BAR -->
-<div class="top">
+<!-- NAVBAR -->
+<div class="navbar">
 
-<div>SERKAN GAMES</div>
+<div class="logo" id="logoText">🎮 Serkan Games</div>
 
-<div id="clock">00:00:00</div>
+<input type="text" id="search" placeholder="Oyun ara...">
 
-<div>
-<input placeholder="ara">
+<div class="clock" id="clock">00:00:00</div>
+
+<div class="menu">
+<a href="#">Ana Sayfa</a>
+<a href="#">Ayarlar</a>
 </div>
 
-<div class="settings" onclick="toggle()">⚙
-<div id="panel" class="panel">
-<button onclick="pc()">PC</button>
-<button onclick="mobile()">Mobil</button>
 </div>
+
+<!-- İÇERİK -->
+<div class="content">
+
+<div class="card">
+<h2>Oyunlar</h2>
+<p>Buradan oyunlarını oynayabilirsin</p>
 </div>
 
 </div>
 
 <script>
 
-/////////////////////
-// CANLI SAAT (DÜZELTİLDİ)
-/////////////////////
-setInterval(()=>{
-let d=new Date();
-
+//// SAAT
+function clock(){
+let d = new Date();
 document.getElementById("clock").innerText =
-String(d.getHours()).padStart(2,"0")+":"+
-String(d.getMinutes()).padStart(2,"0")+":"+
-String(d.getSeconds()).padStart(2,"0");
+d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
+}
+setInterval(clock,1000);
+clock();
 
-},1000);
+//// ÖZEL GÜNLER
+let today = new Date();
+let gun = today.getDate();
+let ay = today.getMonth()+1;
 
-/////////////////////
-// AYAR MENÜSÜ
-/////////////////////
-function toggle(){
-let panel=document.getElementById("panel");
-panel.style.display = panel.style.display=="block"?"none":"block";
+if(gun==10 && ay==11){
+document.getElementById("logoText").innerText = "🇹🇷 10 Kasım";
 }
 
-/////////////////////
-// PC MOD
-/////////////////////
-function pc(){
-document.body.style.maxWidth="1200px";
-document.body.style.margin="auto";
+if(gun==23 && ay==4){
+document.getElementById("logoText").innerText = "🇹🇷 23 Nisan";
 }
 
-/////////////////////
-// MOBİL MOD
-/////////////////////
-function mobile(){
-document.body.style.maxWidth="100%";
-document.body.style.margin="0";
+if(gun==18 && ay==3){
+document.getElementById("logoText").innerText =
+"🕊️ Şehitlerimizi Anıyoruz";
+
+let div = document.createElement("div");
+div.className="special";
+div.innerHTML=`
+<h2>Şehitlerimiz İçin</h2>
+<p>Tüm şehitlerimize rahmet diliyoruz 🤍</p>
+<p><b>Fatiha okunması niyetiyle...</b></p>
+`;
+document.body.appendChild(div);
 }
 
 </script>
