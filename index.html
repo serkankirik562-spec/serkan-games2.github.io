@@ -3,63 +3,90 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Serkan Games</title>
+<title>SERKAN GAMES</title>
 
 <style>
 body {
     margin: 0;
     font-family: Arial;
-    background: #111;
+    background: black;
     color: white;
 }
 
-/* ÜST GRİ BAR */
+/* ÜST BAR */
 .topbar {
-    background: #2b2b2b;
+    background: #3a3a3a;
     height: 60px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 15px;
+    padding: 0 12px;
 }
 
 /* BAŞLIK */
 .title {
-    font-size: 20px;
     font-weight: bold;
+    font-size: 18px;
+    letter-spacing: 2px;
 }
 
 /* SAAT */
 .clock {
-    font-size: 14px;
     color: #00ffcc;
+    font-size: 14px;
 }
 
 /* ARAMA */
 .search {
-    padding: 5px;
-    border-radius: 5px;
+    padding: 6px;
+    border-radius: 6px;
     border: none;
+    outline: none;
 }
 
-/* BUTONLAR */
-.buttons {
-    display: flex;
-    gap: 10px;
-    padding: 10px;
+/* AYARLAR */
+.settings {
+    position: relative;
 }
 
-button {
-    padding: 8px 12px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    background: #444;
+.settings button {
+    background: #555;
     color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
 }
 
-button:hover {
-    background: #666;
+.menu {
+    display: none;
+    position: absolute;
+    top: 35px;
+    right: 0;
+    background: #222;
+    border: 1px solid #444;
+    border-radius: 6px;
+    width: 120px;
+}
+
+.menu button {
+    width: 100%;
+    padding: 8px;
+    border: none;
+    background: none;
+    color: white;
+    cursor: pointer;
+}
+
+.menu button:hover {
+    background: #444;
+}
+
+/* ALT ALAN */
+.content {
+    padding: 20px;
+    text-align: center;
+    font-size: 18px;
 }
 </style>
 </head>
@@ -67,19 +94,28 @@ button:hover {
 <body>
 
 <div class="topbar">
-    <div class="title">Serkan Games</div>
-    
+    <div class="title" id="title">SERKAN GAMES</div>
+
     <input class="search" type="text" placeholder="Ara...">
 
     <div class="clock" id="clock">00:00:00</div>
+
+    <div class="settings">
+        <button onclick="toggleMenu()">Ayarlar</button>
+        <div class="menu" id="menu">
+            <button onclick="setMode('pc')">PC</button>
+            <button onclick="setMode('mobile')">Mobil</button>
+        </div>
+    </div>
 </div>
 
-<div class="buttons">
-    <button onclick="alert('PC Modu Açıldı')">PC</button>
-    <button onclick="alert('Mobil Mod Açıldı')">Mobil</button>
+<div class="content" id="content">
+    Hoşgeldin Serkan 🎮
 </div>
 
 <script>
+
+/* SAAT */
 function updateClock() {
     const now = new Date();
     document.getElementById("clock").innerText =
@@ -87,6 +123,44 @@ function updateClock() {
 }
 setInterval(updateClock, 1000);
 updateClock();
+
+/* MENÜ */
+function toggleMenu() {
+    const menu = document.getElementById("menu");
+    menu.style.display = menu.style.display === "block" ? "none" : "block";
+}
+
+/* PC / MOBİL */
+function setMode(mode) {
+    if(mode === "pc") {
+        document.body.style.fontSize = "16px";
+        alert("PC modu aktif");
+    } else {
+        document.body.style.fontSize = "20px";
+        alert("Mobil modu aktif");
+    }
+}
+
+/* ÖZEL GÜNLER SİSTEMİ */
+const today = new Date();
+const d = today.getDate();
+const m = today.getMonth() + 1;
+
+if(m === 10 && d === 29) {
+    document.getElementById("title").innerText = "CUMHURİYET BAYRAMI 🇹🇷";
+    document.getElementById("content").innerText = "29 Ekim Cumhuriyet Bayramı Kutlu Olsun 🇹🇷";
+}
+
+if(m === 4 && d === 23) {
+    document.getElementById("title").innerText = "23 NİSAN 🇹🇷";
+    document.getElementById("content").innerText = "Ulusal Egemenlik ve Çocuk Bayramı Kutlu Olsun 🎉";
+}
+
+if(m === 11 && d === 10) {
+    document.getElementById("title").innerText = "10 KASIM 🖤";
+    document.getElementById("content").innerText = "Atatürk’ü Saygı ve Özlemle Anıyoruz 🖤";
+}
+
 </script>
 
 </body>
