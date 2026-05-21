@@ -1,35 +1,50 @@
-<!-- SIMULASYON BÖLÜMÜ (ALT KISIM) -->
-<div style="margin-top:20px; font-family:Arial; padding:15px;">
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Serkan Games</title>
+</head>
 
-  <h2>🎮 Simülasyon Oyunları</h2>
+<body style="margin:0; background:#121212; color:white; font-family:Arial;">
 
-  <!-- ARABA TAMİR -->
-  <div style="border:1px solid #ccc; padding:10px; border-radius:10px; margin-bottom:10px;">
-    <h3>🚗 Araba Tamir</h3>
-    <p>Para: <span id="para">0</span> TL</p>
-    <button onclick="tamir()">🔧 Tamir Et (+10 TL)</button>
+  <div style="text-align:center; padding:40px;">
+    <h1>🎮 Serkan Games</h1>
+    <p>Siteye hoş geldin</p>
   </div>
 
-  <!-- NALBUR -->
-  <div style="border:1px solid #ccc; padding:10px; border-radius:10px;">
-    <h3>🔩 Nalbur Dükkanı</h3>
-    <p>Stok: <span id="stok">0</span></p>
-    <button onclick="stokEkle()">📦 Malzeme Ekle (+1)</button>
-  </div>
+  <div style="max-width:500px; margin:auto; padding:20px;">
 
-</div>
+    <h2>🚀 Oyunlar</h2>
+
+    <div style="border:1px solid #333; padding:15px; border-radius:10px; margin-bottom:10px; background:#1e1e1e;">
+      <h3>🚗 Araba Tamir Simülasyonu</h3>
+      <p>Basit para kazanma oyunu</p>
+      <button onclick="paraArtir()" style="padding:10px;">Oyna</button>
+      <p>Para: <span id="para">0</span> TL</p>
+    </div>
+
+    <div style="border:1px solid #333; padding:15px; border-radius:10px; background:#1e1e1e;">
+      <h3>🔩 Nalbur Simülasyonu</h3>
+      <button onclick="stokArtir()" style="padding:10px;">Oyna</button>
+      <p>Stok: <span id="stok">0</span></p>
+    </div>
+
+  </div>
 
 <script>
 let para = 0;
 let stok = 0;
 
-function tamir() {
+function paraArtir() {
   para += 10;
   document.getElementById("para").innerText = para;
 }
 
-function stokEkle() {
+function stokArtir() {
   stok += 1;
   document.getElementById("stok").innerText = stok;
 }
 </script>
+
+</body>
+</html>
