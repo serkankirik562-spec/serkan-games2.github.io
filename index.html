@@ -5,23 +5,27 @@
   <title>Serkan Games</title>
 </head>
 
-<body style="margin:0; background:#0a0a0a; color:#00ffcc; font-family:Arial;">
+<body id="body" style="margin:0; background:#0a0a0a; color:#00ffcc; font-family:Arial;">
 
-<!-- ÜST BAR (HEPSİ YAN YANA) -->
+<!-- ÜST BAR -->
 <div style="display:flex; align-items:center; justify-content:space-between; padding:15px; border-bottom:1px solid #00ffcc33;">
 
   <div style="font-weight:bold;">🎮 SERKAN GAMES</div>
 
-  <div id="clock" style="font-size:18px;">00:00:00</div>
+  <div id="clock">00:00:00</div>
 
-  <input type="text" placeholder="Oyun ara..." 
-    style="padding:8px; width:180px; border-radius:10px; border:none; outline:none;">
+  <input placeholder="Oyun ara..." style="padding:8px; width:180px; border-radius:10px; border:none;">
 
   <button onclick="alert('Ayarlar yakında!')" 
     style="background:#111; color:#00ffcc; border:1px solid #00ffcc; padding:6px 10px; border-radius:8px;">
     ⚙️ Ayarlar
   </button>
 
+</div>
+
+<!-- MESAJ -->
+<div style="text-align:center; margin-top:50px;">
+  <h1 id="message">🎮 Normal Gün</h1>
 </div>
 
 <script>
@@ -36,6 +40,104 @@ function clock(){
 }
 setInterval(clock,1000);
 clock();
+
+
+// ÖZEL GÜNLER
+function special(){
+
+  let d = new Date();
+  let m = d.getMonth()+1;
+  let day = d.getDate();
+
+  let text="🎮 Normal Gün";
+  let bg="#0a0a0a";
+  let color="#00ffcc";
+
+  // YILBAŞI
+  if(m==1 && day==1){
+    text="🎆 Yılbaşı Kutlu Olsun!";
+    bg="#001a33";
+    color="#00ccff";
+  }
+
+  // SEVGİLİLER GÜNÜ
+  else if(m==2 && day==14){
+    text="❤️ Sevgililer Günü!";
+    bg="#33001a";
+    color="#ff4d88";
+  }
+
+  // 23 NİSAN
+  else if(m==4 && day==23){
+    text="🇹🇷 23 Nisan Kutlu Olsun!";
+    bg="#330000";
+    color="#ff4444";
+  }
+
+  // 1 MAYIS
+  else if(m==5 && day==1){
+    text="🛠️ Emek ve Dayanışma Günü!";
+    bg="#003300";
+    color="#00ff66";
+  }
+
+  // 19 MAYIS
+  else if(m==5 && day==19){
+    text="🔥 19 Mayıs!";
+    bg="#001a00";
+    color="#00ff66";
+  }
+
+  // 15 TEMMUZ
+  else if(m==7 && day==15){
+    text="🇹🇷 Demokrasi Günü!";
+    bg="#1a0000";
+    color="#ffcc00";
+  }
+
+  // 30 AĞUSTOS
+  else if(m==8 && day==30){
+    text="🇹🇷 Zafer Bayramı!";
+    bg="#1a0000";
+    color="#ffcc00";
+  }
+
+  // 29 EKİM
+  else if(m==10 && day==29){
+    text="🇹🇷 Cumhuriyet Bayramı!";
+    bg="#330000";
+    color="#ff3333";
+  }
+
+  // 10 KASIM
+  else if(m==11 && day==10){
+    text="🖤 Atatürk’ü Anma Günü";
+    bg="#000";
+    color="#888";
+  }
+
+  // RAMAZAN (yaklaşık)
+  else if(m==4 && day>=9 && day<=11){
+    text="🌙 Ramazan Bayramı Kutlu Olsun!";
+    bg="#0a001a";
+    color="#cc99ff";
+  }
+
+  // KURBAN (yaklaşık)
+  else if(m==6 && day>=15 && day<=17){
+    text="🐑 Kurban Bayramı Mübarek Olsun!";
+    bg="#1a1a00";
+    color="#ffff66";
+  }
+
+  document.getElementById("message").innerText=text;
+  document.getElementById("body").style.background=bg;
+  document.getElementById("body").style.color=color;
+
+}
+
+setInterval(special,1000);
+special();
 
 </script>
 
