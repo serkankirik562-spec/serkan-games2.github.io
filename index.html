@@ -1,167 +1,38 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SERKAN GAMES</title>
+<!-- ALT SİMÜLASYON BÖLÜMÜ -->
+<div style="margin-top:20px; padding:15px; font-family:Arial;">
 
-<style>
-body {
-    margin: 0;
-    font-family: Arial;
-    background: black;
-    color: white;
-}
+  <h2>🎮 Simülasyon Oyunları</h2>
 
-/* ÜST BAR */
-.topbar {
-    background: #3a3a3a;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 12px;
-}
+  <div style="display:grid; gap:10px; max-width:400px;">
 
-/* BAŞLIK */
-.title {
-    font-weight: bold;
-    font-size: 18px;
-    letter-spacing: 2px;
-}
-
-/* SAAT */
-.clock {
-    color: #00ffcc;
-    font-size: 14px;
-}
-
-/* ARAMA */
-.search {
-    padding: 6px;
-    border-radius: 6px;
-    border: none;
-    outline: none;
-}
-
-/* AYARLAR */
-.settings {
-    position: relative;
-}
-
-.settings button {
-    background: #555;
-    color: white;
-    border: none;
-    padding: 6px 10px;
-    border-radius: 6px;
-    cursor: pointer;
-}
-
-.menu {
-    display: none;
-    position: absolute;
-    top: 35px;
-    right: 0;
-    background: #222;
-    border: 1px solid #444;
-    border-radius: 6px;
-    width: 120px;
-}
-
-.menu button {
-    width: 100%;
-    padding: 8px;
-    border: none;
-    background: none;
-    color: white;
-    cursor: pointer;
-}
-
-.menu button:hover {
-    background: #444;
-}
-
-/* ALT ALAN */
-.content {
-    padding: 20px;
-    text-align: center;
-    font-size: 18px;
-}
-</style>
-</head>
-
-<body>
-
-<div class="topbar">
-    <div class="title" id="title">SERKAN GAMES</div>
-
-    <input class="search" type="text" placeholder="Ara...">
-
-    <div class="clock" id="clock">00:00:00</div>
-
-    <div class="settings">
-        <button onclick="toggleMenu()">Ayarlar</button>
-        <div class="menu" id="menu">
-            <button onclick="setMode('pc')">PC</button>
-            <button onclick="setMode('mobile')">Mobil</button>
-        </div>
+    <!-- Araba tamir -->
+    <div style="border:1px solid #ccc; padding:10px; border-radius:10px;">
+      <h3>🚗 Araba Tamir Simülasyonu</h3>
+      <p>Para: <span id="para">0</span> TL</p>
+      <button onclick="tamirEt()">🔧 Tamir Et (+10 TL)</button>
     </div>
-</div>
 
-<div class="content" id="content">
-    Hoşgeldin Serkan 🎮
+    <!-- Nalbur -->
+    <div style="border:1px solid #ccc; padding:10px; border-radius:10px;">
+      <h3>🔩 Nalbur Dükkanı</h3>
+      <p>Stok: <span id="stok">0</span></p>
+      <button onclick="stokEkle()">📦 Malzeme Ekle (+1)</button>
+    </div>
+
+  </div>
 </div>
 
 <script>
+let para = 0;
+let stok = 0;
 
-/* SAAT */
-function updateClock() {
-    const now = new Date();
-    document.getElementById("clock").innerText =
-        now.toLocaleTimeString();
-}
-setInterval(updateClock, 1000);
-updateClock();
-
-/* MENÜ */
-function toggleMenu() {
-    const menu = document.getElementById("menu");
-    menu.style.display = menu.style.display === "block" ? "none" : "block";
+function tamirEt() {
+  para += 10;
+  document.getElementById("para").innerText = para;
 }
 
-/* PC / MOBİL */
-function setMode(mode) {
-    if(mode === "pc") {
-        document.body.style.fontSize = "16px";
-        alert("PC modu aktif");
-    } else {
-        document.body.style.fontSize = "20px";
-        alert("Mobil modu aktif");
-    }
+function stokEkle() {
+  stok += 1;
+  document.getElementById("stok").innerText = stok;
 }
-
-/* ÖZEL GÜNLER SİSTEMİ */
-const today = new Date();
-const d = today.getDate();
-const m = today.getMonth() + 1;
-
-if(m === 10 && d === 29) {
-    document.getElementById("title").innerText = "CUMHURİYET BAYRAMI 🇹🇷";
-    document.getElementById("content").innerText = "29 Ekim Cumhuriyet Bayramı Kutlu Olsun 🇹🇷";
-}
-
-if(m === 4 && d === 23) {
-    document.getElementById("title").innerText = "23 NİSAN 🇹🇷";
-    document.getElementById("content").innerText = "Ulusal Egemenlik ve Çocuk Bayramı Kutlu Olsun 🎉";
-}
-
-if(m === 11 && d === 10) {
-    document.getElementById("title").innerText = "10 KASIM 🖤";
-    document.getElementById("content").innerText = "Atatürk’ü Saygı ve Özlemle Anıyoruz 🖤";
-}
-
 </script>
-
-</body>
-</html>
