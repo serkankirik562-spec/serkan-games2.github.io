@@ -5,45 +5,113 @@
   <title>Serkan Games</title>
 </head>
 
-<body style="margin:0; background:#121212; color:white; font-family:Arial;">
+<body style="margin:0; font-family:Arial; transition:0.5s;" id="body">
 
-  <div style="text-align:center; padding:40px;">
-    <h1>🎮 Serkan Games</h1>
-    <p>Siteye hoş geldin</p>
-  </div>
+<!-- ÜST -->
+<div style="padding:15px; border-bottom:1px solid #333; text-align:center;">
+  <h2 id="title">🎮 Serkan Games</h2>
+</div>
 
-  <div style="max-width:500px; margin:auto; padding:20px;">
+<!-- SAAT -->
+<div style="text-align:center; margin-top:40px;">
+  <h1 id="clock">00:00:00</h1>
+</div>
 
-    <h2>🚀 Oyunlar</h2>
-
-    <div style="border:1px solid #333; padding:15px; border-radius:10px; margin-bottom:10px; background:#1e1e1e;">
-      <h3>🚗 Araba Tamir Simülasyonu</h3>
-      <p>Basit para kazanma oyunu</p>
-      <button onclick="paraArtir()" style="padding:10px;">Oyna</button>
-      <p>Para: <span id="para">0</span> TL</p>
-    </div>
-
-    <div style="border:1px solid #333; padding:15px; border-radius:10px; background:#1e1e1e;">
-      <h3>🔩 Nalbur Simülasyonu</h3>
-      <button onclick="stokArtir()" style="padding:10px;">Oyna</button>
-      <p>Stok: <span id="stok">0</span></p>
-    </div>
-
-  </div>
+<!-- MESAJ -->
+<div style="text-align:center; margin-top:40px;">
+  <h2 id="message">🎮 Normal Gün</h2>
+</div>
 
 <script>
-let para = 0;
-let stok = 0;
 
-function paraArtir() {
-  para += 10;
-  document.getElementById("para").innerText = para;
+// SAAT
+function clock() {
+  let d = new Date();
+  let h = String(d.getHours()).padStart(2,'0');
+  let m = String(d.getMinutes()).padStart(2,'0');
+  let s = String(d.getSeconds()).padStart(2,'0');
+  document.getElementById("clock").innerText = h + ":" + m + ":" + s;
+}
+setInterval(clock,1000);
+clock();
+
+
+// ÖZEL GÜN SİSTEMİ
+function special() {
+  let d = new Date();
+  let m = d.getMonth()+1;
+  let day = d.getDate();
+
+  let msg = "🎮 Normal Gün";
+  let bg = "#111";
+  let color = "#00ffcc";
+
+  // Yılbaşı
+  if(m==1 && day==1){
+    msg="🎆 Mutlu Yıllar Serkan!";
+    bg="#001a33";
+    color="#00ccff";
+  }
+
+  // 23 Nisan
+  else if(m==4 && day==23){
+    msg="🇹🇷 23 Nisan Kutlu Olsun!";
+    bg="#330000";
+    color="#ff4444";
+  }
+
+  // 19 Mayıs
+  else if(m==5 && day==19){
+    msg="🔥 19 Mayıs Gençlik Bayramı!";
+    bg="#001a00";
+    color="#00ff66";
+  }
+
+  // 29 Ekim
+  else if(m==10 && day==29){
+    msg="🇹🇷 Cumhuriyet Bayramı Kutlu Olsun!";
+    bg="#330000";
+    color="#ff3333";
+  }
+
+  // 30 Ağustos
+  else if(m==8 && day==30){
+    msg="🇹🇷 Zafer Bayramı!";
+    bg="#1a0000";
+    color="#ffcc00";
+  }
+
+  // 10 Kasım
+  else if(m==11 && day==10){
+    msg="🖤 Atatürk’ü Anma Günü";
+    bg="#000";
+    color="#888";
+  }
+
+  // RAMAZAN BAYRAMI (örnek)
+  else if(m==4 && day==10){
+    msg="🌙 Ramazan Bayramı Kutlu Olsun!";
+    bg="#0a001a";
+    color="#cc99ff";
+  }
+
+  // KURBAN BAYRAMI (örnek)
+  else if(m==6 && day==17){
+    msg="🐑 Kurban Bayramı Mübarek Olsun!";
+    bg="#1a1a00";
+    color="#ffff66";
+  }
+
+  // uygula
+  document.getElementById("message").innerText = msg;
+  document.getElementById("body").style.background = bg;
+  document.getElementById("body").style.color = color;
+  document.getElementById("title").style.color = color;
 }
 
-function stokArtir() {
-  stok += 1;
-  document.getElementById("stok").innerText = stok;
-}
+setInterval(special,1000);
+special();
+
 </script>
 
 </body>
