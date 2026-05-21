@@ -5,53 +5,33 @@
   <title>Serkan Games</title>
 </head>
 
-<body id="body" style="margin:0; background:#0a0a0a; color:#00ffcc; font-family:Arial;">
+<body id="body" style="margin:0; background:#0a0a0a; color:#00ffcc; font-family:Arial; padding-top:60px;">
 
 <!-- ÜST BAR -->
-<div style="display:flex; justify-content:space-between; align-items:center; padding:15px; border-bottom:1px solid #00ffcc33;">
+<div style="position:fixed; top:0; left:0; width:100%;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:12px 15px;
+  background:#0a0a0a;
+  border-bottom:1px solid #00ffcc33;
+  z-index:9999;">
 
-  <div>🎮 SERKAN GAMES</div>
+  <div style="font-weight:bold;">🎮 SERKAN GAMES</div>
 
   <div id="clock">00:00:00</div>
 
   <input placeholder="Oyun ara..."
-    style="padding:8px; width:180px; border-radius:10px; border:none;">
+    style="padding:6px 10px; width:180px; border-radius:8px; border:none; outline:none;">
 
-  <button onclick="toggleSettings()"
+  <button onclick="alert('Ayarlar yakında!')"
     style="background:#111; color:#00ffcc; border:1px solid #00ffcc; padding:6px 10px; border-radius:8px;">
-    ⚙️
+    ⚙️ Ayarlar
   </button>
 
 </div>
 
-<!-- HOŞGELDİN -->
-<div style="text-align:center; margin-top:40px;">
-  <h2 id="welcome" style="color:white;">Hoşgeldin</h2>
-</div>
-
-<!-- AYARLAR -->
-<div id="settings"
-  style="display:none; position:fixed; top:25%; left:50%; transform:translateX(-50%);
-  background:#111; padding:10px; border:1px solid #00ffcc; border-radius:10px; width:200px;">
-
-  <h4>⚙️ Ayarlar</h4>
-
-  <input id="username"
-    placeholder="Kullanıcı adı"
-    style="padding:6px; width:180px; color:white; background:#000; border:1px solid #333; margin-bottom:5px;">
-
-  <br>
-
-  <button onclick="saveUser()"
-    style="padding:6px; width:180px; background:#00ffcc; border:none; color:black; margin-bottom:5px;">
-    Kaydet
-  </button>
-
-  <button onclick="logout()"
-    style="padding:6px; width:180px; background:red; border:none; color:white;">
-    🚪 Hesaptan Çık
-  </button>
-
+<!-- MESAJ -->
+<div style="text-align:center; margin-top:60px;">
+  <h1 id="message">🎮 Yükleniyor...</h1>
 </div>
 
 <script>
@@ -68,48 +48,58 @@ setInterval(clock,1000);
 clock();
 
 
-// AYARLAR AÇ/KAPAT
-function toggleSettings(){
-  let s=document.getElementById("settings");
-  s.style.display=(s.style.display=="none")?"block":"none";
-}
+// ÖZEL GÜNLER SİSTEMİ
+function special(){
 
+  const d = new Date();
+  const m = d.getMonth()+1;
+  const day = d.getDate();
 
-// KAYDET
-function saveUser(){
-  let name=document.getElementById("username").value;
-  if(name){
-    localStorage.setItem("user",name);
-    localStorage.setItem("logged","true");
-    showUser();
-    toggleSettings();
+  let msg="🎮 Normal Gün";
+
+  if(m==1 && day==1){
+    msg="🎆 Yılbaşı Kutlu Olsun!";
   }
-}
 
-
-// KULLANICI GÖSTER
-function showUser(){
-  let name=localStorage.getItem("user");
-  if(name){
-    document.getElementById("welcome").innerText="Hoşgeldin "+name;
+  else if(m==2 && day==14){
+    msg="❤️ Sevgililer Günü!";
   }
-}
 
-
-// ÇIKIŞ
-function logout(){
-  localStorage.setItem("logged","false");
-  location.reload();
-}
-
-
-// KONTROL
-function check(){
-  if(localStorage.getItem("logged")=="true"){
-    showUser();
+  else if(m==4 && day==23){
+    msg="🇹🇷 23 Nisan Kutlu Olsun!";
   }
+
+  else if(m==5 && day==19){
+    msg="🔥 19 Mayıs Gençlik Bayramı!";
+  }
+
+  else if(m==8 && day==30){
+    msg="🇹🇷 Zafer Bayramı!";
+  }
+
+  else if(m==10 && day==29){
+    msg="🇹🇷 Cumhuriyet Bayramı!";
+  }
+
+  else if(m==11 && day==10){
+    msg="🖤 Atatürk’ü Anma Günü";
+  }
+
+  // RAMAZAN (yaklaşık günler)
+  else if(m==4 && (day>=9 && day<=11)){
+    msg="🌙 Ramazan Bayramı Kutlu Olsun!";
+  }
+
+  // KURBAN (yaklaşık günler)
+  else if(m==6 && (day>=15 && day<=17)){
+    msg="🐑 Kurban Bayramı Mübarek Olsun!";
+  }
+
+  document.getElementById("message").innerText = msg;
 }
-check();
+
+setInterval(special,1000);
+special();
 
 </script>
 
