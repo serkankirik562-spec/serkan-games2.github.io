@@ -7,47 +7,15 @@
 
 <body id="body" style="margin:0; background:#0a0a0a; color:#00ffcc; font-family:Arial;">
 
-<!-- LOGIN / REGISTER -->
-<div id="auth" style="text-align:center; margin-top:80px;">
-
-  <h2>🎮 Serkan Games</h2>
-
-  <div id="registerBox">
-    <h3>Kayıt Ol</h3>
-    <input id="r_user" placeholder="Kullanıcı adı" style="padding:8px;"><br><br>
-    <input id="r_pass" type="password" placeholder="Şifre" style="padding:8px;"><br><br>
-    <button onclick="register()">Kayıt Ol</button>
-    <p onclick="showLogin()" style="cursor:pointer; color:#00ffcc;">Giriş yap</p>
-  </div>
-
-  <div id="loginBox" style="display:none;">
-    <h3>Giriş Yap</h3>
-    <input id="l_user" placeholder="Kullanıcı adı" style="padding:8px;"><br><br>
-    <input id="l_pass" type="password" placeholder="Şifre" style="padding:8px;"><br><br>
-    <button onclick="login()">Giriş Yap</button>
-    <p onclick="showRegister()" style="cursor:pointer; color:#00ffcc;">Kayıt ol</p>
-  </div>
-
+<!-- ÜST BAR -->
+<div style="display:flex; justify-content:space-between; padding:15px; border-bottom:1px solid #00ffcc33;">
+  <div>🎮 SERKAN GAMES</div>
+  <div id="clock">00:00:00</div>
 </div>
 
-<!-- ANA SİTE -->
-<div id="site" style="display:none;">
-
-  <!-- ÜST BAR -->
-  <div style="display:flex; justify-content:space-between; padding:15px; border-bottom:1px solid #00ffcc33;">
-    <div>🎮 SERKAN GAMES</div>
-    <div id="clock">00:00:00</div>
-    <button onclick="logout()" style="background:red; color:white; border:none; padding:6px 10px;">
-      Hesaptan Çık
-    </button>
-  </div>
-
-  <!-- OYUN ALANI -->
-  <div style="text-align:center; margin-top:50px;">
-    <h2>🎮 Oyun Alanı</h2>
-    <button onclick="playGame()">Oyuna Gir</button>
-  </div>
-
+<!-- MESAJ -->
+<div style="text-align:center; margin-top:60px;">
+  <h1 id="msg">Yükleniyor...</h1>
 </div>
 
 <script>
@@ -64,75 +32,54 @@ setInterval(clock,1000);
 clock();
 
 
-// REGISTER
-function register(){
-  let u=document.getElementById("r_user").value;
-  let p=document.getElementById("r_pass").value;
+// TEK ÖZEL GÜN SİSTEMİ (ÇAKIŞMASIZ)
+function special(){
 
-  if(u && p){
-    localStorage.setItem("user",u);
-    localStorage.setItem("pass",p);
-    localStorage.setItem("logged","true");
-    openSite();
+  const d = new Date();
+  const m = d.getMonth()+1;
+  const day = d.getDate();
+
+  let text = "";
+
+  switch(true){
+
+    case (m==1 && day==1):
+      text="🎆 Yılbaşı Kutlu Olsun!";
+      break;
+
+    case (m==2 && day==14):
+      text="❤️ Sevgililer Günü!";
+      break;
+
+    case (m==4 && day==23):
+      text="🇹🇷 23 Nisan!";
+      break;
+
+    case (m==5 && day==19):
+      text="🔥 19 Mayıs!";
+      break;
+
+    case (m==8 && day==30):
+      text="🇹🇷 Zafer Bayramı!";
+      break;
+
+    case (m==10 && day==29):
+      text="🇹🇷 Cumhuriyet Bayramı!";
+      break;
+
+    case (m==11 && day==10):
+      text="🖤 10 Kasım";
+      break;
+
+    default:
+      text="🎮 Özel Gün Yok (Normal Gün)";
   }
+
+  document.getElementById("msg").innerText = text;
 }
 
-// LOGIN
-function login(){
-  let u=document.getElementById("l_user").value;
-  let p=document.getElementById("l_pass").value;
-
-  let su=localStorage.getItem("user");
-  let sp=localStorage.getItem("pass");
-
-  if(u==su && p==sp){
-    localStorage.setItem("logged","true");
-    openSite();
-  } else {
-    alert("Hatalı giriş!");
-  }
-}
-
-// LOGOUT
-function logout(){
-  localStorage.setItem("logged","false");
-  location.reload();
-}
-
-// SAYFA AÇ
-function openSite(){
-  document.getElementById("auth").style.display="none";
-  document.getElementById("site").style.display="block";
-}
-
-// KONTROL
-function check(){
-  if(localStorage.getItem("logged")=="true"){
-    openSite();
-  }
-}
-check();
-
-
-// OYUN KORUMA
-function playGame(){
-  if(localStorage.getItem("logged")!="true"){
-    alert("❌ Lütfen giriş yapın!");
-  } else {
-    alert("🎮 Oyun açıldı!");
-  }
-}
-
-
-// MENÜ
-function showLogin(){
-  document.getElementById("loginBox").style.display="block";
-  document.getElementById("registerBox").style.display="none";
-}
-function showRegister(){
-  document.getElementById("loginBox").style.display="none";
-  document.getElementById("registerBox").style.display="block";
-}
+setInterval(special,1000);
+special();
 
 </script>
 
