@@ -1,80 +1,45 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>Serkan Games</title>
-</head>
-
-<body style="margin:0; background:#0a0a0a; color:#00ffcc; font-family:Arial; padding-top:60px;">
-
-<!-- ÜST BAR -->
-<div style="position:fixed; top:0; left:0; width:100%;
-  display:flex; align-items:center; justify-content:space-between;
-  padding:12px 15px;
-  background:#0a0a0a;
-  border-bottom:1px solid #00ffcc33;
-  z-index:9999;">
-
-  <div style="font-weight:bold;">🎮 SERKAN GAMES</div>
-
-  <div id="clock">00:00:00</div>
-
-  <input placeholder="Oyun ara..."
-    style="padding:6px 10px; width:200px; border-radius:8px; border:none; outline:none;">
-
-  <!-- BOŞ AYAR BUTONU -->
-  <button onclick="alert('Ayarlar şu an boş')"
-    style="background:#111; color:#00ffcc; border:1px solid #00ffcc; padding:6px 10px; border-radius:8px;">
-    ⚙️ Ayarlar
-  </button>
-
-</div>
-
-<!-- MESAJ -->
-<div style="text-align:center; margin-top:80px;">
-  <h1 id="message">🎮 Yükleniyor...</h1>
-</div>
-
 <script>
 
-// SAAT
-function clock(){
-  let d=new Date();
-  document.getElementById("clock").innerText =
-  String(d.getHours()).padStart(2,'0')+":"+
-  String(d.getMinutes()).padStart(2,'0')+":"+
-  String(d.getSeconds()).padStart(2,'0');
-}
-setInterval(clock,1000);
-clock();
-
-
-// ÖZEL GÜNLER
 function special(){
 
-  const d=new Date();
-  const m=d.getMonth()+1;
-  const day=d.getDate();
+  const d = new Date();
+  const m = d.getMonth() + 1;
+  const day = d.getDate();
 
-  let msg="🎮 Normal Gün";
+  let msg = ""; // ❌ hiçbir yazı yok
 
-  if(m==1 && day==1) msg="🎆 Yılbaşı!";
-  else if(m==2 && day==14) msg="❤️ Sevgililer Günü!";
-  else if(m==4 && day==23) msg="🇹🇷 23 Nisan!";
-  else if(m==5 && day==19) msg="🔥 19 Mayıs!";
-  else if(m==8 && day==30) msg="🇹🇷 Zafer Bayramı!";
-  else if(m==10 && day==29) msg="🇹🇷 Cumhuriyet Bayramı!";
-  else if(m==11 && day==10) msg="🖤 10 Kasım";
-  else if(m==4 && day>=9 && day<=11) msg="🌙 Ramazan Bayramı!";
-  else if(m==6 && day>=15 && day<=17) msg="🐑 Kurban Bayramı!";
+  if(m==1 && day==1){
+    msg="🎆 Yılbaşı Kutlu Olsun!";
+  }
+  else if(m==2 && day==14){
+    msg="❤️ Sevgililer Günü!";
+  }
+  else if(m==4 && day==23){
+    msg="🇹🇷 23 Nisan Kutlu Olsun!";
+  }
+  else if(m==5 && day==19){
+    msg="🔥 19 Mayıs Gençlik Bayramı!";
+  }
+  else if(m==8 && day==30){
+    msg="🇹🇷 Zafer Bayramı!";
+  }
+  else if(m==10 && day==29){
+    msg="🇹🇷 Cumhuriyet Bayramı!";
+  }
+  else if(m==11 && day==10){
+    msg="🖤 Atatürk’ü Anma Günü";
+  }
+  else if(m==4 && (day>=9 && day<=11)){
+    msg="🌙 Ramazan Bayramı Kutlu Olsun!";
+  }
+  else if(m==6 && (day>=15 && day<=17)){
+    msg="🐑 Kurban Bayramı Mübarek Olsun!";
+  }
 
-  document.getElementById("message").innerText=msg;
+  document.getElementById("message").innerText = msg;
 }
 
 setInterval(special,1000);
 special();
 
 </script>
-
-</body>
-</html>
