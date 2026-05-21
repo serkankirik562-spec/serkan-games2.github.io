@@ -5,39 +5,29 @@
   <title>Serkan Games</title>
 </head>
 
-<body id="body" style="margin:0; background:#0a0a0a; color:#00ffcc; font-family:Arial;">
+<body style="margin:0; background:#0a0a0a; color:#00ffcc; font-family:Arial;">
 
-<!-- ÜST BAR -->
-<div style="display:flex; justify-content:space-between; align-items:center; padding:15px; border-bottom:1px solid #00ffcc33;">
-  <h2>🎮 Serkan Games</h2>
+<!-- ÜST BAR (HEPSİ YAN YANA) -->
+<div style="display:flex; align-items:center; justify-content:space-between; padding:15px; border-bottom:1px solid #00ffcc33;">
 
-  <div>
-    <button onclick="alert('Ayarlar yakında!')" style="background:#111; color:#00ffcc; border:1px solid #00ffcc; padding:5px 10px; border-radius:8px;">
-      ⚙️ Ayarlar
-    </button>
-  </div>
-</div>
+  <div style="font-weight:bold;">🎮 SERKAN GAMES</div>
 
-<!-- CANLI SAAT -->
-<div style="text-align:center; margin-top:30px;">
-  <h1 id="clock">00:00:00</h1>
-</div>
+  <div id="clock" style="font-size:18px;">00:00:00</div>
 
-<!-- ARAMA -->
-<div style="text-align:center; margin-top:20px;">
-  <input id="search" placeholder="Oyun ara..." 
-    style="padding:10px; width:250px; border-radius:10px; border:none; outline:none;">
-</div>
+  <input type="text" placeholder="Oyun ara..." 
+    style="padding:8px; width:180px; border-radius:10px; border:none; outline:none;">
 
-<!-- MESAJ -->
-<div style="text-align:center; margin-top:40px;">
-  <h2 id="message">🎮 Normal Gün</h2>
+  <button onclick="alert('Ayarlar yakında!')" 
+    style="background:#111; color:#00ffcc; border:1px solid #00ffcc; padding:6px 10px; border-radius:8px;">
+    ⚙️ Ayarlar
+  </button>
+
 </div>
 
 <script>
 
 // SAAT
-function clock() {
+function clock(){
   let d = new Date();
   let h = String(d.getHours()).padStart(2,'0');
   let m = String(d.getMinutes()).padStart(2,'0');
@@ -46,26 +36,6 @@ function clock() {
 }
 setInterval(clock,1000);
 clock();
-
-
-// ÖZEL GÜNLER
-function special() {
-  let d = new Date();
-  let m = d.getMonth()+1;
-  let day = d.getDate();
-
-  let msg = "🎮 Normal Gün";
-
-  if(m==1 && day==1) msg="🎆 Yılbaşı Kutlu Olsun!";
-  else if(m==4 && day==23) msg="🇹🇷 23 Nisan Kutlu Olsun!";
-  else if(m==5 && day==19) msg="🔥 19 Mayıs!";
-  else if(m==10 && day==29) msg="🇹🇷 Cumhuriyet Bayramı!";
-  else if(m==11 && day==10) msg="🖤 10 Kasım Saygı Günü";
-
-  document.getElementById("message").innerText = msg;
-}
-setInterval(special,1000);
-special();
 
 </script>
 
