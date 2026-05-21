@@ -8,14 +8,50 @@
 <body id="body" style="margin:0; background:#0a0a0a; color:#00ffcc; font-family:Arial;">
 
 <!-- ÜST BAR -->
-<div style="display:flex; justify-content:space-between; padding:15px; border-bottom:1px solid #00ffcc33;">
+<div style="display:flex; justify-content:space-between; align-items:center; padding:15px; border-bottom:1px solid #00ffcc33;">
+
   <div>🎮 SERKAN GAMES</div>
+
   <div id="clock">00:00:00</div>
+
+  <input placeholder="Oyun ara..."
+    style="padding:8px; width:180px; border-radius:10px; border:none;">
+
+  <button onclick="toggleSettings()"
+    style="background:#111; color:#00ffcc; border:1px solid #00ffcc; padding:6px 10px; border-radius:8px;">
+    ⚙️
+  </button>
+
 </div>
 
-<!-- MESAJ -->
-<div style="text-align:center; margin-top:60px;">
-  <h1 id="msg">Yükleniyor...</h1>
+<!-- HOŞGELDİN -->
+<div style="text-align:center; margin-top:40px;">
+  <h2 id="welcome" style="color:white;">Hoşgeldin</h2>
+</div>
+
+<!-- AYARLAR -->
+<div id="settings"
+  style="display:none; position:fixed; top:25%; left:50%; transform:translateX(-50%);
+  background:#111; padding:10px; border:1px solid #00ffcc; border-radius:10px; width:200px;">
+
+  <h4>⚙️ Ayarlar</h4>
+
+  <input id="username"
+    placeholder="Kullanıcı adı"
+    style="padding:6px; width:180px; color:white; background:#000; border:1px solid #333; margin-bottom:5px;">
+
+  <br>
+
+  <button onclick="saveUser()"
+    style="padding:6px; width:180px; background:#00ffcc; border:none; color:black; margin-bottom:5px;">
+    Kaydet
+  </button>
+
+  <button onclick="logout()"
+    style="padding:6px; width:180px; background:red; border:none; color:white;">
+    🚪 Hesaptan Çık
+  </button>
+
 </div>
 
 <script>
@@ -32,54 +68,48 @@ setInterval(clock,1000);
 clock();
 
 
-// TEK ÖZEL GÜN SİSTEMİ (ÇAKIŞMASIZ)
-function special(){
-
-  const d = new Date();
-  const m = d.getMonth()+1;
-  const day = d.getDate();
-
-  let text = "";
-
-  switch(true){
-
-    case (m==1 && day==1):
-      text="🎆 Yılbaşı Kutlu Olsun!";
-      break;
-
-    case (m==2 && day==14):
-      text="❤️ Sevgililer Günü!";
-      break;
-
-    case (m==4 && day==23):
-      text="🇹🇷 23 Nisan!";
-      break;
-
-    case (m==5 && day==19):
-      text="🔥 19 Mayıs!";
-      break;
-
-    case (m==8 && day==30):
-      text="🇹🇷 Zafer Bayramı!";
-      break;
-
-    case (m==10 && day==29):
-      text="🇹🇷 Cumhuriyet Bayramı!";
-      break;
-
-    case (m==11 && day==10):
-      text="🖤 10 Kasım";
-      break;
-
-    default:
-      text="🎮 Özel Gün Yok (Normal Gün)";
-  }
-
-  document.getElementById("msg").innerText = text;
+// AYARLAR AÇ/KAPAT
+function toggleSettings(){
+  let s=document.getElementById("settings");
+  s.style.display=(s.style.display=="none")?"block":"none";
 }
 
-setInterval(special,1000);
-special();
+
+// KAYDET
+function saveUser(){
+  let name=document.getElementById("username").value;
+  if(name){
+    localStorage.setItem("user",name);
+    localStorage.setItem("logged","true");
+    showUser();
+    toggleSettings();
+  }
+}
+
+
+// KULLANICI GÖSTER
+function showUser(){
+  let name=localStorage.getItem("user");
+  if(name){
+    document.getElementById("welcome").innerText="Hoşgeldin "+name;
+  }
+}
+
+
+// ÇIKIŞ
+function logout(){
+  localStorage.setItem("logged","false");
+  location.reload();
+}
+
+
+// KONTROL
+function check(){
+  if(localStorage.getItem("logged")=="true"){
+    showUser();
+  }
+}
+check();
 
 </script>
 
