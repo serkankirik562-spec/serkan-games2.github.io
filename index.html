@@ -1,32 +1,29 @@
-<!-- ALT SİMÜLASYON BÖLÜMÜ -->
-<div style="margin-top:20px; padding:15px; font-family:Arial;">
+<!-- SIMULASYON BÖLÜMÜ (ALT KISIM) -->
+<div style="margin-top:20px; font-family:Arial; padding:15px;">
 
   <h2>🎮 Simülasyon Oyunları</h2>
 
-  <div style="display:grid; gap:10px; max-width:400px;">
-
-    <!-- Araba tamir -->
-    <div style="border:1px solid #ccc; padding:10px; border-radius:10px;">
-      <h3>🚗 Araba Tamir Simülasyonu</h3>
-      <p>Para: <span id="para">0</span> TL</p>
-      <button onclick="tamirEt()">🔧 Tamir Et (+10 TL)</button>
-    </div>
-
-    <!-- Nalbur -->
-    <div style="border:1px solid #ccc; padding:10px; border-radius:10px;">
-      <h3>🔩 Nalbur Dükkanı</h3>
-      <p>Stok: <span id="stok">0</span></p>
-      <button onclick="stokEkle()">📦 Malzeme Ekle (+1)</button>
-    </div>
-
+  <!-- ARABA TAMİR -->
+  <div style="border:1px solid #ccc; padding:10px; border-radius:10px; margin-bottom:10px;">
+    <h3>🚗 Araba Tamir</h3>
+    <p>Para: <span id="para">0</span> TL</p>
+    <button onclick="tamir()">🔧 Tamir Et (+10 TL)</button>
   </div>
+
+  <!-- NALBUR -->
+  <div style="border:1px solid #ccc; padding:10px; border-radius:10px;">
+    <h3>🔩 Nalbur Dükkanı</h3>
+    <p>Stok: <span id="stok">0</span></p>
+    <button onclick="stokEkle()">📦 Malzeme Ekle (+1)</button>
+  </div>
+
 </div>
 
 <script>
 let para = 0;
 let stok = 0;
 
-function tamirEt() {
+function tamir() {
   para += 10;
   document.getElementById("para").innerText = para;
 }
