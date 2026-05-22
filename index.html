@@ -2,9 +2,8 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-
-<title>Serkan Games</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Serkan Games - Kuaför Tycoon V2</title>
 
 <style>
 body{
@@ -14,207 +13,180 @@ body{
   color:white;
 }
 
-/* LANDSCAPE FIX */
-@media screen and (orientation:portrait){
-  body::before{
-    content:"📱 Lütfen telefonu yan çevir";
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
-    font-size:20px;
-  }
-  .game{display:none;}
+/* START LOCK */
+#startScreen{
+  position:fixed;
+  width:100%;
+  height:100%;
+  background:#000;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
 }
 
-/* TOPBAR */
-.topbar{
+/* HUD */
+.hud{
   display:flex;
   justify-content:space-between;
   padding:10px;
   background:#111;
 }
 
-/* START */
-.card{
-  width:300px;
-  margin:60px auto;
-  background:#1c1c1c;
-  padding:20px;
-  border-radius:10px;
-  text-align:center;
-}
-
-input, button{
+/* CONTROL PANEL */
+.panel{
+  position:fixed;
+  bottom:0;
   width:100%;
+  background:#1c1c1c;
+  display:flex;
+  justify-content:center;
+  gap:10px;
   padding:10px;
-  margin-top:10px;
-  border:none;
-  border-radius:6px;
 }
 
-/* GAME */
-.game{
-  display:none;
-}
-
-/* SHOP */
-.shop{
-  background:#222;
+.tool{
   padding:10px;
-  margin:10px;
-  border-radius:10px;
-}
-
-/* INVENTORY */
-.inv{
-  background:#222;
-  padding:10px;
-  margin:10px;
-  border-radius:10px;
-}
-
-.item{
-  display:inline-block;
-  background:#444;
-  padding:8px;
-  margin:5px;
-  border-radius:6px;
-}
-
-/* CUSTOMER */
-.box{
-  background:#222;
-  margin:10px;
-  padding:10px;
-  border-radius:10px;
-}
-
-.cut{
-  display:inline-block;
-  background:#444;
-  padding:10px;
-  margin:5px;
-  border-radius:6px;
+  background:#333;
+  border-radius:8px;
   cursor:pointer;
 }
 
-.cut:hover{
+.tool.active{
+  background:#00c853;
+}
+
+/* SHOP LOCK */
+.shop{
+  background:#222;
+  margin:10px;
+  padding:10px;
+  border-radius:10px;
+  opacity:0.3;
+  pointer-events:none;
+}
+
+.shop.unlocked{
+  opacity:1;
+  pointer-events:auto;
+}
+
+/* CUSTOMER AREA */
+.area{
+  text-align:center;
+  margin-top:20px;
+}
+
+.bar{
+  width:80%;
+  height:20px;
+  background:#333;
+  margin:auto;
+  border-radius:10px;
+  overflow:hidden;
+}
+
+.fill{
+  height:100%;
+  width:0%;
   background:#00c853;
 }
 </style>
-
 </head>
 
 <body>
 
-<!-- START -->
-<div class="card" id="start">
-<h2>💇 Kuaför Tycoon</h2>
-<input id="name" placeholder="Kuaför adı">
-<button onclick="start()">Başla</button>
+<!-- START SCREEN -->
+<div id="startScreen">
+<h2>💇 Kuaför Tycoon V2</h2>
+<p>Mağazayı açmak için başla</p>
+<button onclick="startGame()">BAŞLA</button>
 </div>
 
-<!-- GAME -->
-<div class="game" id="game">
-
-<div class="topbar">
-  <div id="bname">Kuaför</div>
-  <div>💵 <span id="money">0</span></div>
-  <div>📅 Gün <span id="day">1</span></div>
+<!-- HUD -->
+<div class="hud">
+<div id="name">Kuaför</div>
+<div>💵 <span id="money">0</span></div>
+<div>📅 Gün <span id="day">1</span></div>
 </div>
 
 <!-- SHOP -->
-<div class="shop">
-<h3>🛒 Mağaza</h3>
-<button onclick="buy('zemin')">Zemin 50$</button>
-<button onclick="buy('koltuk')">Koltuk 100$</button>
-</div>
-
-<!-- INVENTORY (BAŞLANGIÇ EŞYALARI) -->
-<div class="inv">
-<h3>🎒 Envanter</h3>
-<div class="item">✂️ Makas (satılamaz)</div>
-<div class="item">💈 Tarak (satılamaz)</div>
+<div class="shop" id="shop">
+<h3>🛒 MAĞAZA (kilitli değil)</h3>
+<button onclick="buy()">Koltuk 100$</button>
 </div>
 
 <!-- CUSTOMER -->
-<div class="box">
+<div class="area">
 <h3>👤 Müşteri</h3>
-<p id="customer"></p>
+<p id="customer">Hazır</p>
 
-<div>
-<div class="cut" onclick="cut('yan')">Yan</div>
-<div class="cut" onclick="cut('ust')">Üst</div>
-<div class="cut" onclick="cut('arka')">Arka</div>
-</div>
-
+<div class="bar"><div class="fill" id="fill"></div></div>
 <p id="msg"></p>
 </div>
 
+<!-- CONTROL PANEL -->
+<div class="panel">
+<div class="tool" onclick="selectTool('makas')">✂️ Makas</div>
+<div class="tool" onclick="selectTool('makine')">🔌 Makine</div>
+<div class="tool" onclick="selectTool('köpük')">🫧 Köpük</div>
+<div class="tool" onclick="selectTool('jilet')">🪒 Jilet</div>
 </div>
 
 <script>
 
-let money = 0;
-let day = 1;
-let target = "";
+let money=0;
+let day=1;
+let tool="";
+let progress=0;
+let shopOpened=false;
 
-function start(){
-  let n = document.getElementById("name").value;
-  if(!n) n="Kuaför";
-
-  document.getElementById("bname").innerText = n;
-
-  document.getElementById("start").style.display="none";
-  document.getElementById("game").style.display="block";
-
+function startGame(){
+  document.getElementById("startScreen").style.display="none";
   newCustomer();
-  setInterval(() => {
-    day++;
-    money += 15;
-    document.getElementById("day").innerText = day;
-    document.getElementById("money").innerText = money;
-  }, 12000);
 }
 
+/* SHOP OPEN LOGIC */
+function openShop(){
+  if(money >= 50){
+    document.getElementById("shop").classList.add("unlocked");
+    shopOpened=true;
+  }
+}
+
+/* TOOLS */
+function selectTool(t){
+  tool=t;
+
+  document.querySelectorAll(".tool").forEach(e=>{
+    e.classList.remove("active");
+  });
+
+  event.target.classList.add("active");
+}
+
+/* CUSTOMER SYSTEM */
 function newCustomer(){
-  const parts = ["yan","ust","arka"];
-  target = parts[Math.floor(Math.random()*parts.length)];
-  document.getElementById("customer").innerText =
-  "İstediği: " + target;
+  progress=0;
+  document.getElementById("customer").innerText="Müşteri geldi (yaklaş)";
 }
 
-function cut(p){
-  if(p === target){
-    money += 25;
-    document.getElementById("msg").innerText = "✔ Doğru +25$";
-  }else{
-    money -= 10;
-    document.getElementById("msg").innerText = "❌ Yanlış -10$";
+/* SIMULATED CUT ANIMATION */
+setInterval(()=>{
+  if(tool && progress<100){
+    progress+=5;
+
+    document.getElementById("fill").style.width=progress+"%";
+
+    if(progress==100){
+      money+=20;
+      document.getElementById("money").innerText=money;
+      document.getElementById("msg").innerText="✔ İşlem tamamlandı";
+
+      setTimeout(newCustomer,1000);
+    }
   }
-
-  document.getElementById("money").innerText = money;
-  setTimeout(newCustomer, 800);
-}
-
-function buy(item){
-  let price = 0;
-
-  if(item=="zemin") price=50;
-  if(item=="koltuk") price=100;
-
-  if(money >= price){
-    money -= price;
-    document.getElementById("msg").innerText =
-    "✔ Satın alındı: " + item;
-  }else{
-    document.getElementById("msg").innerText =
-    "❌ Para yok!";
-  }
-
-  document.getElementById("money").innerText = money;
-}
+},400);
 
 </script>
 
