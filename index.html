@@ -1,73 +1,135 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Serkan Games</title>
+<meta charset="UTF-8">
+<title>Serkan Games</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:#f2f2f2;
+}
+
+/* TOP BAR */
+.topbar{
+  display:flex;
+  align-items:center;
+  padding:10px 15px;
+  background:#111;
+  color:white;
+  gap:15px;
+}
+
+.title{
+  font-weight:bold;
+  font-size:18px;
+}
+
+.clock{
+  color:#00ffcc;
+  font-size:16px;
+}
+
+/* arama sağa it */
+.search{
+  margin-left:auto;
+  padding:6px;
+  border-radius:6px;
+  border:none;
+  width:180px;
+}
+
+.settings{
+  font-size:22px;
+  cursor:pointer;
+}
+
+/* OYUN ALANI */
+.box{
+  text-align:center;
+  margin-top:60px;
+}
+
+button{
+  padding:15px;
+  margin:10px;
+  font-size:18px;
+  cursor:pointer;
+}
+
+#msg{
+  font-size:20px;
+  margin-top:15px;
+}
+
+#score{
+  font-size:18px;
+  margin-top:10px;
+}
+</style>
 </head>
 
-<body style="margin:0; background:#0a0a0a; color:#00ffcc; font-family:Arial; padding-top:60px;">
+<body>
 
-<!-- ÜST BAR -->
-<div style="position:fixed; top:0; left:0; width:100%;
-  display:flex; align-items:center; justify-content:space-between;
-  padding:12px 15px;
-  background:#0a0a0a;
-  border-bottom:1px solid #00ffcc33;
-  z-index:9999;">
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="title">SERKAN GAMES</div>
 
-  <div style="font-weight:bold;">🎮 SERKAN GAMES</div>
+  <div class="clock" id="clock">00:00:00</div>
 
-  <div id="clock">00:00:00</div>
+  <input class="search" placeholder="Ara...">
 
-  <input placeholder="Oyun ara..."
-    style="padding:6px 10px; width:180px; border-radius:8px; border:none; outline:none;">
-
+  <div class="settings">⚙️</div>
 </div>
 
-<!-- MESAJ -->
-<div style="text-align:center; margin-top:120px;">
-  <h1 id="message"></h1>
+<!-- OYUN -->
+<div class="box">
+  <h2>💇 Kuaför Simülasyonu</h2>
+
+  <p id="customer">Müşteri hazır...</p>
+
+  <button onclick="action('kes')">✂️ Kes</button>
+  <button onclick="action('boya')">🎨 Boya</button>
+  <button onclick="action('tara')">💈 Tara</button>
+
+  <div id="msg"></div>
+  <div id="score">Puan: 0</div>
 </div>
 
 <script>
-
-// CANLI SAAT
-function clock(){
-  let d=new Date();
+/* SAAT */
+function updateClock(){
   document.getElementById("clock").innerText =
-  String(d.getHours()).padStart(2,'0')+":"+
-  String(d.getMinutes()).padStart(2,'0')+":"+
-  String(d.getSeconds()).padStart(2,'0');
+  new Date().toLocaleTimeString("tr-TR");
 }
-setInterval(clock,1000);
-clock();
+setInterval(updateClock,1000);
+updateClock();
 
+/* OYUN */
+let score = 0;
+let actions = ["kes","boya","tara"];
 
-// ÖZEL GÜNLER (NORMAL YOK)
-function special(){
-
-  const d=new Date();
-  const m=d.getMonth()+1;
-  const day=d.getDate();
-
-  let msg="";
-
-  if(m==1 && day==1) msg="🎆 Yılbaşı Kutlu Olsun!";
-  else if(m==2 && day==14) msg="❤️ Sevgililer Günü!";
-  else if(m==4 && day==23) msg="🇹🇷 23 Nisan!";
-  else if(m==5 && day==19) msg="🔥 19 Mayıs!";
-  else if(m==8 && day==30) msg="🇹🇷 Zafer Bayramı!";
-  else if(m==10 && day==29) msg="🇹🇷 Cumhuriyet Bayramı!";
-  else if(m==11 && day==10) msg="🖤 10 Kasım";
-  else if(m==4 && day>=9 && day<=11) msg="🌙 Ramazan Bayramı!";
-  else if(m==6 && day>=15 && day<=17) msg="🐑 Kurban Bayramı!";
-
-  document.getElementById("message").textContent = msg;
+function newCustomer(){
+  window.target = actions[Math.floor(Math.random()*actions.length)];
+  document.getElementById("customer").innerText =
+  "Müşteri istedi: " + window.target;
 }
 
-setInterval(special,1000);
-special();
+function action(x){
+  if(x === window.target){
+    score += 10;
+    document.getElementById("msg").innerText = "✔ Doğru! +10";
+  } else {
+    score -= 5;
+    document.getElementById("msg").innerText = "❌ Yanlış! -5";
+  }
 
+  document.getElementById("score").innerText = "Puan: " + score;
+  setTimeout(newCustomer, 800);
+}
+
+newCustomer();
 </script>
 
 </body>
