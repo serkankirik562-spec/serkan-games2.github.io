@@ -11,7 +11,7 @@ body{
   background:#f2f2f2;
 }
 
-/* TOP BAR */
+/* TOPBAR */
 .topbar{
   display:flex;
   align-items:center;
@@ -31,7 +31,7 @@ body{
   font-size:16px;
 }
 
-/* arama sağa it */
+/* search */
 .search{
   margin-left:auto;
   padding:6px;
@@ -45,10 +45,18 @@ body{
   cursor:pointer;
 }
 
-/* OYUN ALANI */
+/* SPECIAL DAY BAR */
+.special{
+  text-align:center;
+  background:#ffcc00;
+  padding:8px;
+  font-weight:bold;
+}
+
+/* GAME */
 .box{
   text-align:center;
-  margin-top:60px;
+  margin-top:40px;
 }
 
 button{
@@ -72,7 +80,7 @@ button{
 
 <body>
 
-<!-- TOP BAR -->
+<!-- TOP -->
 <div class="topbar">
   <div class="title">SERKAN GAMES</div>
 
@@ -81,6 +89,11 @@ button{
   <input class="search" placeholder="Ara...">
 
   <div class="settings">⚙️</div>
+</div>
+
+<!-- ÖZEL GÜN -->
+<div class="special" id="specialDay">
+Özel gün kontrol ediliyor...
 </div>
 
 <!-- OYUN -->
@@ -98,6 +111,7 @@ button{
 </div>
 
 <script>
+
 /* SAAT */
 function updateClock(){
   document.getElementById("clock").innerText =
@@ -106,7 +120,24 @@ function updateClock(){
 setInterval(updateClock,1000);
 updateClock();
 
-/* OYUN */
+/* ÖZEL GÜNLER */
+function checkSpecialDay(){
+  const d = new Date();
+  const m = d.getMonth()+1;
+  const day = d.getDate();
+
+  let msg = "Bugün normal bir gün.";
+
+  if(m==1 && day==1) msg="🎉 Yeni Yıl Kutlu Olsun!";
+  if(m==4 && day==23) msg="🇹🇷 23 Nisan Kutlu Olsun!";
+  if(m==5 && day==19) msg="🇹🇷 19 Mayıs Kutlu Olsun!";
+  if(m==10 && day==29) msg="🇹🇷 29 Ekim Cumhuriyet Bayramı!";
+
+  document.getElementById("specialDay").innerText = msg;
+}
+checkSpecialDay();
+
+/* GAME */
 let score = 0;
 let actions = ["kes","boya","tara"];
 
@@ -126,10 +157,11 @@ function action(x){
   }
 
   document.getElementById("score").innerText = "Puan: " + score;
-  setTimeout(newCustomer, 800);
+  setTimeout(newCustomer, 700);
 }
 
 newCustomer();
+
 </script>
 
 </body>
