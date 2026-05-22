@@ -2,7 +2,9 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Serkan Games - Kuaför Tycoon</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<title>Serkan Games</title>
 
 <style>
 body{
@@ -12,76 +14,88 @@ body{
   color:white;
 }
 
-/* STEAM CARD */
+/* LANDSCAPE FIX */
+@media screen and (orientation:portrait){
+  body::before{
+    content:"📱 Lütfen telefonu yan çevir";
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    font-size:20px;
+  }
+  .game{display:none;}
+}
+
+/* TOPBAR */
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  padding:10px;
+  background:#111;
+}
+
+/* START */
 .card{
-  width:320px;
-  margin:40px auto;
+  width:300px;
+  margin:60px auto;
   background:#1c1c1c;
   padding:20px;
-  border-radius:15px;
+  border-radius:10px;
   text-align:center;
-  box-shadow:0 0 15px black;
 }
 
-input{
-  padding:10px;
-  width:90%;
-  margin-top:10px;
-  border:none;
-  border-radius:8px;
-}
-
-button{
-  padding:10px;
-  margin-top:10px;
+input, button{
   width:100%;
-  cursor:pointer;
+  padding:10px;
+  margin-top:10px;
   border:none;
-  border-radius:8px;
-  background:#00c853;
-  color:white;
-  font-size:16px;
+  border-radius:6px;
 }
 
 /* GAME */
 .game{
   display:none;
-  padding:20px;
 }
 
-.topbar{
-  display:flex;
-  justify-content:space-between;
-  background:#111;
-  padding:10px;
-  align-items:center;
-}
-
+/* SHOP */
 .shop{
-  margin-top:15px;
   background:#222;
   padding:10px;
+  margin:10px;
   border-radius:10px;
 }
 
-.box{
-  margin-top:20px;
+/* INVENTORY */
+.inv{
   background:#222;
-  padding:15px;
+  padding:10px;
+  margin:10px;
   border-radius:10px;
 }
 
-.bar{
-  display:flex;
-  gap:10px;
-  justify-content:center;
-  margin-top:10px;
+.item{
+  display:inline-block;
+  background:#444;
+  padding:8px;
+  margin:5px;
+  border-radius:6px;
+}
+
+/* CUSTOMER */
+.box{
+  background:#222;
+  margin:10px;
+  padding:10px;
+  border-radius:10px;
 }
 
 .cut{
-  padding:10px;
+  display:inline-block;
   background:#444;
-  border-radius:8px;
+  padding:10px;
+  margin:5px;
+  border-radius:6px;
   cursor:pointer;
 }
 
@@ -94,21 +108,18 @@ button{
 
 <body>
 
-<!-- STEAM START -->
-<div class="card" id="startCard">
+<!-- START -->
+<div class="card" id="start">
 <h2>💇 Kuaför Tycoon</h2>
-<p>Kuaför adını gir</p>
-
-<input id="name" placeholder="Kuaför adı...">
-
-<button onclick="startGame()">Başlat</button>
+<input id="name" placeholder="Kuaför adı">
+<button onclick="start()">Başla</button>
 </div>
 
 <!-- GAME -->
 <div class="game" id="game">
 
 <div class="topbar">
-  <div id="barberName">Kuaför</div>
+  <div id="bname">Kuaför</div>
   <div>💵 <span id="money">0</span></div>
   <div>📅 Gün <span id="day">1</span></div>
 </div>
@@ -116,20 +127,26 @@ button{
 <!-- SHOP -->
 <div class="shop">
 <h3>🛒 Mağaza</h3>
-<button onclick="buy('zemin')">Zemin (50$)</button>
-<button onclick="buy('duvar')">Duvar (50$)</button>
-<button onclick="buy('koltuk')">Koltuk (100$)</button>
+<button onclick="buy('zemin')">Zemin 50$</button>
+<button onclick="buy('koltuk')">Koltuk 100$</button>
+</div>
+
+<!-- INVENTORY (BAŞLANGIÇ EŞYALARI) -->
+<div class="inv">
+<h3>🎒 Envanter</h3>
+<div class="item">✂️ Makas (satılamaz)</div>
+<div class="item">💈 Tarak (satılamaz)</div>
 </div>
 
 <!-- CUSTOMER -->
 <div class="box">
 <h3>👤 Müşteri</h3>
-<p id="customer">Hazır...</p>
+<p id="customer"></p>
 
-<div class="bar">
-  <div class="cut" onclick="cut('yan')">Yan</div>
-  <div class="cut" onclick="cut('ust')">Üst</div>
-  <div class="cut" onclick="cut('arka')">Arka</div>
+<div>
+<div class="cut" onclick="cut('yan')">Yan</div>
+<div class="cut" onclick="cut('ust')">Üst</div>
+<div class="cut" onclick="cut('arka')">Arka</div>
 </div>
 
 <p id="msg"></p>
@@ -143,24 +160,22 @@ let money = 0;
 let day = 1;
 let target = "";
 
-function startGame(){
-  let name = document.getElementById("name").value;
-  if(!name) name = "Kuaför";
+function start(){
+  let n = document.getElementById("name").value;
+  if(!n) n="Kuaför";
 
-  document.getElementById("barberName").innerText = name;
+  document.getElementById("bname").innerText = n;
 
-  document.getElementById("startCard").style.display="none";
+  document.getElementById("start").style.display="none";
   document.getElementById("game").style.display="block";
 
   newCustomer();
-  setInterval(nextDay, 15000); // 15 sn = 1 gün
-}
-
-function nextDay(){
-  day++;
-  document.getElementById("day").innerText = day;
-  money += 20;
-  document.getElementById("money").innerText = money;
+  setInterval(() => {
+    day++;
+    money += 15;
+    document.getElementById("day").innerText = day;
+    document.getElementById("money").innerText = money;
+  }, 12000);
 }
 
 function newCustomer(){
@@ -170,25 +185,23 @@ function newCustomer(){
   "İstediği: " + target;
 }
 
-function cut(part){
-  if(part === target){
-    money += 30;
-    document.getElementById("msg").innerText = "✔ Doğru! +30$";
+function cut(p){
+  if(p === target){
+    money += 25;
+    document.getElementById("msg").innerText = "✔ Doğru +25$";
   }else{
     money -= 10;
-    document.getElementById("msg").innerText = "❌ Yanlış! -10$";
+    document.getElementById("msg").innerText = "❌ Yanlış -10$";
   }
 
   document.getElementById("money").innerText = money;
-  setTimeout(newCustomer, 1000);
+  setTimeout(newCustomer, 800);
 }
 
-/* SHOP */
 function buy(item){
   let price = 0;
 
   if(item=="zemin") price=50;
-  if(item=="duvar") price=50;
   if(item=="koltuk") price=100;
 
   if(money >= price){
