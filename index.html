@@ -3,26 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Serkan Games - Kuaför Tycoon V2</title>
+<title>Serkan Games V4</title>
 
 <style>
 body{
   margin:0;
   font-family:Arial;
-  background:#0f0f0f;
+  background:#0b0f14;
   color:white;
-}
-
-/* START LOCK */
-#startScreen{
-  position:fixed;
-  width:100%;
-  height:100%;
-  background:#000;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  flex-direction:column;
+  overflow:hidden;
 }
 
 /* HUD */
@@ -30,107 +19,145 @@ body{
   display:flex;
   justify-content:space-between;
   padding:10px;
-  background:#111;
+  background:#111827;
 }
 
-/* CONTROL PANEL */
-.panel{
+/* GAME WORLD */
+.world{
+  height:60vh;
+  background:linear-gradient(#1e293b,#0b0f14);
+  position:relative;
+  overflow:hidden;
+}
+
+/* CUSTOMER */
+.customer{
+  width:80px;
+  height:80px;
+  background:#fbbf24;
+  border-radius:10px;
+  position:absolute;
+  top:40%;
+  left:40%;
+  transition:0.5s;
+}
+
+/* TOOLBAR */
+.toolbar{
   position:fixed;
   bottom:0;
   width:100%;
-  background:#1c1c1c;
   display:flex;
   justify-content:center;
   gap:10px;
+  background:#111827;
   padding:10px;
 }
 
 .tool{
   padding:10px;
-  background:#333;
+  background:#374151;
   border-radius:8px;
   cursor:pointer;
 }
 
 .tool.active{
-  background:#00c853;
+  background:#10b981;
 }
 
-/* SHOP LOCK */
+/* SHOP */
 .shop{
-  background:#222;
-  margin:10px;
+  position:fixed;
+  top:50px;
+  right:10px;
+  width:200px;
+  background:#1f2937;
   padding:10px;
   border-radius:10px;
-  opacity:0.3;
+  opacity:0.4;
   pointer-events:none;
 }
 
-.shop.unlocked{
+.shop.open{
   opacity:1;
   pointer-events:auto;
 }
 
-/* CUSTOMER AREA */
-.area{
-  text-align:center;
-  margin-top:20px;
-}
-
-.bar{
-  width:80%;
-  height:20px;
-  background:#333;
-  margin:auto;
-  border-radius:10px;
-  overflow:hidden;
-}
-
-.fill{
+/* GRID BUILD MODE */
+.grid{
+  position:absolute;
+  width:100%;
   height:100%;
-  width:0%;
-  background:#00c853;
+  display:grid;
+  grid-template-columns:repeat(10,1fr);
+  grid-template-rows:repeat(6,1fr);
+}
+
+.cell{
+  border:1px solid rgba(255,255,255,0.05);
+}
+
+.cell.ok{
+  background:rgba(16,185,129,0.3);
+}
+
+.cell.no{
+  background:rgba(239,68,68,0.3);
+}
+
+/* PHONE */
+.phone{
+  position:fixed;
+  left:10px;
+  bottom:60px;
+  background:#111827;
+  padding:10px;
+  border-radius:10px;
 }
 </style>
+
 </head>
 
 <body>
 
-<!-- START SCREEN -->
-<div id="startScreen">
-<h2>💇 Kuaför Tycoon V2</h2>
-<p>Mağazayı açmak için başla</p>
-<button onclick="startGame()">BAŞLA</button>
-</div>
-
 <!-- HUD -->
 <div class="hud">
-<div id="name">Kuaför</div>
+<div>💈 SERKAN SALON</div>
 <div>💵 <span id="money">0</span></div>
 <div>📅 Gün <span id="day">1</span></div>
 </div>
 
+<!-- WORLD -->
+<div class="world">
+
+<div class="grid" id="grid"></div>
+
+<div class="customer" id="customer"></div>
+
+</div>
+
 <!-- SHOP -->
 <div class="shop" id="shop">
-<h3>🛒 MAĞAZA (kilitli değil)</h3>
-<button onclick="buy()">Koltuk 100$</button>
+<h3>🛒 Mağaza</h3>
+<button onclick="buy('koltuk')">Koltuk 100$</button>
+<button onclick="buy('duvar')">Duvar 50$</button>
+<button onclick="openShop()">Aç/Kapat</button>
 </div>
 
-<!-- CUSTOMER -->
-<div class="area">
-<h3>👤 Müşteri</h3>
-<p id="customer">Hazır</p>
-
-<div class="bar"><div class="fill" id="fill"></div></div>
-<p id="msg"></p>
+<!-- PHONE -->
+<div class="phone">
+📱 <br>
+1 Yemek<br>
+2 Shop<br>
+3 Müşteri
 </div>
 
-<!-- CONTROL PANEL -->
-<div class="panel">
-<div class="tool" onclick="selectTool('makas')">✂️ Makas</div>
-<div class="tool" onclick="selectTool('makine')">🔌 Makine</div>
-<div class="tool" onclick="selectTool('köpük')">🫧 Köpük</div>
-<div class="tool" onclick="selectTool('jilet')">🪒 Jilet</div>
+<!-- TOOLBAR -->
+<div class="toolbar">
+<div class="tool" onclick="tool('makas')">✂️</div>
+<div class="tool" onclick="tool('makine')">🔌</div>
+<div class="tool" onclick="tool('köpük')">🫧</div>
+<div class="tool" onclick="tool('jilet')">🪒</div>
 </div>
 
 <script>
@@ -138,55 +165,79 @@ body{
 let money=0;
 let day=1;
 let tool="";
+let shop=false;
 let progress=0;
-let shopOpened=false;
 
-function startGame(){
-  document.getElementById("startScreen").style.display="none";
-  newCustomer();
+/* GRID BUILD SYSTEM */
+let grid = document.getElementById("grid");
+
+for(let i=0;i<60;i++){
+  let c=document.createElement("div");
+  c.className="cell";
+
+  c.onclick=()=>{
+    if(shop){
+      c.classList.toggle("ok");
+    }
+  };
+
+  grid.appendChild(c);
 }
 
-/* SHOP OPEN LOGIC */
-function openShop(){
-  if(money >= 50){
-    document.getElementById("shop").classList.add("unlocked");
-    shopOpened=true;
-  }
-}
-
-/* TOOLS */
-function selectTool(t){
-  tool=t;
-
-  document.querySelectorAll(".tool").forEach(e=>{
-    e.classList.remove("active");
-  });
-
-  event.target.classList.add("active");
-}
-
-/* CUSTOMER SYSTEM */
-function newCustomer(){
-  progress=0;
-  document.getElementById("customer").innerText="Müşteri geldi (yaklaş)";
-}
-
-/* SIMULATED CUT ANIMATION */
+/* CUSTOMER MOVE (AI FEEL) */
 setInterval(()=>{
-  if(tool && progress<100){
-    progress+=5;
+  let c=document.getElementById("customer");
 
-    document.getElementById("fill").style.width=progress+"%";
+  c.style.top = (30+Math.random()*40)+"%";
+  c.style.left = (20+Math.random()*60)+"%";
 
-    if(progress==100){
+},3000);
+
+/* GAME LOOP */
+setInterval(()=>{
+
+  if(tool){
+    progress++;
+
+    if(progress>100){
       money+=20;
       document.getElementById("money").innerText=money;
-      document.getElementById("msg").innerText="✔ İşlem tamamlandı";
-
-      setTimeout(newCustomer,1000);
+      progress=0;
     }
   }
-},400);
+
+},200);
+
+/* TOOL */
+function tool(t){
+  document.querySelectorAll(".tool").forEach(e=>e.classList.remove("active"));
+  event.target.classList.add("active");
+  tool=t;
+}
+
+/* SHOP */
+function openShop(){
+  shop=!shop;
+  document.getElementById("shop").classList.toggle("open");
+}
+
+/* BUY */
+function buy(i){
+  if(i=="koltuk" && money>=100){
+    money-=100;
+  }
+  if(i=="duvar" && money>=50){
+    money-=50;
+  }
+
+  document.getElementById("money").innerText=money;
+}
+
+/* DAY */
+setInterval(()=>{
+  day++;
+  document.getElementById("day").innerText=day;
+},10000);
 
 </script>
 
