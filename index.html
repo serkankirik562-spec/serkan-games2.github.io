@@ -2,165 +2,206 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Serkan Games</title>
+<title>Serkan Games - Kuaför Tycoon</title>
 
 <style>
 body{
   margin:0;
   font-family:Arial;
-  background:#f2f2f2;
-}
-
-/* TOPBAR */
-.topbar{
-  display:flex;
-  align-items:center;
-  padding:10px 15px;
-  background:#111;
+  background:#0f0f0f;
   color:white;
-  gap:15px;
 }
 
-.title{
-  font-weight:bold;
-  font-size:18px;
+/* STEAM CARD */
+.card{
+  width:320px;
+  margin:40px auto;
+  background:#1c1c1c;
+  padding:20px;
+  border-radius:15px;
+  text-align:center;
+  box-shadow:0 0 15px black;
 }
 
-.clock{
-  color:#00ffcc;
-  font-size:16px;
-}
-
-/* search */
-.search{
-  margin-left:auto;
-  padding:6px;
-  border-radius:6px;
+input{
+  padding:10px;
+  width:90%;
+  margin-top:10px;
   border:none;
-  width:180px;
-}
-
-.settings{
-  font-size:22px;
-  cursor:pointer;
-}
-
-/* SPECIAL DAY BAR */
-.special{
-  text-align:center;
-  background:#ffcc00;
-  padding:8px;
-  font-weight:bold;
-}
-
-/* GAME */
-.box{
-  text-align:center;
-  margin-top:40px;
+  border-radius:8px;
 }
 
 button{
+  padding:10px;
+  margin-top:10px;
+  width:100%;
+  cursor:pointer;
+  border:none;
+  border-radius:8px;
+  background:#00c853;
+  color:white;
+  font-size:16px;
+}
+
+/* GAME */
+.game{
+  display:none;
+  padding:20px;
+}
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  background:#111;
+  padding:10px;
+  align-items:center;
+}
+
+.shop{
+  margin-top:15px;
+  background:#222;
+  padding:10px;
+  border-radius:10px;
+}
+
+.box{
+  margin-top:20px;
+  background:#222;
   padding:15px;
-  margin:10px;
-  font-size:18px;
+  border-radius:10px;
+}
+
+.bar{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  margin-top:10px;
+}
+
+.cut{
+  padding:10px;
+  background:#444;
+  border-radius:8px;
   cursor:pointer;
 }
 
-#msg{
-  font-size:20px;
-  margin-top:15px;
-}
-
-#score{
-  font-size:18px;
-  margin-top:10px;
+.cut:hover{
+  background:#00c853;
 }
 </style>
+
 </head>
 
 <body>
 
-<!-- TOP -->
+<!-- STEAM START -->
+<div class="card" id="startCard">
+<h2>💇 Kuaför Tycoon</h2>
+<p>Kuaför adını gir</p>
+
+<input id="name" placeholder="Kuaför adı...">
+
+<button onclick="startGame()">Başlat</button>
+</div>
+
+<!-- GAME -->
+<div class="game" id="game">
+
 <div class="topbar">
-  <div class="title">SERKAN GAMES</div>
-
-  <div class="clock" id="clock">00:00:00</div>
-
-  <input class="search" placeholder="Ara...">
-
-  <div class="settings">⚙️</div>
+  <div id="barberName">Kuaför</div>
+  <div>💵 <span id="money">0</span></div>
+  <div>📅 Gün <span id="day">1</span></div>
 </div>
 
-<!-- ÖZEL GÜN -->
-<div class="special" id="specialDay">
-Özel gün kontrol ediliyor...
+<!-- SHOP -->
+<div class="shop">
+<h3>🛒 Mağaza</h3>
+<button onclick="buy('zemin')">Zemin (50$)</button>
+<button onclick="buy('duvar')">Duvar (50$)</button>
+<button onclick="buy('koltuk')">Koltuk (100$)</button>
 </div>
 
-<!-- OYUN -->
+<!-- CUSTOMER -->
 <div class="box">
-  <h2>💇 Kuaför Simülasyonu</h2>
+<h3>👤 Müşteri</h3>
+<p id="customer">Hazır...</p>
 
-  <p id="customer">Müşteri hazır...</p>
+<div class="bar">
+  <div class="cut" onclick="cut('yan')">Yan</div>
+  <div class="cut" onclick="cut('ust')">Üst</div>
+  <div class="cut" onclick="cut('arka')">Arka</div>
+</div>
 
-  <button onclick="action('kes')">✂️ Kes</button>
-  <button onclick="action('boya')">🎨 Boya</button>
-  <button onclick="action('tara')">💈 Tara</button>
+<p id="msg"></p>
+</div>
 
-  <div id="msg"></div>
-  <div id="score">Puan: 0</div>
 </div>
 
 <script>
 
-/* SAAT */
-function updateClock(){
-  document.getElementById("clock").innerText =
-  new Date().toLocaleTimeString("tr-TR");
+let money = 0;
+let day = 1;
+let target = "";
+
+function startGame(){
+  let name = document.getElementById("name").value;
+  if(!name) name = "Kuaför";
+
+  document.getElementById("barberName").innerText = name;
+
+  document.getElementById("startCard").style.display="none";
+  document.getElementById("game").style.display="block";
+
+  newCustomer();
+  setInterval(nextDay, 15000); // 15 sn = 1 gün
 }
-setInterval(updateClock,1000);
-updateClock();
 
-/* ÖZEL GÜNLER */
-function checkSpecialDay(){
-  const d = new Date();
-  const m = d.getMonth()+1;
-  const day = d.getDate();
-
-  let msg = "Bugün normal bir gün.";
-
-  if(m==1 && day==1) msg="🎉 Yeni Yıl Kutlu Olsun!";
-  if(m==4 && day==23) msg="🇹🇷 23 Nisan Kutlu Olsun!";
-  if(m==5 && day==19) msg="🇹🇷 19 Mayıs Kutlu Olsun!";
-  if(m==10 && day==29) msg="🇹🇷 29 Ekim Cumhuriyet Bayramı!";
-
-  document.getElementById("specialDay").innerText = msg;
+function nextDay(){
+  day++;
+  document.getElementById("day").innerText = day;
+  money += 20;
+  document.getElementById("money").innerText = money;
 }
-checkSpecialDay();
-
-/* GAME */
-let score = 0;
-let actions = ["kes","boya","tara"];
 
 function newCustomer(){
-  window.target = actions[Math.floor(Math.random()*actions.length)];
+  const parts = ["yan","ust","arka"];
+  target = parts[Math.floor(Math.random()*parts.length)];
   document.getElementById("customer").innerText =
-  "Müşteri istedi: " + window.target;
+  "İstediği: " + target;
 }
 
-function action(x){
-  if(x === window.target){
-    score += 10;
-    document.getElementById("msg").innerText = "✔ Doğru! +10";
-  } else {
-    score -= 5;
-    document.getElementById("msg").innerText = "❌ Yanlış! -5";
+function cut(part){
+  if(part === target){
+    money += 30;
+    document.getElementById("msg").innerText = "✔ Doğru! +30$";
+  }else{
+    money -= 10;
+    document.getElementById("msg").innerText = "❌ Yanlış! -10$";
   }
 
-  document.getElementById("score").innerText = "Puan: " + score;
-  setTimeout(newCustomer, 700);
+  document.getElementById("money").innerText = money;
+  setTimeout(newCustomer, 1000);
 }
 
-newCustomer();
+/* SHOP */
+function buy(item){
+  let price = 0;
+
+  if(item=="zemin") price=50;
+  if(item=="duvar") price=50;
+  if(item=="koltuk") price=100;
+
+  if(money >= price){
+    money -= price;
+    document.getElementById("msg").innerText =
+    "✔ Satın alındı: " + item;
+  }else{
+    document.getElementById("msg").innerText =
+    "❌ Para yok!";
+  }
+
+  document.getElementById("money").innerText = money;
+}
 
 </script>
 
