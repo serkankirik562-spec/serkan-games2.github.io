@@ -11,82 +11,59 @@ body {
   transition: 0.3s;
 }
 
-/* DARK MODE */
-body.dark {
-  background: #0a0a0a;
-  color: white;
-}
+/* THEMES */
+body.dark { background:#0a0a0a; color:white; }
+body.light { background:#f2f2f2; color:black; }
 
-/* LIGHT MODE */
-body.light {
-  background: #f2f2f2;
-  color: black;
-}
-
-/* ÜST BAR */
 .top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 20px;
-  border-bottom: 2px solid #333;
-  background: rgba(0,0,0,0.2);
+  display:flex;
+  justify-content:space-between;
+  padding:15px;
+  background:rgba(0,0,0,0.3);
 }
 
-body.light .top {
-  background: #fff;
-  border-bottom: 2px solid #ddd;
+.logo { color:#00ffcc; font-weight:bold; }
+
+.clock { font-size:18px; }
+
+.settings-btn {
+  background:#222;
+  padding:8px 12px;
+  border-radius:10px;
+  cursor:pointer;
 }
 
-/* LOGO */
-.logo {
-  font-size: 22px;
-  font-weight: bold;
-  color: #00ffcc;
+/* PANEL */
+.panel {
+  position:fixed;
+  right:-300px;
+  top:0;
+  width:250px;
+  height:100%;
+  background:#111;
+  padding:20px;
+  transition:0.3s;
 }
 
-/* SAAT */
-.clock {
-  font-size: 18px;
+.panel.open {
+  right:0;
 }
 
-/* AYARLAR */
-.settings {
-  padding: 8px 12px;
-  background: #222;
-  border-radius: 10px;
-  cursor: pointer;
+.panel h3 {
+  color:#00ffcc;
 }
 
-body.light .settings {
-  background: #ddd;
+button, input {
+  width:100%;
+  margin-top:10px;
+  padding:10px;
+  border:none;
+  border-radius:8px;
 }
 
-/* ORTA */
-.center {
-  margin-top: 80px;
-  text-align: center;
-}
-
-h1 {
-  color: #00ffcc;
-}
-
-/* SEARCH */
-.search input {
-  padding: 12px;
-  width: 280px;
-  border-radius: 10px;
-  border: none;
-  outline: none;
-}
-
-.search button {
-  padding: 12px;
-  border-radius: 10px;
-  border: none;
-  background: #00ffcc;
-  cursor: pointer;
+/* SLIDER */
+input[type=range] {
+  width:100%;
 }
 </style>
 </head>
@@ -96,43 +73,82 @@ h1 {
 <div class="top">
   <div class="logo">SERKAN GAMES</div>
   <div class="clock" id="clock">00:00:00</div>
-  <div class="settings" onclick="toggleMode()">⚙ Tema</div>
+  <div class="settings-btn" onclick="togglePanel()">⚙ Ayarlar</div>
 </div>
 
-<div class="center">
-  <h1>GAMER HUB</h1>
+<h2 style="text-align:center;margin-top:80px;">🎮 GAMER HUB</h2>
 
-  <div class="search">
-    <input type="text" placeholder="Oyun ara...">
-    <button>Ara</button>
-  </div>
+<!-- AYARLAR PANEL -->
+<div class="panel" id="panel">
+
+  <h3>Ayarlar</h3>
+
+  <button onclick="toggleTheme()">🌙 / ☀ Tema</button>
+
+  <button onclick="toggleMusic()">🎵 Müzik Aç/Kapat</button>
+
+  <p>🔊 Ses</p>
+  <input type="range" min="0" max="100" value="50" oninput="setVolume(this.value)">
+
 </div>
+
+<!-- TELİFSİZ ARKA PLAN MÜZİĞİ -->
+<audio id="music" loop>
+  <source src="https://cdn.pixabay.com/download/audio/2022/10/16/audio_7c2c2c7f3a.mp3?filename=gaming-music-ambient-118699.mp3" type="audio/mpeg">
+</audio>
 
 <script>
-// SAAT
-function updateClock() {
-  let now = new Date();
-  let h = String(now.getHours()).padStart(2,'0');
-  let m = String(now.getMinutes()).padStart(2,'0');
-  let s = String(now.getSeconds()).padStart(2,'0');
 
-  document.getElementById("clock").innerText = h + ":" + m + ":" + s;
+// SAAT
+function updateClock(){
+  let d = new Date();
+  let h = String(d.getHours()).padStart(2,'0');
+  let m = String(d.getMinutes()).padStart(2,'0');
+  let s = String(d.getSeconds()).padStart(2,'0');
+  document.getElementById("clock").innerText = h+":"+m+":"+s;
 }
-setInterval(updateClock, 1000);
+setInterval(updateClock,1000);
 updateClock();
 
-// GÜNDÜZ / GECE
-function toggleMode() {
-  let body = document.body;
+// PANEL AÇ/KAPA
+function togglePanel(){
+  document.getElementById("panel").classList.toggle("open");
+}
 
-  if (body.classList.contains("dark")) {
-    body.classList.remove("dark");
-    body.classList.add("light");
+// THEME
+function toggleTheme(){
+  let b = document.body;
+  if(b.classList.contains("dark")){
+    b.classList.remove("dark");
+    b.classList.add("light");
   } else {
-    body.classList.remove("light");
-    body.classList.add("dark");
+    b.classList.remove("light");
+    b.classList.add("dark");
   }
 }
+
+// MUSIC
+let music = document.getElementById("music");
+let playing = false;
+
+function toggleMusic(){
+  if(playing){
+    music.pause();
+    playing = false;
+  } else {
+    music.play();
+    playing = true;
+  }
+}
+
+// VOLUME
+function setVolume(v){
+  music.volume = v / 100;
+}
+
+// otomatik ses
+music.volume = 0.5;
+
 </script>
 
 </body>
