@@ -1,244 +1,118 @@
 <!DOCTYPE html>
-<html>
+<html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Serkan Games V4</title>
+<title>SERKAN GAMES</title>
 
 <style>
-body{
-  margin:0;
-  font-family:Arial;
-  background:#0b0f14;
-  color:white;
-  overflow:hidden;
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #0a0a0a;
+  color: white;
+  text-align: center;
 }
 
-/* HUD */
-.hud{
-  display:flex;
-  justify-content:space-between;
-  padding:10px;
-  background:#111827;
+/* ÜST BAR */
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background: #111;
+  border-bottom: 2px solid #222;
 }
 
-/* GAME WORLD */
-.world{
-  height:60vh;
-  background:linear-gradient(#1e293b,#0b0f14);
-  position:relative;
-  overflow:hidden;
+/* LOGO */
+.logo {
+  font-size: 22px;
+  font-weight: bold;
+  color: #00ffcc;
+  letter-spacing: 2px;
 }
 
-/* CUSTOMER */
-.customer{
-  width:80px;
-  height:80px;
-  background:#fbbf24;
-  border-radius:10px;
-  position:absolute;
-  top:40%;
-  left:40%;
-  transition:0.5s;
+/* SAAT */
+.clock {
+  font-size: 18px;
+  color: #aaa;
 }
 
-/* TOOLBAR */
-.toolbar{
-  position:fixed;
-  bottom:0;
-  width:100%;
-  display:flex;
-  justify-content:center;
-  gap:10px;
-  background:#111827;
-  padding:10px;
+/* AYARLAR */
+.settings {
+  background: #222;
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
 }
 
-.tool{
-  padding:10px;
-  background:#374151;
-  border-radius:8px;
-  cursor:pointer;
+.settings:hover {
+  background: #333;
 }
 
-.tool.active{
-  background:#10b981;
+/* ORTA ALAN */
+.center {
+  margin-top: 80px;
 }
 
-/* SHOP */
-.shop{
-  position:fixed;
-  top:50px;
-  right:10px;
-  width:200px;
-  background:#1f2937;
-  padding:10px;
-  border-radius:10px;
-  opacity:0.4;
-  pointer-events:none;
+h1 {
+  font-size: 40px;
+  color: #00ffcc;
 }
 
-.shop.open{
-  opacity:1;
-  pointer-events:auto;
+/* ARAMA */
+.search {
+  margin-top: 20px;
 }
 
-/* GRID BUILD MODE */
-.grid{
-  position:absolute;
-  width:100%;
-  height:100%;
-  display:grid;
-  grid-template-columns:repeat(10,1fr);
-  grid-template-rows:repeat(6,1fr);
+.search input {
+  width: 300px;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  background: #222;
+  color: white;
 }
 
-.cell{
-  border:1px solid rgba(255,255,255,0.05);
-}
-
-.cell.ok{
-  background:rgba(16,185,129,0.3);
-}
-
-.cell.no{
-  background:rgba(239,68,68,0.3);
-}
-
-/* PHONE */
-.phone{
-  position:fixed;
-  left:10px;
-  bottom:60px;
-  background:#111827;
-  padding:10px;
-  border-radius:10px;
+.search button {
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: #00ffcc;
+  cursor: pointer;
+  font-weight: bold;
 }
 </style>
-
 </head>
 
 <body>
 
-<!-- HUD -->
-<div class="hud">
-<div>💈 SERKAN SALON</div>
-<div>💵 <span id="money">0</span></div>
-<div>📅 Gün <span id="day">1</span></div>
+<div class="top">
+  <div class="logo">SERKAN GAMES</div>
+  <div class="clock" id="clock">00:00:00</div>
+  <div class="settings">⚙ Ayarlar</div>
 </div>
 
-<!-- WORLD -->
-<div class="world">
+<div class="center">
+  <h1>GAMER MOD</h1>
 
-<div class="grid" id="grid"></div>
-
-<div class="customer" id="customer"></div>
-
-</div>
-
-<!-- SHOP -->
-<div class="shop" id="shop">
-<h3>🛒 Mağaza</h3>
-<button onclick="buy('koltuk')">Koltuk 100$</button>
-<button onclick="buy('duvar')">Duvar 50$</button>
-<button onclick="openShop()">Aç/Kapat</button>
-</div>
-
-<!-- PHONE -->
-<div class="phone">
-📱 <br>
-1 Yemek<br>
-2 Shop<br>
-3 Müşteri
-</div>
-
-<!-- TOOLBAR -->
-<div class="toolbar">
-<div class="tool" onclick="tool('makas')">✂️</div>
-<div class="tool" onclick="tool('makine')">🔌</div>
-<div class="tool" onclick="tool('köpük')">🫧</div>
-<div class="tool" onclick="tool('jilet')">🪒</div>
+  <div class="search">
+    <input type="text" placeholder="Oyun ara...">
+    <button>Ara</button>
+  </div>
 </div>
 
 <script>
+function updateClock() {
+  let now = new Date();
+  let h = String(now.getHours()).padStart(2,'0');
+  let m = String(now.getMinutes()).padStart(2,'0');
+  let s = String(now.getSeconds()).padStart(2,'0');
 
-let money=0;
-let day=1;
-let tool="";
-let shop=false;
-let progress=0;
-
-/* GRID BUILD SYSTEM */
-let grid = document.getElementById("grid");
-
-for(let i=0;i<60;i++){
-  let c=document.createElement("div");
-  c.className="cell";
-
-  c.onclick=()=>{
-    if(shop){
-      c.classList.toggle("ok");
-    }
-  };
-
-  grid.appendChild(c);
+  document.getElementById("clock").innerText = h + ":" + m + ":" + s;
 }
-
-/* CUSTOMER MOVE (AI FEEL) */
-setInterval(()=>{
-  let c=document.getElementById("customer");
-
-  c.style.top = (30+Math.random()*40)+"%";
-  c.style.left = (20+Math.random()*60)+"%";
-
-},3000);
-
-/* GAME LOOP */
-setInterval(()=>{
-
-  if(tool){
-    progress++;
-
-    if(progress>100){
-      money+=20;
-      document.getElementById("money").innerText=money;
-      progress=0;
-    }
-  }
-
-},200);
-
-/* TOOL */
-function tool(t){
-  document.querySelectorAll(".tool").forEach(e=>e.classList.remove("active"));
-  event.target.classList.add("active");
-  tool=t;
-}
-
-/* SHOP */
-function openShop(){
-  shop=!shop;
-  document.getElementById("shop").classList.toggle("open");
-}
-
-/* BUY */
-function buy(i){
-  if(i=="koltuk" && money>=100){
-    money-=100;
-  }
-  if(i=="duvar" && money>=50){
-    money-=50;
-  }
-
-  document.getElementById("money").innerText=money;
-}
-
-/* DAY */
-setInterval(()=>{
-  day++;
-  document.getElementById("day").innerText=day;
-},10000);
-
+setInterval(updateClock, 1000);
+updateClock();
 </script>
 
 </body>
