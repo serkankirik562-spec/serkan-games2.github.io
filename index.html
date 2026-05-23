@@ -8,9 +8,19 @@
 body {
   margin: 0;
   font-family: Arial;
+  transition: 0.3s;
+}
+
+/* DARK MODE */
+body.dark {
   background: #0a0a0a;
   color: white;
-  text-align: center;
+}
+
+/* LIGHT MODE */
+body.light {
+  background: #f2f2f2;
+  color: black;
 }
 
 /* ÜST BAR */
@@ -19,8 +29,13 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 15px 20px;
-  background: #111;
-  border-bottom: 2px solid #222;
+  border-bottom: 2px solid #333;
+  background: rgba(0,0,0,0.2);
+}
+
+body.light .top {
+  background: #fff;
+  border-bottom: 2px solid #ddd;
 }
 
 /* LOGO */
@@ -28,73 +43,64 @@ body {
   font-size: 22px;
   font-weight: bold;
   color: #00ffcc;
-  letter-spacing: 2px;
 }
 
 /* SAAT */
 .clock {
   font-size: 18px;
-  color: #aaa;
 }
 
 /* AYARLAR */
 .settings {
-  background: #222;
   padding: 8px 12px;
+  background: #222;
   border-radius: 10px;
   cursor: pointer;
 }
 
-.settings:hover {
-  background: #333;
+body.light .settings {
+  background: #ddd;
 }
 
-/* ORTA ALAN */
+/* ORTA */
 .center {
   margin-top: 80px;
+  text-align: center;
 }
 
 h1 {
-  font-size: 40px;
   color: #00ffcc;
 }
 
-/* ARAMA */
-.search {
-  margin-top: 20px;
-}
-
+/* SEARCH */
 .search input {
-  width: 300px;
   padding: 12px;
+  width: 280px;
   border-radius: 10px;
   border: none;
   outline: none;
-  background: #222;
-  color: white;
 }
 
 .search button {
   padding: 12px;
-  border: none;
   border-radius: 10px;
+  border: none;
   background: #00ffcc;
   cursor: pointer;
-  font-weight: bold;
 }
 </style>
 </head>
 
-<body>
+<body class="dark">
 
 <div class="top">
   <div class="logo">SERKAN GAMES</div>
   <div class="clock" id="clock">00:00:00</div>
-  <div class="settings">⚙ Ayarlar</div>
+  <div class="settings" onclick="toggleMode()">⚙ Tema</div>
 </div>
 
 <div class="center">
-  <h1>GAMER MOD</h1>
+  <h1>GAMER HUB</h1>
 
   <div class="search">
     <input type="text" placeholder="Oyun ara...">
@@ -103,6 +109,7 @@ h1 {
 </div>
 
 <script>
+// SAAT
 function updateClock() {
   let now = new Date();
   let h = String(now.getHours()).padStart(2,'0');
@@ -113,6 +120,19 @@ function updateClock() {
 }
 setInterval(updateClock, 1000);
 updateClock();
+
+// GÜNDÜZ / GECE
+function toggleMode() {
+  let body = document.body;
+
+  if (body.classList.contains("dark")) {
+    body.classList.remove("dark");
+    body.classList.add("light");
+  } else {
+    body.classList.remove("light");
+    body.classList.add("dark");
+  }
+}
 </script>
 
 </body>
