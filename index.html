@@ -11,59 +11,93 @@ body {
   transition: 0.3s;
 }
 
-/* THEMES */
 body.dark { background:#0a0a0a; color:white; }
 body.light { background:#f2f2f2; color:black; }
 
 .top {
   display:flex;
+  align-items:center;
   justify-content:space-between;
-  padding:15px;
-  background:rgba(0,0,0,0.3);
+  padding:10px 15px;
+  background:rgba(0,0,0,0.4);
+  gap:10px;
 }
 
-.logo { color:#00ffcc; font-weight:bold; }
+/* LOGO */
+.logo {
+  color:#00ffcc;
+  font-weight:bold;
+  white-space:nowrap;
+}
 
-.clock { font-size:18px; }
+/* SEARCH (YUKARI TAŞINDI) */
+.search {
+  flex:1;
+  display:flex;
+  justify-content:center;
+}
 
+.search input {
+  width:60%;
+  max-width:400px;
+  padding:8px;
+  border:none;
+  border-radius:8px;
+  outline:none;
+  background:#222;
+  color:white;
+}
+
+.search button {
+  padding:8px 12px;
+  border:none;
+  border-radius:8px;
+  background:#00ffcc;
+  cursor:pointer;
+  margin-left:5px;
+}
+
+/* CLOCK */
+.clock {
+  white-space:nowrap;
+}
+
+/* SETTINGS */
 .settings-btn {
   background:#222;
-  padding:8px 12px;
-  border-radius:10px;
+  padding:6px 10px;
+  border-radius:8px;
   cursor:pointer;
 }
+
+/* CENTER */
+.center {
+  text-align:center;
+  margin-top:80px;
+}
+
+h1 { color:#00ffcc; }
 
 /* PANEL */
 .panel {
   position:fixed;
-  right:-300px;
+  right:-260px;
   top:0;
-  width:250px;
+  width:230px;
   height:100%;
   background:#111;
-  padding:20px;
+  padding:15px;
   transition:0.3s;
 }
 
-.panel.open {
-  right:0;
-}
+.panel.open { right:0; }
 
-.panel h3 {
-  color:#00ffcc;
-}
-
-button, input {
+button {
   width:100%;
   margin-top:10px;
   padding:10px;
   border:none;
   border-radius:8px;
-}
-
-/* SLIDER */
-input[type=range] {
-  width:100%;
 }
 </style>
 </head>
@@ -71,83 +105,54 @@ input[type=range] {
 <body class="dark">
 
 <div class="top">
+
   <div class="logo">SERKAN GAMES</div>
+
+  <div class="search">
+    <input type="text" placeholder="Oyun ara...">
+    <button>Ara</button>
+  </div>
+
   <div class="clock" id="clock">00:00:00</div>
-  <div class="settings-btn" onclick="togglePanel()">⚙ Ayarlar</div>
+
+  <div class="settings-btn" onclick="togglePanel()">⚙</div>
+
 </div>
 
-<h2 style="text-align:center;margin-top:80px;">🎮 GAMER HUB</h2>
+<div class="center">
+  <h1>GAMER HUB</h1>
+</div>
 
-<!-- AYARLAR PANEL -->
+<!-- PANEL -->
 <div class="panel" id="panel">
-
   <h3>Ayarlar</h3>
-
   <button onclick="toggleTheme()">🌙 / ☀ Tema</button>
-
-  <button onclick="toggleMusic()">🎵 Müzik Aç/Kapat</button>
-
-  <p>🔊 Ses</p>
-  <input type="range" min="0" max="100" value="50" oninput="setVolume(this.value)">
-
 </div>
-
-<!-- TELİFSİZ ARKA PLAN MÜZİĞİ -->
-<audio id="music" loop>
-  <source src="https://cdn.pixabay.com/download/audio/2022/10/16/audio_7c2c2c7f3a.mp3?filename=gaming-music-ambient-118699.mp3" type="audio/mpeg">
-</audio>
 
 <script>
 
-// SAAT
+// saat
 function updateClock(){
-  let d = new Date();
-  let h = String(d.getHours()).padStart(2,'0');
-  let m = String(d.getMinutes()).padStart(2,'0');
-  let s = String(d.getSeconds()).padStart(2,'0');
-  document.getElementById("clock").innerText = h+":"+m+":"+s;
+  let d=new Date();
+  document.getElementById("clock").innerText =
+  String(d.getHours()).padStart(2,'0')+":"+
+  String(d.getMinutes()).padStart(2,'0')+":"+
+  String(d.getSeconds()).padStart(2,'0');
 }
 setInterval(updateClock,1000);
 updateClock();
 
-// PANEL AÇ/KAPA
+// panel
 function togglePanel(){
   document.getElementById("panel").classList.toggle("open");
 }
 
-// THEME
+// tema
 function toggleTheme(){
-  let b = document.body;
-  if(b.classList.contains("dark")){
-    b.classList.remove("dark");
-    b.classList.add("light");
-  } else {
-    b.classList.remove("light");
-    b.classList.add("dark");
-  }
+  let b=document.body;
+  b.classList.toggle("light");
+  b.classList.toggle("dark");
 }
-
-// MUSIC
-let music = document.getElementById("music");
-let playing = false;
-
-function toggleMusic(){
-  if(playing){
-    music.pause();
-    playing = false;
-  } else {
-    music.play();
-    playing = true;
-  }
-}
-
-// VOLUME
-function setVolume(v){
-  music.volume = v / 100;
-}
-
-// otomatik ses
-music.volume = 0.5;
 
 </script>
 
