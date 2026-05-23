@@ -11,93 +11,112 @@ body {
   transition: 0.3s;
 }
 
-body.dark { background:#0a0a0a; color:white; }
-body.light { background:#f2f2f2; color:black; }
+/* 🌙 DARK */
+body.dark {
+  background: #06130f;
+  color: white;
+}
 
+/* ☀ LIGHT (AÇIK YEŞİL TON) */
+body.light {
+  background: linear-gradient(135deg, #b8ffcc, #d8ffe6);
+  color: #111;
+}
+
+/* TOP BAR */
 .top {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:10px 15px;
-  background:rgba(0,0,0,0.4);
-  gap:10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 15px;
+  background: rgba(0,0,0,0.25);
+  backdrop-filter: blur(6px);
 }
 
 /* LOGO */
 .logo {
-  color:#00ffcc;
-  font-weight:bold;
-  white-space:nowrap;
+  font-weight: bold;
+  color: #00ff99;
+  letter-spacing: 2px;
 }
 
-/* SEARCH (YUKARI TAŞINDI) */
+/* SEARCH */
 .search {
-  flex:1;
-  display:flex;
-  justify-content:center;
+  flex: 1;
+  display: flex;
+  justify-content: center;
 }
 
 .search input {
-  width:60%;
-  max-width:400px;
-  padding:8px;
-  border:none;
-  border-radius:8px;
-  outline:none;
-  background:#222;
-  color:white;
+  width: 60%;
+  max-width: 400px;
+  padding: 8px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  background: #111;
+  color: white;
 }
 
 .search button {
-  padding:8px 12px;
-  border:none;
-  border-radius:8px;
-  background:#00ffcc;
-  cursor:pointer;
-  margin-left:5px;
+  margin-left: 5px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 10px;
+  background: #00ff99;
+  cursor: pointer;
+  font-weight: bold;
 }
 
 /* CLOCK */
 .clock {
-  white-space:nowrap;
+  margin-left: 10px;
+  white-space: nowrap;
 }
 
 /* SETTINGS */
-.settings-btn {
-  background:#222;
-  padding:6px 10px;
-  border-radius:8px;
-  cursor:pointer;
+.settings {
+  background: #111;
+  padding: 6px 10px;
+  border-radius: 10px;
+  cursor: pointer;
 }
 
 /* CENTER */
 .center {
-  text-align:center;
-  margin-top:80px;
+  text-align: center;
+  margin-top: 80px;
 }
 
-h1 { color:#00ffcc; }
+h1 {
+  color: #00ff99;
+  font-size: 40px;
+  text-shadow: 0 0 10px #00ff99;
+}
 
 /* PANEL */
 .panel {
-  position:fixed;
-  right:-260px;
-  top:0;
-  width:230px;
-  height:100%;
-  background:#111;
-  padding:15px;
-  transition:0.3s;
+  position: fixed;
+  right: -260px;
+  top: 0;
+  width: 230px;
+  height: 100%;
+  background: #0b1a14;
+  padding: 15px;
+  transition: 0.3s;
 }
 
-.panel.open { right:0; }
+.panel.open {
+  right: 0;
+}
 
 button {
-  width:100%;
-  margin-top:10px;
-  padding:10px;
-  border:none;
-  border-radius:8px;
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
 }
 </style>
 </head>
@@ -115,7 +134,7 @@ button {
 
   <div class="clock" id="clock">00:00:00</div>
 
-  <div class="settings-btn" onclick="togglePanel()">⚙</div>
+  <div class="settings" onclick="togglePanel()">⚙</div>
 
 </div>
 
@@ -126,32 +145,35 @@ button {
 <!-- PANEL -->
 <div class="panel" id="panel">
   <h3>Ayarlar</h3>
+
   <button onclick="toggleTheme()">🌙 / ☀ Tema</button>
+
 </div>
 
 <script>
 
-// saat
+// SAAT
 function updateClock(){
-  let d=new Date();
-  document.getElementById("clock").innerText =
-  String(d.getHours()).padStart(2,'0')+":"+
-  String(d.getMinutes()).padStart(2,'0')+":"+
-  String(d.getSeconds()).padStart(2,'0');
+  let d = new Date();
+  let h = String(d.getHours()).padStart(2,'0');
+  let m = String(d.getMinutes()).padStart(2,'0');
+  let s = String(d.getSeconds()).padStart(2,'0');
+
+  document.getElementById("clock").innerText = h+":"+m+":"+s;
 }
 setInterval(updateClock,1000);
 updateClock();
 
-// panel
+// PANEL
 function togglePanel(){
   document.getElementById("panel").classList.toggle("open");
 }
 
-// tema
+// THEME
 function toggleTheme(){
-  let b=document.body;
-  b.classList.toggle("light");
+  let b = document.body;
   b.classList.toggle("dark");
+  b.classList.toggle("light");
 }
 
 </script>
