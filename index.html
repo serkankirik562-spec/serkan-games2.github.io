@@ -17,9 +17,9 @@ body.dark {
   color: white;
 }
 
-/* ☀ LIGHT (AÇIK YEŞİL TON) */
+/* ☀ LIGHT (AÇIK YEŞİL) */
 body.light {
-  background: linear-gradient(135deg, #b8ffcc, #d8ffe6);
+  background: linear-gradient(135deg, #b8ffcc, #e6fff0);
   color: #111;
 }
 
@@ -28,9 +28,10 @@ body.light {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 15px;
+  padding: 10px 12px;
   background: rgba(0,0,0,0.25);
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(8px);
+  gap: 10px;
 }
 
 /* LOGO */
@@ -38,39 +39,11 @@ body.light {
   font-weight: bold;
   color: #00ff99;
   letter-spacing: 2px;
-}
-
-/* SEARCH */
-.search {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-}
-
-.search input {
-  width: 60%;
-  max-width: 400px;
-  padding: 8px;
-  border-radius: 10px;
-  border: none;
-  outline: none;
-  background: #111;
-  color: white;
-}
-
-.search button {
-  margin-left: 5px;
-  padding: 8px 12px;
-  border: none;
-  border-radius: 10px;
-  background: #00ff99;
-  cursor: pointer;
-  font-weight: bold;
+  white-space: nowrap;
 }
 
 /* CLOCK */
 .clock {
-  margin-left: 10px;
   white-space: nowrap;
 }
 
@@ -80,6 +53,12 @@ body.light {
   padding: 6px 10px;
   border-radius: 10px;
   cursor: pointer;
+}
+
+/* SPOTIFY */
+.spotify-mini {
+  display: flex;
+  align-items: center;
 }
 
 /* CENTER */
@@ -110,13 +89,16 @@ h1 {
   right: 0;
 }
 
-button {
+button, input {
   width: 100%;
   margin-top: 10px;
   padding: 10px;
   border: none;
   border-radius: 10px;
-  cursor: pointer;
+}
+
+input[type=range] {
+  width: 100%;
 }
 </style>
 </head>
@@ -127,9 +109,14 @@ button {
 
   <div class="logo">SERKAN GAMES</div>
 
-  <div class="search">
-    <input type="text" placeholder="Oyun ara...">
-    <button>Ara</button>
+  <!-- 🎧 SPOTIFY -->
+  <div class="spotify-mini">
+    <iframe style="border-radius:10px"
+      src="https://open.spotify.com/embed/track/1lOe9qE0vR9z4n3Yc6g1Qm"
+      width="220" height="80"
+      frameborder="0"
+      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
+    </iframe>
   </div>
 
   <div class="clock" id="clock">00:00:00</div>
@@ -142,24 +129,37 @@ button {
   <h1>GAMER HUB</h1>
 </div>
 
-<!-- PANEL -->
+<!-- AYARLAR PANEL -->
 <div class="panel" id="panel">
-  <h3>Ayarlar</h3>
+
+  <h3>⚙ Ayarlar</h3>
 
   <button onclick="toggleTheme()">🌙 / ☀ Tema</button>
 
+  <h3>🎵 Müzik</h3>
+
+  <button onclick="playMusic()">▶ Oynat</button>
+  <button onclick="pauseMusic()">⏸ Durdur</button>
+
+  <p>🔊 Ses</p>
+  <input type="range" min="0" max="100" value="50" oninput="setVolume(this.value)">
+
 </div>
+
+<!-- BACKGROUND MUSIC -->
+<audio id="music" loop>
+  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8b5b1d3b6.mp3?filename=gaming-112677.mp3" type="audio/mpeg">
+</audio>
 
 <script>
 
-// SAAT
+// CLOCK
 function updateClock(){
   let d = new Date();
-  let h = String(d.getHours()).padStart(2,'0');
-  let m = String(d.getMinutes()).padStart(2,'0');
-  let s = String(d.getSeconds()).padStart(2,'0');
-
-  document.getElementById("clock").innerText = h+":"+m+":"+s;
+  document.getElementById("clock").innerText =
+  String(d.getHours()).padStart(2,'0') + ":" +
+  String(d.getMinutes()).padStart(2,'0') + ":" +
+  String(d.getSeconds()).padStart(2,'0');
 }
 setInterval(updateClock,1000);
 updateClock();
@@ -171,10 +171,26 @@ function togglePanel(){
 
 // THEME
 function toggleTheme(){
-  let b = document.body;
-  b.classList.toggle("dark");
-  b.classList.toggle("light");
+  document.body.classList.toggle("light");
+  document.body.classList.toggle("dark");
 }
+
+// MUSIC
+let music = document.getElementById("music");
+
+function playMusic(){
+  music.play();
+}
+
+function pauseMusic(){
+  music.pause();
+}
+
+function setVolume(v){
+  music.volume = v / 100;
+}
+
+music.volume = 0.5;
 
 </script>
 
