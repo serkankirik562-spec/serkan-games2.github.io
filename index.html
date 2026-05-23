@@ -11,35 +11,60 @@ body {
   transition: 0.3s;
 }
 
-/* 🌙 DARK */
+/* 🌙 GECE */
 body.dark {
-  background: #06130f;
+  background: #050805;
   color: white;
 }
 
-/* ☀ LIGHT (AÇIK YEŞİL) */
+/* ☀ GÜNDÜZ */
 body.light {
-  background: linear-gradient(135deg, #b8ffcc, #e6fff0);
+  background: #f2f2f2;
   color: #111;
 }
 
 /* TOP BAR */
 .top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 12px;
-  background: rgba(0,0,0,0.25);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:10px;
+  background: rgba(0,0,0,0.2);
   backdrop-filter: blur(8px);
-  gap: 10px;
 }
 
-/* LOGO */
+/* 🎮 NEON LOGO */
 .logo {
   font-weight: bold;
-  color: #00ff99;
+  font-size: 20px;
   letter-spacing: 2px;
-  white-space: nowrap;
+}
+
+/* GECE YAZI BEYAZ */
+body.dark .logo {
+  color: white;
+}
+
+/* GÜNDÜZ YAZI SİYAH */
+body.light .logo {
+  color: black;
+}
+
+/* 🟩⬛ NEON EFEKT */
+.logo span {
+  color: #00ff99;
+  text-shadow: 0 0 8px #00ff99;
+}
+
+/* SEARCH */
+.search input {
+  padding: 8px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  width: 250px;
+  background: #111;
+  color: white;
 }
 
 /* CLOCK */
@@ -49,28 +74,10 @@ body.light {
 
 /* SETTINGS */
 .settings {
-  background: #111;
   padding: 6px 10px;
+  background: #111;
   border-radius: 10px;
   cursor: pointer;
-}
-
-/* SPOTIFY */
-.spotify-mini {
-  display: flex;
-  align-items: center;
-}
-
-/* CENTER */
-.center {
-  text-align: center;
-  margin-top: 80px;
-}
-
-h1 {
-  color: #00ff99;
-  font-size: 40px;
-  text-shadow: 0 0 10px #00ff99;
 }
 
 /* PANEL */
@@ -89,16 +96,12 @@ h1 {
   right: 0;
 }
 
-button, input {
+button {
   width: 100%;
   margin-top: 10px;
   padding: 10px;
   border: none;
   border-radius: 10px;
-}
-
-input[type=range] {
-  width: 100%;
 }
 </style>
 </head>
@@ -107,16 +110,13 @@ input[type=range] {
 
 <div class="top">
 
-  <div class="logo">SERKAN GAMES</div>
+  <!-- 🎮 SERKAN GAMES NEON -->
+  <div class="logo">
+    SERKAN <span>GAMES</span>
+  </div>
 
-  <!-- 🎧 SPOTIFY -->
-  <div class="spotify-mini">
-    <iframe style="border-radius:10px"
-      src="https://open.spotify.com/embed/track/1lOe9qE0vR9z4n3Yc6g1Qm"
-      width="220" height="80"
-      frameborder="0"
-      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
-    </iframe>
+  <div class="search">
+    <input type="text" placeholder="Oyun ara...">
   </div>
 
   <div class="clock" id="clock">00:00:00</div>
@@ -125,40 +125,26 @@ input[type=range] {
 
 </div>
 
-<div class="center">
+<div class="center" style="text-align:center;margin-top:80px;">
   <h1>GAMER HUB</h1>
 </div>
 
-<!-- AYARLAR PANEL -->
+<!-- PANEL -->
 <div class="panel" id="panel">
 
-  <h3>⚙ Ayarlar</h3>
-
-  <button onclick="toggleTheme()">🌙 / ☀ Tema</button>
-
-  <h3>🎵 Müzik</h3>
-
-  <button onclick="playMusic()">▶ Oynat</button>
-  <button onclick="pauseMusic()">⏸ Durdur</button>
-
-  <p>🔊 Ses</p>
-  <input type="range" min="0" max="100" value="50" oninput="setVolume(this.value)">
+  <button onclick="setDark()">🌙 Gece Modu</button>
+  <button onclick="setLight()">☀ Gündüz Modu</button>
 
 </div>
-
-<!-- BACKGROUND MUSIC -->
-<audio id="music" loop>
-  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8b5b1d3b6.mp3?filename=gaming-112677.mp3" type="audio/mpeg">
-</audio>
 
 <script>
 
 // CLOCK
 function updateClock(){
-  let d = new Date();
-  document.getElementById("clock").innerText =
-  String(d.getHours()).padStart(2,'0') + ":" +
-  String(d.getMinutes()).padStart(2,'0') + ":" +
+  let d=new Date();
+  document.getElementById("clock").innerText=
+  String(d.getHours()).padStart(2,'0')+":"+
+  String(d.getMinutes()).padStart(2,'0')+":"+
   String(d.getSeconds()).padStart(2,'0');
 }
 setInterval(updateClock,1000);
@@ -169,28 +155,17 @@ function togglePanel(){
   document.getElementById("panel").classList.toggle("open");
 }
 
-// THEME
-function toggleTheme(){
-  document.body.classList.toggle("light");
-  document.body.classList.toggle("dark");
+// 🌙 GECE
+function setDark(){
+  document.body.classList.add("dark");
+  document.body.classList.remove("light");
 }
 
-// MUSIC
-let music = document.getElementById("music");
-
-function playMusic(){
-  music.play();
+// ☀ GÜNDÜZ
+function setLight(){
+  document.body.classList.add("light");
+  document.body.classList.remove("dark");
 }
-
-function pauseMusic(){
-  music.pause();
-}
-
-function setVolume(v){
-  music.volume = v / 100;
-}
-
-music.volume = 0.5;
 
 </script>
 
