@@ -1,66 +1,266 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Serkan Games</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Serkan Games</title>
 
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+<style>
 
-    body {
-      font-family: Arial;
-      background: linear-gradient(135deg, #0f0f0f, #1c1c1c);
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      text-align: center;
-    }
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial;
+}
 
-    .box {
-      padding: 40px;
-      border-radius: 15px;
-      background: #1f1f1f;
-      box-shadow: 0 0 20px #00ffcc33;
-    }
+body{
+    height:100vh;
+    overflow:hidden;
+    transition:0.4s;
+}
 
-    h1 {
-      font-size: 32px;
-      color: #00ffcc;
-      text-shadow: 0 0 10px #00ffcc;
-    }
+/* GÜNDÜZ */
+.light{
+    background:
+    radial-gradient(circle at top,#5dade2,#1b4f72 70%);
+    color:white;
+}
 
-    p {
-      margin-top: 10px;
-      color: gray;
-      font-size: 14px;
-    }
+/* GECE */
+.dark{
+    background:
+    radial-gradient(circle at top,#111,#000 70%);
+    color:white;
+}
 
-    footer {
-      position: fixed;
-      bottom: 10px;
-      width: 100%;
-      font-size: 12px;
-      color: gray;
-      text-align: center;
-    }
-  </style>
+/* ARKA PLAN EFEKT */
+.bg{
+    position:fixed;
+    width:100%;
+    height:100%;
+    background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size:40px 40px;
+    z-index:-1;
+}
+
+/* ÜST MENÜ */
+.navbar{
+    width:100%;
+    height:65px;
+    background:rgba(0,0,0,0.4);
+    backdrop-filter:blur(10px);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 15px;
+    box-shadow:0 0 15px rgba(0,255,255,0.2);
+}
+
+.logo{
+    font-size:22px;
+    font-weight:bold;
+    color:#00ffee;
+    text-shadow:0 0 10px #00ffee;
+}
+
+/* ORTA MENÜ */
+.nav-center{
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+.clock{
+    font-size:15px;
+}
+
+.search{
+    width:180px;
+    height:35px;
+    border:none;
+    outline:none;
+    border-radius:10px;
+    padding-left:10px;
+    background:#1f1f1f;
+    color:white;
+}
+
+/* AYARLAR BUTONU */
+.settings-btn{
+    width:40px;
+    height:40px;
+    border:none;
+    border-radius:10px;
+    background:#1f1f1f;
+    color:white;
+    cursor:pointer;
+    font-size:18px;
+}
+
+/* AYAR PANELİ */
+.settings{
+    position:fixed;
+    top:80px;
+    right:20px;
+    width:230px;
+    background:#111;
+    border-radius:15px;
+    padding:20px;
+    display:none;
+    box-shadow:0 0 20px rgba(0,255,255,0.3);
+}
+
+.settings.active{
+    display:block;
+}
+
+.settings-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.close{
+    cursor:pointer;
+    font-size:18px;
+    color:red;
+}
+
+.theme-btn{
+    width:100%;
+    height:40px;
+    border:none;
+    border-radius:10px;
+    background:#222;
+    color:white;
+    cursor:pointer;
+    margin-top:10px;
+}
+
+/* ORTA YAZI */
+.center{
+    height:calc(100vh - 65px);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    text-align:center;
+}
+
+.center h1{
+    font-size:50px;
+    color:#00ffee;
+    text-shadow:0 0 20px #00ffee;
+}
+
+.center p{
+    margin-top:10px;
+    opacity:0.7;
+}
+
+</style>
 </head>
 
-<body>
+<body class="dark">
 
-  <div class="box">
-    <h1>SERKAN GAMES<br>HOŞGELDİNİZ</h1>
-    <p>Sistem hazır. Oyunlar sen ekledikçe açılacak.</p>
-  </div>
+<div class="bg"></div>
 
-  <footer>Serkan Games v1.0</footer>
+<!-- ÜST MENÜ -->
+<div class="navbar">
+
+    <div class="logo">SERKAN GAMES</div>
+
+    <div class="nav-center">
+
+        <div class="clock" id="clock">
+            00:00:00
+        </div>
+
+        <input type="text" class="search" placeholder="Ara...">
+
+        <button class="settings-btn" onclick="openSettings()">
+            ⚙️
+        </button>
+
+    </div>
+
+</div>
+
+<!-- AYAR PANELİ -->
+<div class="settings" id="settings">
+
+    <div class="settings-top">
+        <h3>Ayarlar</h3>
+
+        <div class="close" onclick="closeSettings()">
+            ✖
+        </div>
+    </div>
+
+    <button class="theme-btn" onclick="toggleTheme()">
+        🌙 Night / ☀️ Light
+    </button>
+
+</div>
+
+<!-- ORTA -->
+<div class="center">
+    <h1>HOŞGELDİNİZ</h1>
+    <p>Serkan Games sistem aktif</p>
+</div>
+
+<script>
+
+/* CANLI SAAT */
+
+function updateClock(){
+
+    let now = new Date();
+
+    let h = String(now.getHours()).padStart(2,"0");
+    let m = String(now.getMinutes()).padStart(2,"0");
+    let s = String(now.getSeconds()).padStart(2,"0");
+
+    document.getElementById("clock").innerHTML =
+    h + ":" + m + ":" + s;
+}
+
+setInterval(updateClock,1000);
+updateClock();
+
+/* AYARLAR */
+
+function openSettings(){
+    document.getElementById("settings")
+    .classList.add("active");
+}
+
+function closeSettings(){
+    document.getElementById("settings")
+    .classList.remove("active");
+}
+
+/* TEMA */
+
+function toggleTheme(){
+
+    if(document.body.classList.contains("dark")){
+
+        document.body.classList.remove("dark");
+        document.body.classList.add("light");
+
+    } else {
+
+        document.body.classList.remove("light");
+        document.body.classList.add("dark");
+    }
+}
+
+</script>
 
 </body>
-</html>
+  </html>
