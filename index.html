@@ -17,7 +17,6 @@
 body{
     height:100vh;
     overflow:hidden;
-    transition:0.4s;
 }
 
 /* DARK */
@@ -28,7 +27,7 @@ body{
 
 /* LIGHT */
 .light{
-    background: radial-gradient(circle at top,#ffffff,#1a1a1a 80%);
+    background: radial-gradient(circle at top,#fff,#1a1a1a 80%);
     color:white;
 }
 
@@ -40,6 +39,42 @@ body{
     background-image: radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px);
     background-size:25px 25px;
     z-index:-1;
+}
+
+/* LOGIN */
+.login{
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:black;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    z-index:999;
+}
+
+.login h2{
+    color:white;
+    text-shadow:0 0 15px white;
+    margin-bottom:20px;
+}
+
+.login input{
+    padding:10px;
+    border:none;
+    border-radius:10px;
+    margin-bottom:10px;
+    outline:none;
+}
+
+.login button{
+    padding:10px 20px;
+    border:none;
+    border-radius:10px;
+    background:white;
+    color:black;
+    cursor:pointer;
 }
 
 /* ÜST BAR */
@@ -70,13 +105,8 @@ body{
     gap:10px;
 }
 
-.clock{
-    font-size:14px;
-}
-
-.date{
+.clock,.date{
     font-size:13px;
-    opacity:0.8;
 }
 
 .search{
@@ -87,7 +117,6 @@ body{
     padding-left:10px;
     background:#1f1f1f;
     color:white;
-    outline:none;
 }
 
 .settings-btn{
@@ -100,7 +129,7 @@ body{
     cursor:pointer;
 }
 
-/* AYAR PANEL */
+/* AYAR */
 .settings{
     position:fixed;
     top:80px;
@@ -129,33 +158,24 @@ body{
     border-radius:10px;
     background:#222;
     color:white;
+    cursor:pointer;
 }
 
 /* ORTA */
 .center{
     height:calc(100vh - 65px);
     display:flex;
-    justify-content:flex-start;
+    justify-content:center;
     align-items:center;
     flex-direction:column;
     text-align:center;
-    padding-top:120px;
+    margin-top:65px;
 }
 
 .title{
-    opacity:0;
-    transform:translateY(40px);
-    animation:slideUp 1s ease forwards;
     font-size:45px;
     color:white;
     text-shadow:0 0 20px white;
-}
-
-@keyframes slideUp{
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
 }
 
 </style>
@@ -164,6 +184,13 @@ body{
 <body class="dark">
 
 <div class="bg"></div>
+
+<!-- LOGIN -->
+<div class="login" id="login">
+    <h2>SERKAN GAMES</h2>
+    <input id="nameInput" placeholder="İsmini gir...">
+    <button onclick="enterGame()">Giriş</button>
+</div>
 
 <!-- ÜST BAR -->
 <div class="navbar">
@@ -196,26 +223,39 @@ body{
 
 <!-- ORTA -->
 <div class="center">
-    <h1 class="title">SERKAN GAMES<br>HOŞGELDİNİZ</h1>
+    <h1 class="title">HOŞGELDİNİZ</h1>
 </div>
 
 <script>
+
+/* GİRİŞ */
+function enterGame(){
+
+    let name = document.getElementById("nameInput").value;
+
+    if(name.trim() === ""){
+        alert("İsim gir!");
+        return;
+    }
+
+    localStorage.setItem("username", name);
+    document.getElementById("login").style.display = "none";
+}
 
 /* SAAT + TARİH */
 function updateTime(){
 
     let now = new Date();
 
-    let h = String(now.getHours()).padStart(2,"0");
-    let m = String(now.getMinutes()).padStart(2,"0");
-    let s = String(now.getSeconds()).padStart(2,"0");
+    document.getElementById("clock").innerHTML =
+    String(now.getHours()).padStart(2,"0")+":"+
+    String(now.getMinutes()).padStart(2,"0")+":"+
+    String(now.getSeconds()).padStart(2,"0");
 
-    let d = String(now.getDate()).padStart(2,"0");
-    let mo = String(now.getMonth()+1).padStart(2,"0");
-    let y = now.getFullYear();
-
-    document.getElementById("clock").innerHTML = h+":"+m+":"+s;
-    document.getElementById("date").innerHTML = d+"/"+mo+"/"+y;
+    document.getElementById("date").innerHTML =
+    String(now.getDate()).padStart(2,"0")+"/"+
+    String(now.getMonth()+1).padStart(2,"0")+"/"+
+    now.getFullYear();
 }
 
 setInterval(updateTime,1000);
