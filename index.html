@@ -20,117 +20,109 @@ body{
     transition:0.4s;
 }
 
-/* GÜNDÜZ */
+/* LIGHT (Beyaz gamer ana tema) */
 .light{
-    background:
-    radial-gradient(circle at top,#5dade2,#1b4f72 70%);
+    background: radial-gradient(circle at top,#ffffff,#1a1a1a 80%);
     color:white;
 }
 
-/* GECE */
+/* DARK */
 .dark{
-    background:
-    radial-gradient(circle at top,#111,#000 70%);
+    background: radial-gradient(circle at top,#111,#000 80%);
     color:white;
 }
 
-/* ARKA PLAN EFEKT */
+/* ARKA PLAN PARÇACIK */
 .bg{
     position:fixed;
     width:100%;
     height:100%;
     background-image:
-    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-    background-size:40px 40px;
+    radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px);
+    background-size:25px 25px;
     z-index:-1;
 }
 
-/* ÜST MENÜ */
+/* ÜST BAR */
 .navbar{
     width:100%;
     height:65px;
-    background:rgba(0,0,0,0.4);
+    background:rgba(0,0,0,0.5);
     backdrop-filter:blur(10px);
     display:flex;
-    align-items:center;
     justify-content:space-between;
+    align-items:center;
     padding:0 15px;
-    box-shadow:0 0 15px rgba(0,255,255,0.2);
 }
 
+/* LOGO (AÇILIŞ ANİMASYONLU) */
 .logo{
     font-size:22px;
     font-weight:bold;
-    color:#00ffee;
-    text-shadow:0 0 10px #00ffee;
+    color:white;
+    text-shadow:0 0 15px white;
+    animation: glow 2s ease-in-out infinite alternate;
 }
 
-/* ORTA MENÜ */
+@keyframes glow{
+    from { text-shadow:0 0 5px white; }
+    to { text-shadow:0 0 25px white; }
+}
+
 .nav-center{
     display:flex;
+    gap:10px;
     align-items:center;
-    gap:15px;
 }
 
 .clock{
-    font-size:15px;
+    font-size:14px;
 }
 
 .search{
-    width:180px;
+    width:170px;
     height:35px;
     border:none;
-    outline:none;
     border-radius:10px;
     padding-left:10px;
     background:#1f1f1f;
     color:white;
+    outline:none;
 }
 
-/* AYARLAR BUTONU */
 .settings-btn{
     width:40px;
     height:40px;
     border:none;
     border-radius:10px;
-    background:#1f1f1f;
+    background:#222;
     color:white;
     cursor:pointer;
-    font-size:18px;
 }
 
-/* AYAR PANELİ */
+/* AYAR PANEL */
 .settings{
     position:fixed;
     top:80px;
     right:20px;
-    width:230px;
+    width:220px;
     background:#111;
     border-radius:15px;
     padding:20px;
     display:none;
-    box-shadow:0 0 20px rgba(0,255,255,0.3);
 }
 
 .settings.active{
     display:block;
 }
 
-.settings-top{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:20px;
-}
-
 .close{
-    cursor:pointer;
-    font-size:18px;
     color:red;
+    cursor:pointer;
 }
 
 .theme-btn{
+    margin-top:10px;
     width:100%;
     height:40px;
     border:none;
@@ -138,10 +130,9 @@ body{
     background:#222;
     color:white;
     cursor:pointer;
-    margin-top:10px;
 }
 
-/* ORTA YAZI */
+/* ORTA */
 .center{
     height:calc(100vh - 65px);
     display:flex;
@@ -152,14 +143,32 @@ body{
 }
 
 .center h1{
-    font-size:50px;
-    color:#00ffee;
-    text-shadow:0 0 20px #00ffee;
+    font-size:45px;
+    color:white;
+    text-shadow:0 0 20px white;
 }
 
 .center p{
-    margin-top:10px;
     opacity:0.7;
+}
+
+/* AÇILIŞ OVERLAY */
+.splash{
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:black;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:30px;
+    color:white;
+    animation: fadeOut 2s forwards;
+    animation-delay:1.5s;
+}
+
+@keyframes fadeOut{
+    to{opacity:0; visibility:hidden;}
 }
 
 </style>
@@ -169,98 +178,84 @@ body{
 
 <div class="bg"></div>
 
-<!-- ÜST MENÜ -->
+<!-- AÇILIŞ -->
+<div class="splash">SERKAN GAMES</div>
+
+<!-- ÜST BAR -->
 <div class="navbar">
 
-    <div class="logo">SERKAN GAMES</div>
+<div class="logo">SERKAN GAMES</div>
 
-    <div class="nav-center">
+<div class="nav-center">
 
-        <div class="clock" id="clock">
-            00:00:00
-        </div>
+<div class="clock" id="clock">00:00:00</div>
 
-        <input type="text" class="search" placeholder="Ara...">
+<input class="search" placeholder="Ara...">
 
-        <button class="settings-btn" onclick="openSettings()">
-            ⚙️
-        </button>
-
-    </div>
+<button class="settings-btn" onclick="openSettings()">⚙️</button>
 
 </div>
 
-<!-- AYAR PANELİ -->
+</div>
+
+<!-- AYAR -->
 <div class="settings" id="settings">
 
-    <div class="settings-top">
-        <h3>Ayarlar</h3>
+<div class="close" onclick="closeSettings()">✖</div>
 
-        <div class="close" onclick="closeSettings()">
-            ✖
-        </div>
-    </div>
-
-    <button class="theme-btn" onclick="toggleTheme()">
-        🌙 Night / ☀️ Light
-    </button>
+<button class="theme-btn" onclick="toggleTheme()">Night / Light</button>
 
 </div>
 
 <!-- ORTA -->
 <div class="center">
-    <h1>HOŞGELDİNİZ</h1>
-    <p>Serkan Games sistem aktif</p>
+<h1>HOŞGELDİNİZ</h1>
+<p>Serkan Games sistem aktif</p>
 </div>
 
 <script>
 
-/* CANLI SAAT */
-
-function updateClock(){
-
-    let now = new Date();
-
-    let h = String(now.getHours()).padStart(2,"0");
-    let m = String(now.getMinutes()).padStart(2,"0");
-    let s = String(now.getSeconds()).padStart(2,"0");
-
-    document.getElementById("clock").innerHTML =
-    h + ":" + m + ":" + s;
+/* SAAT */
+function clock(){
+let d = new Date();
+document.getElementById("clock").innerHTML =
+String(d.getHours()).padStart(2,"0")+":"+
+String(d.getMinutes()).padStart(2,"0")+":"+
+String(d.getSeconds()).padStart(2,"0");
 }
+setInterval(clock,1000);
+clock();
 
-setInterval(updateClock,1000);
-updateClock();
-
-/* AYARLAR */
-
+/* AYAR */
 function openSettings(){
-    document.getElementById("settings")
-    .classList.add("active");
+document.getElementById("settings").classList.add("active");
 }
-
 function closeSettings(){
-    document.getElementById("settings")
-    .classList.remove("active");
+document.getElementById("settings").classList.remove("active");
 }
 
 /* TEMA */
-
 function toggleTheme(){
+if(document.body.classList.contains("dark")){
+document.body.classList.remove("dark");
+document.body.classList.add("light");
+localStorage.setItem("theme","light");
+}else{
+document.body.classList.remove("light");
+document.body.classList.add("dark");
+localStorage.setItem("theme","dark");
+}
+}
 
-    if(document.body.classList.contains("dark")){
-
-        document.body.classList.remove("dark");
-        document.body.classList.add("light");
-
-    } else {
-
-        document.body.classList.remove("light");
-        document.body.classList.add("dark");
-    }
+/* KAYIT */
+window.onload = function(){
+let t = localStorage.getItem("theme");
+if(t){
+document.body.className = t;
+}
 }
 
 </script>
 
 </body>
-  </html>
+</html>
