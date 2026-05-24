@@ -20,25 +20,24 @@ body{
     transition:0.4s;
 }
 
-/* LIGHT (Beyaz gamer ana tema) */
-.light{
-    background: radial-gradient(circle at top,#ffffff,#1a1a1a 80%);
-    color:white;
-}
-
 /* DARK */
 .dark{
     background: radial-gradient(circle at top,#111,#000 80%);
     color:white;
 }
 
-/* ARKA PLAN PARÇACIK */
+/* LIGHT */
+.light{
+    background: radial-gradient(circle at top,#ffffff,#1a1a1a 80%);
+    color:white;
+}
+
+/* ARKA PLAN */
 .bg{
     position:fixed;
     width:100%;
     height:100%;
-    background-image:
-    radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px);
+    background-image: radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px);
     background-size:25px 25px;
     z-index:-1;
 }
@@ -47,40 +46,41 @@ body{
 .navbar{
     width:100%;
     height:65px;
-    background:rgba(0,0,0,0.5);
-    backdrop-filter:blur(10px);
+    background:rgba(0,0,0,0.6);
+    backdrop-filter:blur(12px);
     display:flex;
     justify-content:space-between;
     align-items:center;
     padding:0 15px;
+    position:fixed;
+    top:0;
+    left:0;
 }
 
-/* LOGO (AÇILIŞ ANİMASYONLU) */
 .logo{
-    font-size:22px;
+    font-size:20px;
     font-weight:bold;
     color:white;
     text-shadow:0 0 15px white;
-    animation: glow 2s ease-in-out infinite alternate;
-}
-
-@keyframes glow{
-    from { text-shadow:0 0 5px white; }
-    to { text-shadow:0 0 25px white; }
 }
 
 .nav-center{
     display:flex;
-    gap:10px;
     align-items:center;
+    gap:10px;
 }
 
 .clock{
     font-size:14px;
 }
 
+.date{
+    font-size:13px;
+    opacity:0.8;
+}
+
 .search{
-    width:170px;
+    width:160px;
     height:35px;
     border:none;
     border-radius:10px;
@@ -129,7 +129,6 @@ body{
     border-radius:10px;
     background:#222;
     color:white;
-    cursor:pointer;
 }
 
 /* ORTA */
@@ -140,35 +139,23 @@ body{
     align-items:center;
     flex-direction:column;
     text-align:center;
+    margin-top:65px;
 }
 
-.center h1{
+.title{
+    opacity:0;
+    transform:translateY(40px);
+    animation:slideUp 1s ease forwards;
     font-size:45px;
     color:white;
     text-shadow:0 0 20px white;
 }
 
-.center p{
-    opacity:0.7;
-}
-
-/* AÇILIŞ OVERLAY */
-.splash{
-    position:fixed;
-    width:100%;
-    height:100%;
-    background:black;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    font-size:30px;
-    color:white;
-    animation: fadeOut 2s forwards;
-    animation-delay:1.5s;
-}
-
-@keyframes fadeOut{
-    to{opacity:0; visibility:hidden;}
+@keyframes slideUp{
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
 }
 
 </style>
@@ -178,81 +165,71 @@ body{
 
 <div class="bg"></div>
 
-<!-- AÇILIŞ -->
-<div class="splash">SERKAN GAMES</div>
-
 <!-- ÜST BAR -->
 <div class="navbar">
 
-<div class="logo">SERKAN GAMES</div>
+    <div class="logo">SERKAN GAMES</div>
 
-<div class="nav-center">
+    <div class="nav-center">
 
-<div class="clock" id="clock">00:00:00</div>
+        <div class="clock" id="clock">00:00:00</div>
+        <div class="date" id="date">00/00/0000</div>
 
-<input class="search" placeholder="Ara...">
+        <input class="search" placeholder="Ara...">
 
-<button class="settings-btn" onclick="openSettings()">⚙️</button>
+    </div>
 
-</div>
+    <button class="settings-btn" onclick="toggleSettings()">⚙️</button>
 
 </div>
 
 <!-- AYAR -->
 <div class="settings" id="settings">
 
-<div class="close" onclick="closeSettings()">✖</div>
+    <div class="close" onclick="toggleSettings()">✖</div>
 
-<button class="theme-btn" onclick="toggleTheme()">Night / Light</button>
+    <button class="theme-btn" onclick="toggleTheme()">
+        Night / Light
+    </button>
 
 </div>
 
 <!-- ORTA -->
 <div class="center">
-<h1>HOŞGELDİNİZ</h1>
-<p>Serkan Games sistem aktif</p>
+    <h1 class="title">SERKAN GAMES<br>HOŞGELDİNİZ</h1>
 </div>
 
 <script>
 
-/* SAAT */
-function clock(){
-let d = new Date();
-document.getElementById("clock").innerHTML =
-String(d.getHours()).padStart(2,"0")+":"+
-String(d.getMinutes()).padStart(2,"0")+":"+
-String(d.getSeconds()).padStart(2,"0");
+/* SAAT + TARİH */
+function updateTime(){
+
+    let now = new Date();
+
+    let h = String(now.getHours()).padStart(2,"0");
+    let m = String(now.getMinutes()).padStart(2,"0");
+    let s = String(now.getSeconds()).padStart(2,"0");
+
+    let d = String(now.getDate()).padStart(2,"0");
+    let mo = String(now.getMonth()+1).padStart(2,"0");
+    let y = now.getFullYear();
+
+    document.getElementById("clock").innerHTML = h+":"+m+":"+s;
+    document.getElementById("date").innerHTML = d+"/"+mo+"/"+y;
 }
-setInterval(clock,1000);
-clock();
+
+setInterval(updateTime,1000);
+updateTime();
 
 /* AYAR */
-function openSettings(){
-document.getElementById("settings").classList.add("active");
-}
-function closeSettings(){
-document.getElementById("settings").classList.remove("active");
+function toggleSettings(){
+    document.getElementById("settings").classList.toggle("active");
 }
 
 /* TEMA */
 function toggleTheme(){
-if(document.body.classList.contains("dark")){
-document.body.classList.remove("dark");
-document.body.classList.add("light");
-localStorage.setItem("theme","light");
-}else{
-document.body.classList.remove("light");
-document.body.classList.add("dark");
-localStorage.setItem("theme","dark");
-}
-}
-
-/* KAYIT */
-window.onload = function(){
-let t = localStorage.getItem("theme");
-if(t){
-document.body.className = t;
-}
+    document.body.classList.toggle("light");
+    document.body.classList.toggle("dark");
 }
 
 </script>
