@@ -2,32 +2,149 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <title>Site</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Serkan Games</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0a0f1f;
+      color: white;
+    }
+
+    /* TOP BAR */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 15px;
+      background: linear-gradient(90deg, #111827, #1f2937);
+      border-bottom: 2px solid #00ffcc;
+    }
+
+    .logo {
+      font-size: 20px;
+      font-weight: bold;
+      color: #00ffcc;
+      letter-spacing: 2px;
+    }
+
+    /* SEARCH */
+    .search input {
+      padding: 7px;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      width: 180px;
+    }
+
+    /* RIGHT SIDE */
+    .right {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      font-size: 14px;
+    }
+
+    .box {
+      background: rgba(255,255,255,0.1);
+      padding: 5px 10px;
+      border-radius: 8px;
+    }
+
+    /* SETTINGS */
+    .settings {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 30px;
+      background: #111827;
+      border: 1px solid #00ffcc;
+      border-radius: 10px;
+      padding: 10px;
+      min-width: 120px;
+    }
+
+    .menu div {
+      padding: 5px;
+      cursor: pointer;
+    }
+
+    .menu div:hover {
+      background: rgba(0,255,204,0.2);
+    }
+
+    /* CONTENT */
+    .content {
+      padding: 20px;
+    }
+
+  </style>
 </head>
+
 <body>
 
-  <!-- GİRİŞ KALDIRILDI (login yok) -->
+  <!-- TOP BAR -->
+  <div class="topbar">
 
-  <header>
-    <h1>Benim Sitem</h1>
-  </header>
+    <div class="logo">SERKAN GAMES</div>
 
-  <main>
+    <div class="search">
+      <input type="text" placeholder="Ara...">
+    </div>
 
-    <section id="ozel-gunler">
-      <h2>Özel Günler</h2>
+    <div class="right">
 
-      <ul>
-        <li>1 Ocak - Yeni Yıl</li>
-        <li>23 Nisan - Ulusal Egemenlik ve Çocuk Bayramı</li>
-        <li>19 Mayıs - Atatürk'ü Anma, Gençlik ve Spor Bayramı</li>
-        <li>29 Ekim - Cumhuriyet Bayramı</li>
-        <li>Kurban Bayramı - Dini Bayram</li>
-      </ul>
+      <div class="box" id="datetime">--</div>
 
-    </section>
+      <div class="settings" onclick="toggleMenu()">
+        ⚙️
+        <div class="menu" id="menu">
+          <div>Profil</div>
+          <div>Tema</div>
+          <div>Çıkış</div>
+        </div>
+      </div>
 
-  </main>
+    </div>
+
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+    <h2>Hoşgeldin Serkan 🎮</h2>
+    <p>Gamer panel hazır.</p>
+  </div>
+
+  <script>
+    // SAAT + TARİH
+    function updateTime() {
+      const now = new Date();
+      document.getElementById("datetime").innerText =
+        now.toLocaleDateString() + " " + now.toLocaleTimeString();
+    }
+    setInterval(updateTime, 1000);
+    updateTime();
+
+    // AYAR MENÜ
+    function toggleMenu() {
+      const menu = document.getElementById("menu");
+      menu.style.display = menu.style.display === "block" ? "none" : "block";
+    }
+
+    // dışarı tıklayınca kapat
+    window.onclick = function(e) {
+      if (!e.target.closest(".settings")) {
+        document.getElementById("menu").style.display = "none";
+      }
+    }
+  </script>
 
 </body>
-</html>
+  </html>
