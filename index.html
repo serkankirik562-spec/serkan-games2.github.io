@@ -8,43 +8,38 @@
   <style>
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
+      font-family: Arial;
+      transition: 0.5s;
+    }
+
+    /* TEMALAR */
+    .normal {
       background: #0a0f1f;
       color: white;
     }
 
-    /* TOP BAR */
+    .kurban {
+      background: linear-gradient(135deg, #052e16, #14532d);
+      color: white;
+    }
+
+    .ramazan {
+      background: linear-gradient(135deg, #0f172a, #1e3a8a);
+      color: white;
+    }
+
+    /* TOPBAR */
     .topbar {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      padding: 10px 15px;
-      background: linear-gradient(90deg, #111827, #1f2937);
-      border-bottom: 2px solid #00ffcc;
+      padding: 10px;
+      border-bottom: 2px solid gold;
+      background: rgba(0,0,0,0.4);
     }
 
     .logo {
-      font-size: 20px;
       font-weight: bold;
-      color: #00ffcc;
-      letter-spacing: 2px;
-    }
-
-    /* SEARCH */
-    .search input {
-      padding: 7px;
-      border-radius: 8px;
-      border: none;
-      outline: none;
-      width: 180px;
-    }
-
-    /* RIGHT SIDE */
-    .right {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      font-size: 14px;
+      color: gold;
     }
 
     .box {
@@ -53,77 +48,59 @@
       border-radius: 8px;
     }
 
-    /* SETTINGS */
-    .settings {
-      position: relative;
-      cursor: pointer;
+    .search input {
+      padding: 6px;
+      border-radius: 6px;
+      border: none;
     }
 
-    .menu {
-      display: none;
-      position: absolute;
-      right: 0;
-      top: 30px;
-      background: #111827;
-      border: 1px solid #00ffcc;
-      border-radius: 10px;
-      padding: 10px;
-      min-width: 120px;
-    }
-
-    .menu div {
-      padding: 5px;
-      cursor: pointer;
-    }
-
-    .menu div:hover {
-      background: rgba(0,255,204,0.2);
-    }
-
-    /* CONTENT */
     .content {
       padding: 20px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.1);
+      padding: 15px;
+      border-radius: 12px;
+      margin-top: 10px;
     }
 
   </style>
 </head>
 
-<body>
+<body id="body">
 
-  <!-- TOP BAR -->
   <div class="topbar">
-
     <div class="logo">SERKAN GAMES</div>
 
     <div class="search">
       <input type="text" placeholder="Ara...">
     </div>
 
-    <div class="right">
-
-      <div class="box" id="datetime">--</div>
-
-      <div class="settings" onclick="toggleMenu()">
-        ⚙️
-        <div class="menu" id="menu">
-          <div>Profil</div>
-          <div>Tema</div>
-          <div>Çıkış</div>
-        </div>
-      </div>
-
-    </div>
-
+    <div class="box" id="datetime">--</div>
   </div>
 
-  <!-- CONTENT -->
   <div class="content">
-    <h2>Hoşgeldin Serkan 🎮</h2>
-    <p>Gamer panel hazır.</p>
+    <div class="card">
+      <h3>🎮 Sistem</h3>
+      <p id="modeText">Tema yükleniyor...</p>
+    </div>
+
+    <div class="card">
+      <h3>📅 Özel Günler</h3>
+      <ul>
+        <li>1 Ocak - Yeni Yıl</li>
+        <li>23 Nisan - Ulusal Egemenlik ve Çocuk Bayramı</li>
+        <li>19 Mayıs - Gençlik Bayramı</li>
+        <li>29 Ekim - Cumhuriyet Bayramı</li>
+        <li>Kurban / Ramazan Bayramı (otomatik dönem)</li>
+      </ul>
+    </div>
   </div>
 
   <script>
-    // SAAT + TARİH
+    const body = document.getElementById("body");
+
     function updateTime() {
       const now = new Date();
       document.getElementById("datetime").innerText =
@@ -132,19 +109,18 @@
     setInterval(updateTime, 1000);
     updateTime();
 
-    // AYAR MENÜ
-    function toggleMenu() {
-      const menu = document.getElementById("menu");
-      menu.style.display = menu.style.display === "block" ? "none" : "block";
+    function setTheme(theme, text) {
+      body.className = theme;
+      document.getElementById("modeText").innerText = text;
     }
 
-    // dışarı tıklayınca kapat
-    window.onclick = function(e) {
-      if (!e.target.closest(".settings")) {
-        document.getElementById("menu").style.display = "none";
+    function detectHoliday() {
+      const now = new Date();
+      const d = now.getDate();
+      const m = now.getMonth() + 1;
+
+      // SABİT BAYRAMLAR
+      if (m === 1 && d === 1) {
+        setTheme("normal", "🎉 Yeni Yıl Modu");
       }
-    }
-  </script>
-
-</body>
-  </html>
+      else if (m === 4 &&
