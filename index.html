@@ -123,4 +123,29 @@
       if (m === 1 && d === 1) {
         setTheme("normal", "🎉 Yeni Yıl Modu");
       }
-      else if (m === 4 &&
+      else if (m === 4 && d === 23) {
+        setTheme("normal", "🇹🇷 23 Nisan Modu");
+      }
+      else if (m === 5 && d === 19) {
+        setTheme("normal", "🇹🇷 19 Mayıs Modu");
+      }
+      else if (m === 10 && d === 29) {
+        setTheme("normal", "🇹🇷 29 Ekim Modu");
+      }
+
+      // TAHMİNİ KURBAN BAYRAMI DÖNEMİ (Haziran - Temmuz)
+      else if (m === 6 || m === 7) {
+        setTheme("kurban", "🐑 Kurban Bayramı Teması (Tahmini Dönem)");
+      }
+
+      // NORMAL GÜN
+      else {
+        setTheme("normal", "🎮 Normal Gamer Modu");
+      }
+    }
+
+    detectHoliday();
+  </script>
+
+</body>
+</html>
