@@ -23,10 +23,28 @@
       border-bottom: 2px solid #00ffcc;
     }
 
+    .left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
     .logo {
       font-weight: bold;
       color: #00ffcc;
       letter-spacing: 2px;
+    }
+
+    /* ÖZEL GÜN İKONU */
+    .special {
+      width: 35px;
+      height: 35px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.1);
     }
 
     .search input {
@@ -67,15 +85,6 @@
       min-width: 120px;
     }
 
-    .menu div {
-      padding: 5px;
-      cursor: pointer;
-    }
-
-    .menu div:hover {
-      background: rgba(0,255,204,0.2);
-    }
-
   </style>
 </head>
 
@@ -84,7 +93,14 @@
   <!-- TOP BAR -->
   <div class="topbar">
 
-    <div class="logo">SERKAN GAMES</div>
+    <div class="left">
+
+      <!-- ÖZEL GÜN ALANI -->
+      <div class="special" id="specialIcon">🎮</div>
+
+      <div class="logo">SERKAN GAMES</div>
+
+    </div>
 
     <div class="search">
       <input type="text" placeholder="Ara...">
@@ -107,17 +123,26 @@
   </div>
 
   <script>
+
+    // SAAT
     function updateTime() {
       const now = new Date();
+
       document.getElementById("datetime").innerText =
         now.toLocaleDateString() + " " + now.toLocaleTimeString();
     }
+
     setInterval(updateTime, 1000);
     updateTime();
 
+    // AYAR MENÜSÜ
     function toggleMenu() {
       const menu = document.getElementById("menu");
-      menu.style.display = menu.style.display === "block" ? "none" : "block";
+
+      menu.style.display =
+        menu.style.display === "block"
+        ? "none"
+        : "block";
     }
 
     window.onclick = function(e) {
@@ -125,6 +150,66 @@
         document.getElementById("menu").style.display = "none";
       }
     }
+
+    // ÖZEL GÜN SİSTEMİ
+    function setSpecialDay() {
+
+      const now = new Date();
+
+      const d = now.getDate();
+      const m = now.getMonth() + 1;
+
+      const icon =
+        document.getElementById("specialIcon");
+
+      // 10 Kasım
+      if (d === 10 && m === 11) {
+        icon.innerText = "🖤";
+      }
+
+      // 23 Nisan
+      else if (d === 23 && m === 4) {
+        icon.innerText = "🇹🇷";
+      }
+
+      // 19 Mayıs
+      else if (d === 19 && m === 5) {
+        icon.innerText = "🇹🇷";
+      }
+
+      // 29 Ekim
+      else if (d === 29 && m === 10) {
+        icon.innerText = "🇹🇷";
+      }
+
+      // Yeni Yıl
+      else if (d === 1 && m === 1) {
+        icon.innerText = "🎉";
+      }
+
+      // Kurban Bayramı dönemi
+      else if (m === 6 || m === 7) {
+
+        const animals =
+          ["🐑","🐐","🐄","🐓"];
+
+        const random =
+          animals[Math.floor(
+            Math.random() * animals.length
+          )];
+
+        icon.innerText = random;
+      }
+
+      // NORMAL
+      else {
+        icon.innerText = "🎮";
+      }
+
+    }
+
+    setSpecialDay();
+
   </script>
 
 </body>
