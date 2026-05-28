@@ -46,13 +46,6 @@
       padding: 20px;
     }
 
-    .card {
-      background: rgba(255,255,255,0.08);
-      padding: 15px;
-      border-radius: 12px;
-      margin-top: 10px;
-    }
-
   </style>
 </head>
 
@@ -71,18 +64,6 @@
 
   </div>
 
-  <!-- CONTENT -->
-  <div class="content">
-
-    <div class="card">
-      <h3>🎮 Serkan Games</h3>
-      <p id="holiday">Yükleniyor...</p>
-    </div>
-
-    <!-- OYUNLAR KALDIRILDI -->
-
-  </div>
-
   <script>
     function updateTime() {
       const now = new Date();
@@ -91,27 +72,6 @@
     }
     setInterval(updateTime, 1000);
     updateTime();
-
-    function detectHoliday() {
-      const now = new Date();
-      const d = now.getDate();
-      const m = now.getMonth() + 1;
-
-      if (m === 1 && d === 1) {
-        document.getElementById("holiday").innerText = "🎉 Yeni Yıl";
-      }
-      else if (m === 4 && d === 23) {
-        document.getElementById("holiday").innerText = "🇹🇷 23 Nisan";
-      }
-      else if (m === 5 && d === 19) {
-        document.getElementById("holiday").innerText = "🇹🇷 19 Mayıs";
-      }
-      else if (m === 10 && d === 29) {
-        document.getElementById("holiday").innerText = "🇹🇷 29 Ekim";
-      }
-    }
-
-    detectHoliday();
   </script>
 
 </body>
