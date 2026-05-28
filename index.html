@@ -42,7 +42,6 @@
       border-radius: 8px;
     }
 
-    /* CONTENT */
     .content {
       padding: 20px;
     }
@@ -52,24 +51,6 @@
       padding: 15px;
       border-radius: 12px;
       margin-top: 10px;
-    }
-
-    /* OYUN ALANI (BOŞ) */
-    .games {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 10px;
-      margin-top: 20px;
-    }
-
-    .gamebox {
-      height: 120px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: gray;
     }
 
   </style>
@@ -94,19 +75,11 @@
   <div class="content">
 
     <div class="card">
-      <h3>🎉 Özel Gün</h3>
+      <h3>🎮 Serkan Games</h3>
       <p id="holiday">Yükleniyor...</p>
     </div>
 
-    <div class="card">
-      <h3>🎮 Oyunlar</h3>
-      <div class="games">
-        <div class="gamebox">Yakında</div>
-        <div class="gamebox">Yakında</div>
-        <div class="gamebox">Yakında</div>
-        <div class="gamebox">Yakında</div>
-      </div>
-    </div>
+    <!-- OYUNLAR KALDIRILDI -->
 
   </div>
 
@@ -135,9 +108,6 @@
       }
       else if (m === 10 && d === 29) {
         document.getElementById("holiday").innerText = "🇹🇷 29 Ekim";
-      }
-      else {
-        document.getElementById("holiday").innerText = "🎮 Normal Gün";
       }
     }
 
