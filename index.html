@@ -9,92 +9,171 @@ body {
     margin: 0;
     font-family: Arial;
     color: white;
-
-    /* ARKA PLAN */
-    background-image: url("https://share.google/ozYbfLKi2zzuRbtHH");
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
+    overflow: hidden;
 }
 
-/* ÜST BAR (DEĞİŞMEDİ) */
+/* ARKA PLAN (BEN KOYDUM GÜZEL GAMER STYLE) */
+.bg {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at top, #1a1a2e, #000000);
+    z-index: -2;
+}
+
+/* animasyonlu ışık */
+.glow-bg {
+    position: fixed;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, #00ffcc, #ff00ff, #00aaff);
+    opacity: 0.15;
+    animation: move 10s infinite linear;
+    z-index: -1;
+}
+
+@keyframes move {
+    0% {transform: translate(0,0);}
+    50% {transform: translate(-20%, -20%);}
+    100% {transform: translate(0,0);}
+}
+
+/* ÜST BAR */
 .navbar {
     position: fixed;
     top: 0;
-    left: 0;
     width: 100%;
-    background: rgba(0,0,0,0.7);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 20px;
+    padding: 12px 18px;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
     box-sizing: border-box;
-    z-index: 10;
+    animation: slideDown 1s ease;
 }
 
-.navbar .left {
+@keyframes slideDown {
+    from {transform: translateY(-100%);}
+    to {transform: translateY(0);}
+}
+
+/* SOL */
+.left {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-.navbar img {
+.logo {
     width: 35px;
     height: 35px;
     border-radius: 50%;
+    background: #00ffcc;
 }
 
-.navbar .menu a {
-    color: white;
-    text-decoration: none;
-    margin-left: 15px;
+/* SERKAN GAMES */
+.title {
+    font-weight: bold;
+    font-size: 18px;
+    color: #00ffcc;
+    text-shadow: 0 0 10px #00ffcc;
 }
 
-/* ORTA LOGO ALANI */
-.center {
-    height: 100vh;
+/* ORTA SAAT */
+.clock {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+/* ARAMA */
+.search input {
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+}
+
+/* SAĞ MENÜ */
+.right {
     display: flex;
-    justify-content: center;
     align-items: center;
+    gap: 12px;
 }
 
-.logo {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    border: 3px solid white;
+button {
+    background: transparent;
+    border: 1px solid #00ffcc;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+}
 
-    /* LOGO */
-    background-image: url("https://share.google/lh6ilVB0nNrSwWz1v");
-    background-size: cover;
-    background-position: center;
+button:hover {
+    background: #00ffcc;
+    color: black;
+}
+
+/* AYARLAR MENÜ */
+.settings-box {
+    position: absolute;
+    top: 60px;
+    right: 20px;
+    background: rgba(0,0,0,0.8);
+    padding: 10px;
+    border-radius: 10px;
+    display: none;
 }
 </style>
 </head>
 
 <body>
 
-<!-- ÜST BAR (AYNI KALDI) -->
+<div class="bg"></div>
+<div class="glow-bg"></div>
+
+<!-- NAVBAR -->
 <div class="navbar">
 
     <div class="left">
-        <img src="https://share.google/lh6ilVB0nNrSwWz1v">
-        <b>Serkan Games</b>
+        <div class="logo"></div>
+        <div class="title">SERKAN GAMES</div>
     </div>
 
-    <div class="menu">
-        <a href="#">Ana Sayfa</a>
-        <a href="#">Oyunlar</a>
-        <a href="#">Projeler</a>
-        <a href="#">İletişim</a>
+    <div class="clock" id="clock">00:00:00</div>
+
+    <div class="search">
+        <input placeholder="Ara...">
+    </div>
+
+    <div class="right">
+        <button onclick="toggleSettings()">Ayarlar</button>
     </div>
 
 </div>
 
-<!-- SADECE LOGO ORTADA -->
-<div class="center">
-    <div class="logo"></div>
+<!-- AYARLAR -->
+<div class="settings-box" id="settings">
+    <p>Ayarlarda şimdilik boş 😄</p>
 </div>
+
+<script>
+function updateClock() {
+    const now = new Date();
+    document.getElementById("clock").innerText =
+        now.toLocaleTimeString();
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+function toggleSettings() {
+    let box = document.getElementById("settings");
+    box.style.display = box.style.display === "block" ? "none" : "block";
+}
+</script>
 
 </body>
 </html>
