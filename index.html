@@ -1,216 +1,45 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Serkan Games</title>
+<div id="ozel-gun"></div>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial;
-      background: #0a0f1f;
-      color: white;
-    }
+<script>
+const bugun = new Date();
 
-    /* TOP BAR */
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px;
-      background: #111827;
-      border-bottom: 2px solid #00ffcc;
-    }
+// --- SABİT ÖZEL GÜNLER ---
+const ozelGunler = [
+  { ad: "🎆 Yeni Yıl", bas: "2026-01-01", bit: "2026-01-01" },
+  { ad: "👧 23 Nisan Ulusal Egemenlik ve Çocuk Bayramı", bas: "2026-04-23", bit: "2026-04-23" },
+  { ad: "🧑‍💼 1 Mayıs Emek ve Dayanışma Günü", bas: "2026-05-01", bit: "2026-05-01" },
+  { ad: "🇹🇷 19 Mayıs Atatürk’ü Anma Gençlik ve Spor Bayramı", bas: "2026-05-19", bit: "2026-05-19" },
+  { ad: "🐑 Kurban Bayramı", bas: "2026-05-26", bit: "2026-05-30" },
+  { ad: "🛡️ 15 Temmuz Demokrasi Günü", bas: "2026-07-15", bit: "2026-07-15" },
+  { ad: "🇹🇷 30 Ağustos Zafer Bayramı", bas: "2026-08-30", bit: "2026-08-30" },
+  { ad: "🇹🇷 29 Ekim Cumhuriyet Bayramı", bas: "2026-10-29", bit: "2026-10-29" }
+];
 
-    .left {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+// --- TARİH KONTROL ---
+let aktifGun = null;
 
-    .logo {
-      font-weight: bold;
-      color: #00ffcc;
-      letter-spacing: 2px;
-    }
+for (let i = 0; i < ozelGunler.length; i++) {
+  const g = ozelGunler[i];
+  const bas = new Date(g.bas);
+  const bit = new Date(g.bit);
 
-    /* ÖZEL GÜN İKONU */
-    .special {
-      width: 35px;
-      height: 35px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.1);
-    }
+  if (bugun >= bas && bugun <= bit) {
+    aktifGun = g.ad;
+    break;
+  }
+}
 
-    .search input {
-      padding: 6px;
-      border-radius: 6px;
-      border: none;
-      outline: none;
-    }
+// --- EKRANA YAZ ---
+const alan = document.getElementById("ozel-gun");
 
-    .right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .box {
-      background: rgba(255,255,255,0.1);
-      padding: 5px 10px;
-      border-radius: 8px;
-    }
-
-    /* SETTINGS */
-    .settings {
-      position: relative;
-      cursor: pointer;
-      font-size: 18px;
-    }
-
-    .menu {
-      display: none;
-      position: absolute;
-      right: 0;
-      top: 25px;
-      background: #111827;
-      border: 1px solid #00ffcc;
-      border-radius: 10px;
-      padding: 10px;
-      min-width: 120px;
-    }
-
-  </style>
-</head>
-
-<body>
-
-  <!-- TOP BAR -->
-  <div class="topbar">
-
-    <div class="left">
-
-      <!-- ÖZEL GÜN ALANI -->
-      <div class="special" id="specialIcon">🎮</div>
-
-      <div class="logo">SERKAN GAMES</div>
-
-    </div>
-
-    <div class="search">
-      <input type="text" placeholder="Ara...">
-    </div>
-
-    <div class="right">
-
-      <div class="box" id="datetime">--</div>
-
-      <div class="settings" onclick="toggleMenu()">⚙️
-        <div class="menu" id="menu">
-          <div></div>
-          <div></div>
-          <div></div>
-        </div>
-      </div>
-
-    </div>
-
-  </div>
-
-  <script>
-
-    // SAAT
-    function updateTime() {
-      const now = new Date();
-
-      document.getElementById("datetime").innerText =
-        now.toLocaleDateString() + " " + now.toLocaleTimeString();
-    }
-
-    setInterval(updateTime, 1000);
-    updateTime();
-
-    // AYAR MENÜSÜ
-    function toggleMenu() {
-      const menu = document.getElementById("menu");
-
-      menu.style.display =
-        menu.style.display === "block"
-        ? "none"
-        : "block";
-    }
-
-    window.onclick = function(e) {
-      if (!e.target.closest(".settings")) {
-        document.getElementById("menu").style.display = "none";
-      }
-    }
-
-    // ÖZEL GÜN SİSTEMİ
-    function setSpecialDay() {
-
-      const now = new Date();
-
-      const d = now.getDate();
-      const m = now.getMonth() + 1;
-
-      const icon =
-        document.getElementById("specialIcon");
-
-      // 10 Kasım
-      if (d === 10 && m === 11) {
-        icon.innerText = "🖤";
-      }
-
-      // 23 Nisan
-      else if (d === 23 && m === 4) {
-        icon.innerText = "🇹🇷";
-      }
-
-      // 19 Mayıs
-      else if (d === 19 && m === 5) {
-        icon.innerText = "🇹🇷";
-      }
-
-      // 29 Ekim
-      else if (d === 29 && m === 10) {
-        icon.innerText = "🇹🇷";
-      }
-
-      // Yeni Yıl
-      else if (d === 1 && m === 1) {
-        icon.innerText = "🎉";
-      }
-
-      // Kurban Bayramı dönemi
-      else if (m === 6 || m === 7) {
-
-        const animals =
-          ["🐑","🐐","🐄","🐓"];
-
-        const random =
-          animals[Math.floor(
-            Math.random() * animals.length
-          )];
-
-        icon.innerText = random;
-      }
-
-      // NORMAL
-      else {
-        icon.innerText = "🎮";
-      }
-
-    }
-
-    setSpecialDay();
-
-  </script>
-
-</body>
-</html>
+if (aktifGun) {
+  alan.innerHTML = aktifGun;
+  alan.style.background = "gold";
+  alan.style.padding = "12px";
+  alan.style.textAlign = "center";
+  alan.style.fontSize = "20px";
+  alan.style.fontWeight = "bold";
+} else {
+  alan.style.display = "none";
+}
+</script>
