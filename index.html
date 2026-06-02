@@ -8,19 +8,43 @@
 body {
   margin: 0;
   font-family: Arial;
-  background: #0f172a;
   color: white;
+  overflow-x: hidden;
+}
+
+/* 🎮 GAMER ARKA PLAN */
+body {
+  background: radial-gradient(circle at top, #1e3a8a, #0f172a, #000);
+}
+
+/* ⚡ ANİMASYONLU NOKTALAR */
+.particle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: gold;
+  border-radius: 50%;
+  animation: float 6s infinite linear;
+  opacity: 0.7;
+}
+
+@keyframes float {
+  from { transform: translateY(100vh); }
+  to { transform: translateY(-10vh); }
 }
 
 /* ÜST BAR */
 header {
-  background: gold;
+  background: rgba(255, 215, 0, 0.9);
   color: black;
   padding: 15px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-weight: bold;
+  position: relative;
+  z-index: 10;
+  backdrop-filter: blur(5px);
 }
 
 /* ARAMA */
@@ -45,13 +69,21 @@ header {
   right: 10px;
   top: 60px;
   border-radius: 10px;
+  z-index: 20;
 }
 
-/* ÖZEL GÜN BANNER */
+/* ÖZEL GÜN */
 #ozel-gun {
   text-align: center;
   font-weight: bold;
   padding: 10px;
+}
+
+/* ANA İÇERİK */
+.content {
+  padding: 20px;
+  position: relative;
+  z-index: 10;
 }
 </style>
 </head>
@@ -59,29 +91,29 @@ header {
 <body>
 
 <header>
-  <div>SERKAN GAMES</div>
+  <div>🎮 SERKAN GAMES</div>
 
   <input id="search" placeholder="Oyun ara...">
 
   <div id="clock"></div>
 
   <button onclick="toggleSettings()">⚙️</button>
+
+  <!-- AYARLAR -->
+  <div id="settings">
+    <p>⚙️ Ayarlar</p>
+    <button onclick="alert('Tema yakında!')">🎨 Tema</button>
+    <button onclick="alert('Ses yakında!')">🔊 Ses</button>
+  </div>
 </header>
 
 <!-- ÖZEL GÜN -->
 <div id="ozel-gun"></div>
 
-<!-- AYARLAR -->
-<div id="settings">
-  <p>⚙️ Ayarlar</p>
-  <button onclick="alert('Tema yakında!')">🎨 Tema</button>
-  <button onclick="alert('Ses ayarı yakında!')">🔊 Ses</button>
-</div>
-
 <!-- İÇERİK -->
-<div style="padding:20px;">
+<div class="content">
   <h2>Hoşgeldin Serkan 👋</h2>
-  <p>Site hazır!</p>
+  <p>Gamer site hazır ⚡</p>
 </div>
 
 <script>
@@ -106,21 +138,13 @@ const bugun = new Date();
 
 const ozelGunler = [
   { ad: "🎆 Yeni Yıl", bas: "2026-01-01", bit: "2026-01-01" },
-
   { ad: "🕌 Ramazan Bayramı", bas: "2026-03-20", bit: "2026-03-22" },
-
   { ad: "👧 23 Nisan Ulusal Egemenlik ve Çocuk Bayramı", bas: "2026-04-23", bit: "2026-04-23" },
-
   { ad: "🧑‍💼 1 Mayıs Emek ve Dayanışma Günü", bas: "2026-05-01", bit: "2026-05-01" },
-
   { ad: "🇹🇷 19 Mayıs Atatürk’ü Anma Gençlik ve Spor Bayramı", bas: "2026-05-19", bit: "2026-05-19" },
-
   { ad: "🐑 Kurban Bayramı", bas: "2026-05-26", bit: "2026-05-30" },
-
   { ad: "🛡️ 15 Temmuz Demokrasi ve Milli Birlik Günü", bas: "2026-07-15", bit: "2026-07-15" },
-
   { ad: "🇹🇷 30 Ağustos Zafer Bayramı", bas: "2026-08-30", bit: "2026-08-30" },
-
   { ad: "🇹🇷 29 Ekim Cumhuriyet Bayramı", bas: "2026-10-29", bit: "2026-10-29" }
 ];
 
@@ -139,11 +163,20 @@ for (let g of ozelGunler) {
 const alan = document.getElementById("ozel-gun");
 
 if (aktif) {
-  alan.innerHTML = `${aktif.ad} (${aktif.bas} - ${aktif.bit})`;
+  alan.innerHTML = `🎉 ${aktif.ad} (${aktif.bas} - ${aktif.bit})`;
   alan.style.background = "gold";
   alan.style.color = "black";
 } else {
   alan.style.display = "none";
+}
+
+/* ================= PARTICLE OLUŞTUR ================= */
+for (let i = 0; i < 30; i++) {
+  let p = document.createElement("div");
+  p.className = "particle";
+  p.style.left = Math.random() * 100 + "vw";
+  p.style.animationDuration = (3 + Math.random() * 5) + "s";
+  document.body.appendChild(p);
 }
 
 </script>
