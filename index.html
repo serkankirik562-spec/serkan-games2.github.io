@@ -5,85 +5,56 @@
 <title>SERKAN GAMES</title>
 
 <style>
-body {
-  margin: 0;
-  font-family: Arial;
-  color: white;
-  overflow-x: hidden;
-}
-
-/* 🎮 GAMER ARKA PLAN */
-body {
-  background: radial-gradient(circle at top, #1e3a8a, #0f172a, #000);
-}
-
-/* ⚡ ANİMASYONLU NOKTALAR */
-.particle {
-  position: absolute;
-  width: 6px;
-  height: 6px;
-  background: gold;
-  border-radius: 50%;
-  animation: float 6s infinite linear;
-  opacity: 0.7;
-}
-
-@keyframes float {
-  from { transform: translateY(100vh); }
-  to { transform: translateY(-10vh); }
+body{
+  margin:0;
+  font-family:Arial;
+  background:#0f172a;
+  color:white;
 }
 
 /* ÜST BAR */
-header {
-  background: rgba(255, 215, 0, 0.9);
-  color: black;
-  padding: 15px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-weight: bold;
-  position: relative;
-  z-index: 10;
-  backdrop-filter: blur(5px);
+header{
+  background:#6b7280;
+  padding:12px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 }
 
-/* ARAMA */
-#search {
-  padding: 8px;
-  border-radius: 8px;
-  border: none;
-  width: 180px;
+/* SOL LOGO + YAZI */
+.left{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:bold;
+}
+
+/* YUVARLAK LOGO */
+.logo{
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  overflow:hidden;
+  border:2px solid gold;
+}
+
+.logo img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
 }
 
 /* SAAT */
-#clock {
-  font-size: 14px;
+#clock{
+  font-size:13px;
 }
 
-/* AYARLAR */
-#settings {
-  display: none;
-  background: #1e293b;
-  padding: 10px;
-  position: absolute;
-  right: 10px;
-  top: 60px;
-  border-radius: 10px;
-  z-index: 20;
-}
-
-/* ÖZEL GÜN */
-#ozel-gun {
-  text-align: center;
-  font-weight: bold;
-  padding: 10px;
-}
-
-/* ANA İÇERİK */
-.content {
-  padding: 20px;
-  position: relative;
-  z-index: 10;
+/* ARAMA */
+#search{
+  padding:7px;
+  border-radius:8px;
+  border:none;
+  width:160px;
 }
 </style>
 </head>
@@ -91,94 +62,27 @@ header {
 <body>
 
 <header>
-  <div>🎮 SERKAN GAMES</div>
+
+  <div class="left">
+    <div class="logo">
+      <img src="/mnt/data/a_clean_modern_website_app_ui_screenshot_or_wallp.png">
+    </div>
+    <div>SERKAN GAMES</div>
+  </div>
 
   <input id="search" placeholder="Oyun ara...">
 
   <div id="clock"></div>
 
-  <button onclick="toggleSettings()">⚙️</button>
-
-  <!-- AYARLAR -->
-  <div id="settings">
-    <p>⚙️ Ayarlar</p>
-    <button onclick="alert('Tema yakında!')">🎨 Tema</button>
-    <button onclick="alert('Ses yakında!')">🔊 Ses</button>
-  </div>
 </header>
 
-<!-- ÖZEL GÜN -->
-<div id="ozel-gun"></div>
-
-<!-- İÇERİK -->
-<div class="content">
-  <h2>Hoşgeldin Serkan 👋</h2>
-  <p>Gamer site hazır ⚡</p>
-</div>
-
 <script>
-
-/* ================= SAAT ================= */
-function updateClock() {
-  const now = new Date();
-  document.getElementById("clock").innerText =
-    now.toLocaleTimeString();
+function clock(){
+  const d = new Date();
+  document.getElementById("clock").innerText = d.toLocaleTimeString();
 }
-setInterval(updateClock, 1000);
-updateClock();
-
-/* ================= AYARLAR ================= */
-function toggleSettings() {
-  const panel = document.getElementById("settings");
-  panel.style.display = panel.style.display === "block" ? "none" : "block";
-}
-
-/* ================= ÖZEL GÜNLER ================= */
-const bugun = new Date();
-
-const ozelGunler = [
-  { ad: "🎆 Yeni Yıl", bas: "2026-01-01", bit: "2026-01-01" },
-  { ad: "🕌 Ramazan Bayramı", bas: "2026-03-20", bit: "2026-03-22" },
-  { ad: "👧 23 Nisan Ulusal Egemenlik ve Çocuk Bayramı", bas: "2026-04-23", bit: "2026-04-23" },
-  { ad: "🧑‍💼 1 Mayıs Emek ve Dayanışma Günü", bas: "2026-05-01", bit: "2026-05-01" },
-  { ad: "🇹🇷 19 Mayıs Atatürk’ü Anma Gençlik ve Spor Bayramı", bas: "2026-05-19", bit: "2026-05-19" },
-  { ad: "🐑 Kurban Bayramı", bas: "2026-05-26", bit: "2026-05-30" },
-  { ad: "🛡️ 15 Temmuz Demokrasi ve Milli Birlik Günü", bas: "2026-07-15", bit: "2026-07-15" },
-  { ad: "🇹🇷 30 Ağustos Zafer Bayramı", bas: "2026-08-30", bit: "2026-08-30" },
-  { ad: "🇹🇷 29 Ekim Cumhuriyet Bayramı", bas: "2026-10-29", bit: "2026-10-29" }
-];
-
-let aktif = null;
-
-for (let g of ozelGunler) {
-  const bas = new Date(g.bas);
-  const bit = new Date(g.bit);
-
-  if (bugun >= bas && bugun <= bit) {
-    aktif = g;
-    break;
-  }
-}
-
-const alan = document.getElementById("ozel-gun");
-
-if (aktif) {
-  alan.innerHTML = `🎉 ${aktif.ad} (${aktif.bas} - ${aktif.bit})`;
-  alan.style.background = "gold";
-  alan.style.color = "black";
-} else {
-  alan.style.display = "none";
-}
-
-/* ================= PARTICLE OLUŞTUR ================= */
-for (let i = 0; i < 30; i++) {
-  let p = document.createElement("div");
-  p.className = "particle";
-  p.style.left = Math.random() * 100 + "vw";
-  p.style.animationDuration = (3 + Math.random() * 5) + "s";
-  document.body.appendChild(p);
-}
-
+setInterval(clock,1000);
+clock();
 </script>
 
 </body>
