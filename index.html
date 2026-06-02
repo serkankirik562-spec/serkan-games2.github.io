@@ -2,130 +2,91 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>Serkan Games</title>
+<title>Serkan Games - Oyunlar</title>
 
 <style>
-body {
-    margin: 0;
-    font-family: Arial;
-    color: white;
-    overflow: hidden;
+body{
+    margin:0;
+    font-family:Arial;
+    color:white;
+    background:#0f0f1a;
 }
 
-/* ARKA PLAN (BEN KOYDUM GÜZEL GAMER STYLE) */
-.bg {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle at top, #1a1a2e, #000000);
-    z-index: -2;
+/* ARKA PLAN GLOW */
+.bg{
+    position:fixed;
+    width:100%;
+    height:100%;
+    background: radial-gradient(circle at top, #1a1a2e, #000);
+    z-index:-2;
 }
 
-/* animasyonlu ışık */
-.glow-bg {
-    position: fixed;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(45deg, #00ffcc, #ff00ff, #00aaff);
-    opacity: 0.15;
-    animation: move 10s infinite linear;
-    z-index: -1;
+.glow{
+    position:fixed;
+    width:200%;
+    height:200%;
+    background:linear-gradient(45deg,#00ffcc,#ff00ff,#00aaff);
+    opacity:0.12;
+    animation:move 10s infinite linear;
+    z-index:-1;
 }
 
-@keyframes move {
-    0% {transform: translate(0,0);}
-    50% {transform: translate(-20%, -20%);}
-    100% {transform: translate(0,0);}
+@keyframes move{
+    0%{transform:translate(0,0);}
+    50%{transform:translate(-15%,-15%);}
+    100%{transform:translate(0,0);}
 }
 
-/* ÜST BAR */
-.navbar {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 18px;
-    background: rgba(0,0,0,0.6);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-    box-sizing: border-box;
-    animation: slideDown 1s ease;
+/* HEADER */
+header{
+    text-align:center;
+    padding:80px 20px 30px;
 }
 
-@keyframes slideDown {
-    from {transform: translateY(-100%);}
-    to {transform: translateY(0);}
+header h1{
+    color:#00ffcc;
+    text-shadow:0 0 15px #00ffcc;
 }
 
-/* SOL */
-.left {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+/* GRID */
+.container{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
+    padding:20px;
 }
 
-.logo {
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    background: #00ffcc;
+/* CARD */
+.card{
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.1);
+    border-radius:15px;
+    padding:15px;
+    transition:0.3s;
+    backdrop-filter:blur(10px);
 }
 
-/* SERKAN GAMES */
-.title {
-    font-weight: bold;
-    font-size: 18px;
-    color: #00ffcc;
-    text-shadow: 0 0 10px #00ffcc;
+.card:hover{
+    transform:scale(1.05);
+    box-shadow:0 0 20px #00ffcc;
 }
 
-/* ORTA SAAT */
-.clock {
-    font-size: 14px;
-    opacity: 0.9;
+.card h3{
+    margin:10px 0;
 }
 
-/* ARAMA */
-.search input {
-    padding: 6px 10px;
-    border-radius: 8px;
-    border: none;
-    outline: none;
+button{
+    width:100%;
+    padding:10px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    background:#00ffcc;
+    font-weight:bold;
 }
 
-/* SAĞ MENÜ */
-.right {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-button {
-    background: transparent;
-    border: 1px solid #00ffcc;
-    color: white;
-    padding: 6px 10px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-button:hover {
-    background: #00ffcc;
-    color: black;
-}
-
-/* AYARLAR MENÜ */
-.settings-box {
-    position: absolute;
-    top: 60px;
-    right: 20px;
-    background: rgba(0,0,0,0.8);
-    padding: 10px;
-    border-radius: 10px;
-    display: none;
+button:hover{
+    background:#00ffaa;
 }
 </style>
 </head>
@@ -133,45 +94,40 @@ button:hover {
 <body>
 
 <div class="bg"></div>
-<div class="glow-bg"></div>
+<div class="glow"></div>
 
-<!-- NAVBAR -->
-<div class="navbar">
+<header>
+    <h1>SERKAN GAMES - OYUNLAR</h1>
+    <p>Seç ve oyna 🚀</p>
+</header>
 
-    <div class="left">
-        <div class="logo"></div>
-        <div class="title">SERKAN GAMES</div>
+<div class="container">
+
+    <div class="card">
+        <h3>Snake Game</h3>
+        <button onclick="openGame('https://play.google.com/store/apps/details?id=com.amelosinteractive.snake')">Oyna</button>
     </div>
 
-    <div class="clock" id="clock">00:00:00</div>
-
-    <div class="search">
-        <input placeholder="Ara...">
+    <div class="card">
+        <h3>Hair Tattoo</h3>
+        <button onclick="openGame('https://play.google.com/store/apps/details?id=com.wn.hairtattoo')">Oyna</button>
     </div>
 
-    <div class="right">
-        <button onclick="toggleSettings()">Ayarlar</button>
+    <div class="card">
+        <h3>Real Sniper</h3>
+        <button onclick="openGame('https://play.google.com/store/apps/details?id=com.miniclip.realsniper')">Oyna</button>
     </div>
 
-</div>
+    <div class="card">
+        <h3>Turning Game</h3>
+        <button onclick="openGame('https://play.google.com/store/apps/details?id=com.Eliten.Turning')">Oyna</button>
+    </div>
 
-<!-- AYARLAR -->
-<div class="settings-box" id="settings">
-    <p>Ayarlarda şimdilik boş 😄</p>
 </div>
 
 <script>
-function updateClock() {
-    const now = new Date();
-    document.getElementById("clock").innerText =
-        now.toLocaleTimeString();
-}
-setInterval(updateClock, 1000);
-updateClock();
-
-function toggleSettings() {
-    let box = document.getElementById("settings");
-    box.style.display = box.style.display === "block" ? "none" : "block";
+function openGame(url){
+    window.open(url, "_blank");
 }
 </script>
 
