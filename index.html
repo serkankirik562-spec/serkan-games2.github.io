@@ -1,95 +1,84 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Serkan Games</title>
+  <meta charset="UTF-8">
+  <title>Serkan Games - Gamer Panel</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: #0f0f1a;
+      color: white;
+    }
 
-<style>
-body{
-  margin:0;
-  font-family:Arial;
-  color:white;
+    /* NAVBAR */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #111827;
+      padding: 15px 20px;
+      border-bottom: 2px solid #00ffcc;
+    }
 
-  /* gamer arka plan */
-  background: radial-gradient(circle at top, #2a2a2a, #0b0b0b);
-}
+    .logo {
+      font-size: 20px;
+      font-weight: bold;
+      color: #00ffcc;
+    }
 
-/* ===== NAVBAR ===== */
-.navbar{
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:60px;
-  background:rgba(20,20,20,0.95);
-  backdrop-filter: blur(8px);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:0 15px;
-  box-shadow:0 2px 10px rgba(0,0,0,0.6);
-}
+    .menu a {
+      color: white;
+      text-decoration: none;
+      margin: 0 10px;
+      transition: 0.3s;
+    }
 
-.logo{
-  font-weight:bold;
-  color:#ff3b3b;
-}
+    .menu a:hover {
+      color: #00ffcc;
+    }
 
-/* menu */
-.nav-links a{
-  color:white;
-  text-decoration:none;
-  margin:0 10px;
-  font-size:14px;
-}
+    /* PANEL */
+    .panel {
+      padding: 30px;
+    }
 
-.nav-links a:hover{
-  color:#ff3b3b;
-}
-
-/* CONTENT */
-.content{
-  padding-top:90px;
-  text-align:center;
-}
-
-/* boş alan */
-.empty{
-  margin-top:40px;
-  color:#888;
-  font-size:14px;
-}
-</style>
-
+    .card {
+      background: #1f2937;
+      padding: 20px;
+      margin-top: 20px;
+      border-radius: 10px;
+      border: 1px solid #00ffcc33;
+    }
+  </style>
 </head>
-
 <body>
 
-<!-- NAVBAR -->
-<div class="navbar">
-
-  <div class="logo">🎮 SG GAMER PANEL</div>
-
-  <div class="nav-links">
-    <a href="#">Ana Sayfa</a>
-    <a href="#">Oyunlar</a>
-    <a href="#">Steam</a>
-    <a href="#">Linkler</a>
+  <div class="navbar">
+    <div class="logo">🎮 Serkan Games</div>
+    <div class="menu">
+      <a href="#">Ana Sayfa</a>
+      <a href="#">Oyunlar</a>
+      <a href="#">Gamer Panel</a>
+      <a href="#">İletişim</a>
+    </div>
   </div>
 
-</div>
+  <div class="panel">
+    <h1>Gamer Panel</h1>
 
-<!-- CONTENT -->
-<div class="content">
+    <div class="card">
+      🎯 Durum: Aktif oyuncu
+    </div>
 
-<h2>Serkan Games</h2>
+    <div class="card">
+      🕹 Son oynanan: Minecraft
+    </div>
 
-<div class="empty">
-  Oyunlar kaldırıldı. Yeni sistem hazırlanıyor...
-</div>
-
-</div>
+    <div class="card">
+      🏆 Seviye: 5
+    </div>
+  </div>
 
 </body>
 </html>
