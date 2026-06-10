@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Serkan Games</title>
+<title>Serkan Games V2</title>
 
 <style>
 *{
@@ -15,33 +15,31 @@
 
 body{
     height:100vh;
-    background:url("https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&w=1600&q=80");
     background-size:cover;
     background-position:center;
     overflow:hidden;
+    transition:1s ease-in-out;
 }
 
 /* ÜST BAR */
 .topbar{
     width:100%;
     height:70px;
-    background:rgba(70,70,70,0.85); /* orta gri */
+    background:rgba(60,60,60,0.88);
     display:flex;
     align-items:center;
     justify-content:space-between;
     padding:0 20px;
     color:white;
-    backdrop-filter:blur(8px);
+    backdrop-filter:blur(10px);
 }
 
-/* SOL LOGO */
 .logo{
     font-size:20px;
     font-weight:bold;
     letter-spacing:1px;
 }
 
-/* ORTA ARAMA */
 .search-box input{
     width:300px;
     padding:8px 12px;
@@ -50,7 +48,6 @@ body{
     outline:none;
 }
 
-/* SAĞ TARAF */
 .right{
     display:flex;
     align-items:center;
@@ -72,16 +69,16 @@ body{
     transform:rotate(90deg);
 }
 
-/* ALT YAZI */
 .center-text{
     position:absolute;
     top:50%;
     left:50%;
     transform:translate(-50%,-50%);
     color:white;
-    font-size:40px;
+    font-size:42px;
     font-weight:bold;
-    text-shadow:0 0 10px black;
+    text-shadow:0 0 15px black;
+    text-align:center;
 }
 </style>
 </head>
@@ -89,10 +86,10 @@ body{
 <body>
 
 <div class="topbar">
-    <div class="logo">SERKAN GAMES</div>
+    <div class="logo">SERKAN GAMES V2</div>
 
     <div class="search-box">
-        <input type="text" placeholder="Ara...">
+        <input type="text" placeholder="Oyun ara...">
     </div>
 
     <div class="right">
@@ -102,21 +99,36 @@ body{
 </div>
 
 <div class="center-text">
-    SERKAN GAMES PANEL
+    SERKAN GAMES<br>GAMER PANEL
 </div>
 
 <script>
+// Saat
 function updateTime(){
     const now = new Date();
-
-    const date = now.toLocaleDateString("tr-TR");
-    const time = now.toLocaleTimeString("tr-TR");
-
-    document.getElementById("clock").innerHTML = time + "<br>" + date;
+    document.getElementById("clock").innerHTML =
+        now.toLocaleTimeString("tr-TR") + "<br>" +
+        now.toLocaleDateString("tr-TR");
 }
-
 setInterval(updateTime,1000);
 updateTime();
+
+
+// OYUN ARKA PLANLARI (rastgele)
+const backgrounds = [
+    "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1600&q=80", // FPS savaş
+    "https://images.unsplash.com/photo-1603481546579-65d935ba6a7c?auto=format&fit=crop&w=1600&q=80", // cyber shooter
+    "https://images.unsplash.com/photo-1627856015175-2c1b2d1a4b9f?auto=format&fit=crop&w=1600&q=80", // fantasy RPG
+    "https://images.unsplash.com/photo-1614294148960-9aa740632a87?auto=format&fit=crop&w=1600&q=80"  // dark battle vibe
+];
+
+function changeBg(){
+    const bg = backgrounds[Math.floor(Math.random()*backgrounds.length)];
+    document.body.style.backgroundImage = `url('${bg}')`;
+}
+
+changeBg();
+setInterval(changeBg, 7000);
 </script>
 
 </body>
