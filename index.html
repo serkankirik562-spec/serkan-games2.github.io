@@ -16,7 +16,7 @@ font-family:Arial;
 body{
 height:100vh;
 overflow:hidden;
-transition:0.6s ease-in-out;
+transition:0.6s;
 }
 
 /* TOP BAR */
@@ -60,12 +60,6 @@ font-size:13px;
 
 .settings{
 cursor:pointer;
-transition:0.3s;
-}
-
-.settings:hover{
-transform:rotate(90deg);
-color:#ff00ff;
 }
 
 /* PANEL */
@@ -89,11 +83,7 @@ border-radius:6px;
 text-align:center;
 }
 
-.theme:hover{
-background:rgba(0,255,255,0.2);
-}
-
-/* KAYDET */
+/* SAVE */
 .save{
 margin-top:10px;
 padding:8px;
@@ -104,10 +94,57 @@ text-align:center;
 border-radius:6px;
 cursor:pointer;
 }
+
+/* 🌌 SPACE */
+.space{
+background:linear-gradient(120deg,#000,#001133,#330066);
+animation:spaceGlow 6s infinite alternate;
+}
+
+@keyframes spaceGlow{
+0%{filter:brightness(1);}
+100%{filter:brightness(1.4);}
+}
+
+/* 🔥 FIRE */
+.fire{
+background:linear-gradient(120deg,#000,#330000,#ff3300);
+animation:fireShake 0.3s infinite;
+}
+
+@keyframes fireShake{
+0%{transform:translate(0px,0px);}
+50%{transform:translate(1px,-1px);}
+100%{transform:translate(0px,0px);}
+}
+
+/* 🌊 OCEAN */
+.ocean{
+background:linear-gradient(120deg,#000,#001a33,#00ccff);
+animation:oceanWave 4s infinite ease-in-out;
+}
+
+@keyframes oceanWave{
+0%{filter:hue-rotate(0deg);}
+50%{filter:hue-rotate(20deg);}
+100%{filter:hue-rotate(0deg);}
+}
+
+/* ⚡ CYBER */
+.cyber{
+background:linear-gradient(120deg,#000,#6600ff,#00ffff);
+animation:cyberFlash 1.5s infinite;
+}
+
+@keyframes cyberFlash{
+0%{filter:contrast(1);}
+50%{filter:contrast(1.4) saturate(1.5);}
+100%{filter:contrast(1);}
+}
 </style>
 </head>
 
-<body>
+<body class="space">
 
 <div class="topbar">
 <div class="logo">SERKAN GAMES</div>
@@ -124,26 +161,22 @@ cursor:pointer;
 
 <div class="panel" id="panel">
 
-<div class="theme" onclick="setTheme('space')">🌌 Uzay</div>
-<div class="theme" onclick="setTheme('fire')">🔥 Fire</div>
-<div class="theme" onclick="setTheme('ocean')">🌊 Ocean</div>
-<div class="theme" onclick="setTheme('cyber')">⚡ Cyber</div>
+<div class="theme" onclick="set('space')">🌌 Uzay</div>
+<div class="theme" onclick="set('fire')">🔥 Fire</div>
+<div class="theme" onclick="set('ocean')">🌊 Ocean</div>
+<div class="theme" onclick="set('cyber')">⚡ Cyber</div>
 
-<div class="save" onclick="saveTheme()">KAYDET</div>
+<div class="save" onclick="save()">KAYDET</div>
 
 </div>
 
 <script>
 
-let currentTheme="space";
-
 /* CLOCK */
-function clock(){
+setInterval(()=>{
 document.getElementById("clock").innerText=
 new Date().toLocaleTimeString("tr-TR")+" | "+new Date().toLocaleDateString("tr-TR");
-}
-setInterval(clock,1000);
-clock();
+},1000);
 
 /* PANEL */
 function toggle(){
@@ -151,35 +184,25 @@ let p=document.getElementById("panel");
 p.style.display=p.style.display==="block"?"none":"block";
 }
 
-/* THEMES */
-function setTheme(t){
-currentTheme=t;
+/* THEME */
+let current="space";
 
-if(t==="space"){
-document.body.style.background="linear-gradient(120deg,#000,#001133,#330066)";
-}
-if(t==="fire"){
-document.body.style.background="linear-gradient(120deg,#000,#330000,#ff3300)";
-}
-if(t==="ocean"){
-document.body.style.background="linear-gradient(120deg,#000,#001a33,#00ccff)";
-}
-if(t==="cyber"){
-document.body.style.background="linear-gradient(120deg,#000,#6600ff,#00ffff)";
-}
+function set(t){
+document.body.className=t;
+current=t;
 }
 
 /* SAVE */
-function saveTheme(){
-localStorage.setItem("theme",currentTheme);
-alert("Tema kaydedildi!");
+function save(){
+localStorage.setItem("theme",current);
+alert("Kaydedildi!");
 }
 
 /* LOAD */
-window.onload=function(){
+window.onload=()=>{
 let t=localStorage.getItem("theme");
 if(t){
-setTheme(t);
+set(t);
 }
 }
 
