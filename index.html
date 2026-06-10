@@ -2,7 +2,8 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>Serkan James</title>
+<title>Serkan Games</title>
+
 <style>
 body {
 margin:0;
@@ -12,18 +13,21 @@ color:white;
 overflow:hidden;
 }
 
+/* TOP BAR */
 #topbar {
 display:flex;
 justify-content:space-between;
 padding:10px;
-background:rgba(0,0,0,0.5);
+background:rgba(0,0,0,0.6);
 }
 
 #title {
 font-size:22px;
 font-weight:bold;
+letter-spacing:2px;
 }
 
+/* GAME MENU */
 #gameArea {
 display:flex;
 padding:20px;
@@ -44,11 +48,12 @@ transform:scale(1.05);
 }
 
 canvas {
-background:#87ceeb;
+background:linear-gradient(#87ceeb,#d0f0ff);
 border-radius:10px;
 display:none;
 }
 
+/* MENU */
 .menu {
 display:none;
 position:absolute;
@@ -63,6 +68,7 @@ border-radius:10px;
 button {
 margin:5px;
 padding:10px;
+cursor:pointer;
 }
 </style>
 </head>
@@ -70,55 +76,59 @@ padding:10px;
 <body>
 
 <div id="topbar">
-<div id="title">SERKAN JAMES</div>
+<div id="title">SERKAN GAMES</div>
 <div id="time"></div>
 </div>
 
 <div id="gameArea">
+
 <div class="card" onclick="startGame()">
 <h3>🕷 Spider Swing</h3>
-<p>İpe tutun, zıpla, finish'e ulaş!</p>
+<p>İpe tutun, sallan, finish'e ulaş!</p>
 </div>
 
 <div class="card">
 <h3>⚙ Ayarlar</h3>
-<p>Boş menü (hazır)</p>
+<p>Ses & titreşim sistemi hazır</p>
 </div>
+
 </div>
 
 <canvas id="game" width="800" height="400"></canvas>
 
 <div class="menu" id="menu">
-<h3>MENÜ</h3>
+<h3>LEVEL TAMAMLANDI ⭐</h3>
 <button onclick="nextLevel()">İleri</button>
 <button onclick="home()">Ev</button>
-<button onclick="openSettings()">Ayarlar</button>
+<button onclick="settings()">Ayarlar</button>
 </div>
 
 <script>
 
-let timeDiv = document.getElementById("time");
+/* SAAT */
 setInterval(()=>{
-let d = new Date();
-timeDiv.innerHTML = d.toLocaleString();
+document.getElementById("time").innerHTML = new Date().toLocaleString();
 },1000);
 
+/* GAME */
 let canvas = document.getElementById("game");
 let ctx = canvas.getContext("2d");
 
-let x=50,y=300,vx=0,vy=0;
+let x=50,y=300;
+let vx=0,vy=0;
 let ground=300;
-let holding=false;
-let lastTap=0;
-let coins=0;
 let finishX=700;
 
+let lastTap=0;
+
+/* START */
 function startGame(){
 document.getElementById("gameArea").style.display="none";
 canvas.style.display="block";
 loop();
 }
 
+/* KONTROLLER */
 document.addEventListener("keydown",(e)=>{
 if(e.key=="ArrowRight") vx=3;
 if(e.key=="ArrowLeft") vx=-3;
@@ -126,58 +136,59 @@ if(e.key=="ArrowLeft") vx=-3;
 
 document.addEventListener("keyup",()=>vx=0);
 
-// mobil dokunma
-document.addEventListener("touchstart",(e)=>{
-let now=Date.now();
+/* MOBİL */
+document.addEventListener("touchstart",()=>{
+let now = Date.now();
 
-if(now-lastTap<300){
-vy=-8; // double jump
+if(now-lastTap < 300){
+vy = -8; // çift tık zıplama
 }else{
-vx=2; // hold move
+vx = 2; // basılı tut ileri
 }
-lastTap=now;
+
+lastTap = now;
 });
 
-document.addEventListener("touchend",()=>{
-vx=0;
-});
+document.addEventListener("touchend",()=>vx=0);
 
+/* LOOP */
 function loop(){
+
 ctx.clearRect(0,0,800,400);
 
-// player
-vy+=0.3;
-y+=vy;
-x+=vx;
+/* yer çekimi */
+vy += 0.3;
+y += vy;
+x += vx;
 
-if(y>ground){ y=ground; vy=0; }
+if(y > ground){
+y = ground;
+vy = 0;
+}
 
-// rope (basit swing)
+/* ip (swing efekti) */
 ctx.beginPath();
 ctx.moveTo(x,y);
 ctx.lineTo(x+30,y-80);
 ctx.stroke();
 
-// finish
+/* finish */
 ctx.fillStyle="gold";
 ctx.fillRect(finishX,250,20,100);
 
-// player draw
+/* oyuncu */
 ctx.fillStyle="red";
 ctx.fillRect(x,y-20,20,20);
 
-// coin logic
-if(x>finishX){
-showMenu();
+/* finish kontrol */
+if(x > finishX){
+document.getElementById("menu").style.display="block";
 }
 
 requestAnimationFrame(loop);
 }
 
-function showMenu(){
-document.getElementById("menu").style.display="block";
-}
-
+/* LEVEL */
 function nextLevel(){
 finishX += 200;
 document.getElementById("menu").style.display="none";
@@ -187,8 +198,9 @@ function home(){
 location.reload();
 }
 
-function openSettings(){
-alert("Ses / Titreşim (hazır sistem)");
+/* SETTINGS */
+function settings(){
+alert("Serkan Games: Ses & titreşim sistemi hazır (UI boş)");
 }
 
 </script>
