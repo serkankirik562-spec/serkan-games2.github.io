@@ -17,31 +17,21 @@ body{
     height:100vh;
     background-size:cover;
     background-position:center;
-    overflow:hidden;
 }
 
-/* ÜST BAR */
+/* TOP BAR */
 .topbar{
     width:100%;
     height:70px;
-    background:rgba(60,60,60,0.9);
+    background:rgba(50,50,50,0.9);
     display:flex;
     justify-content:space-between;
     align-items:center;
     padding:0 20px;
     color:white;
-    backdrop-filter:blur(10px);
 }
 
 .logo{font-weight:bold;}
-
-.search-box input{
-    width:250px;
-    padding:7px;
-    border:none;
-    border-radius:6px;
-    outline:none;
-}
 
 .right{
     display:flex;
@@ -49,67 +39,59 @@ body{
     align-items:center;
 }
 
-.settings{
-    cursor:pointer;
-    font-size:22px;
+/* MENU */
+.menu{
+    position:absolute;
+    bottom:20px;
+    left:20px;
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
 }
 
-/* MODAL */
-.modal{
-    position:fixed;
-    top:0;left:0;
-    width:100%;
-    height:100%;
-    background:rgba(0,0,0,0.7);
-    display:none;
-    justify-content:center;
-    align-items:center;
-}
-
-.panel{
-    width:80%;
-    height:80%;
-    background:#222;
-    border-radius:12px;
-    padding:20px;
-    color:white;
-    overflow:auto;
-}
-
-.games{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:15px;
-    margin-top:20px;
-}
-
-.card{
-    cursor:pointer;
-    border:2px solid transparent;
+.tile{
+    width:120px;
+    height:80px;
     border-radius:10px;
     overflow:hidden;
-    transition:0.2s;
-}
-
-.card img{
-    width:100%;
-    height:120px;
-    object-fit:cover;
-}
-
-.card:hover{
-    transform:scale(1.05);
-    border:2px solid #00ffcc;
-}
-
-.saveBtn{
-    margin-top:20px;
-    padding:10px;
-    width:100%;
-    background:#00ffcc;
-    border:none;
     cursor:pointer;
+    border:2px solid transparent;
+    transition:0.2s;
+    position:relative;
+    background:#222;
+    color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    font-size:12px;
+}
+
+.tile img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    position:absolute;
+    top:0;
+    left:0;
+    opacity:0.7;
+}
+
+.tile span{
+    position:relative;
+    z-index:2;
     font-weight:bold;
+}
+
+/* PLUS TILE */
+.plus{
+    font-size:30px;
+    background:#111;
+}
+
+/* GALLERY */
+input{
+    display:none;
 }
 </style>
 </head>
@@ -118,88 +100,101 @@ body{
 
 <div class="topbar">
     <div class="logo">SERKAN GAMES</div>
-
-    <div class="search-box">
-        <input placeholder="Oyun ara...">
-    </div>
-
-    <div class="right">
-        <div id="clock"></div>
-        <div class="settings" onclick="openMenu()">⚙️</div>
-    </div>
+    <div>⚙️</div>
 </div>
 
-<!-- AYARLAR -->
-<div class="modal" id="modal">
-    <div class="panel">
-        <h2>Tema Seç</h2>
+<!-- GALERİ INPUT -->
+<input type="file" id="file" accept="image/*" onchange="addCustom(event)">
 
-        <div class="games">
+<!-- MENU -->
+<div class="menu">
 
-            <div class="card" onclick="selectBg(this)">
-                <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e">
-                <p>CS / FPS</p>
-            </div>
-
-            <div class="card" onclick="selectBg(this)">
-                <img src="https://images.unsplash.com/photo-1614294148960-9aa740632a87">
-                <p>Metin2 / RPG</p>
-            </div>
-
-            <div class="card" onclick="selectBg(this)">
-                <img src="https://images.unsplash.com/photo-1603481546579-65d935ba6a7c">
-                <p>Battle / Action</p>
-            </div>
-
-            <div class="card" onclick="selectBg(this)">
-                <img src="https://images.unsplash.com/photo-1618336753974-aae8e04506aa">
-                <p>Fantasy MMO</p>
-            </div>
-
-        </div>
-
-        <button class="saveBtn" onclick="saveTheme()">KAYDET</button>
+    <div class="tile" onclick="setBg(0)">
+        <img src="https://images.unsplash.com/photo-1603481546579-65d935ba6a7c">
+        <span>CS / FPS</span>
     </div>
+
+    <div class="tile" onclick="setBg(1)">
+        <img src="https://images.unsplash.com/photo-1614294148960-9aa740632a87">
+        <span>Metin2 RPG</span>
+    </div>
+
+    <div class="tile" onclick="setBg(2)">
+        <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e">
+        <span>Minecraft</span>
+    </div>
+
+    <div class="tile" onclick="setBg(3)">
+        <img src="https://images.unsplash.com/photo-1618336753974-aae8e04506aa">
+        <span>Mortal Kombat</span>
+    </div>
+
+    <div class="tile" onclick="setBg(4)">
+        <img src="https://images.unsplash.com/photo-1526498460520-4c246339dccb">
+        <span>Super Mario</span>
+    </div>
+
+    <div class="tile" onclick="setBg(5)">
+        <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420">
+        <span>PUBG</span>
+    </div>
+
+    <!-- PROJE + -->
+    <div class="tile plus" onclick="document.getElementById('file').click()">
+        <span>+</span>
+    </div>
+
 </div>
 
 <script>
 
-// SAAT
-function clock(){
-    const now = new Date();
-    document.getElementById("clock").innerHTML =
-        now.toLocaleTimeString("tr-TR");
-}
-setInterval(clock,1000);
-clock();
+let backgrounds = [
+"https://images.unsplash.com/photo-1603481546579-65d935ba6a7c",
+"https://images.unsplash.com/photo-1614294148960-9aa740632a87",
+"https://images.unsplash.com/photo-1542751371-adc38448a05e",
+"https://images.unsplash.com/photo-1618336753974-aae8e04506aa",
+"https://images.unsplash.com/photo-1526498460520-4c246339dccb",
+"https://images.unsplash.com/photo-1511512578047-dfb367046420"
+];
 
-// MODAL
-function openMenu(){
-    document.getElementById("modal").style.display="flex";
-}
+// yüklenmiş customlar
+let custom = JSON.parse(localStorage.getItem("custom") || "[]");
 
-let selectedBg="";
+function setBg(i){
+    let bg;
 
-function selectBg(el){
-    selectedBg = el.querySelector("img").src;
-    alert("Seçildi!");
-}
-
-function saveTheme(){
-    if(selectedBg!=""){
-        document.body.style.backgroundImage=`url(${selectedBg})`;
-        localStorage.setItem("bg",selectedBg);
+    if(i < backgrounds.length){
+        bg = backgrounds[i];
+    }else{
+        bg = custom[i - backgrounds.length];
     }
-    document.getElementById("modal").style.display="none";
+
+    document.body.style.backgroundImage = `url('${bg}')`;
+    localStorage.setItem("bg", bg);
 }
 
 // yükle
-window.onload=function(){
-    let bg = localStorage.getItem("bg");
-    if(bg){
-        document.body.style.backgroundImage=`url(${bg})`;
+window.onload = () => {
+    let saved = localStorage.getItem("bg");
+    if(saved){
+        document.body.style.backgroundImage = `url('${saved}')`;
     }
 }
+
+// GALERİ EKLE
+function addCustom(e){
+    const file = e.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = function(){
+        custom.push(reader.result);
+        localStorage.setItem("custom", JSON.stringify(custom));
+        alert("Tema eklendi! Menüye yeni resim olarak kaydedildi.");
+    }
+
+    reader.readAsDataURL(file);
+}
+
 </script>
 
 </body>
