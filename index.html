@@ -16,7 +16,7 @@ font-family:Arial;
 body{
 height:100vh;
 overflow:hidden;
-transition:0.6s;
+transition:1s ease;
 }
 
 /* TOP BAR */
@@ -83,7 +83,6 @@ border-radius:6px;
 text-align:center;
 }
 
-/* SAVE */
 .save{
 margin-top:10px;
 padding:8px;
@@ -98,48 +97,49 @@ cursor:pointer;
 /* 🌌 SPACE */
 .space{
 background:linear-gradient(120deg,#000,#001133,#330066);
-animation:spaceGlow 6s infinite alternate;
+animation:spaceGlow 8s ease-in-out infinite;
 }
 
 @keyframes spaceGlow{
-0%{filter:brightness(1);}
-100%{filter:brightness(1.4);}
+0%{filter:brightness(1) hue-rotate(0deg);}
+50%{filter:brightness(1.3) hue-rotate(20deg);}
+100%{filter:brightness(1) hue-rotate(0deg);}
 }
 
 /* 🔥 FIRE */
 .fire{
 background:linear-gradient(120deg,#000,#330000,#ff3300);
-animation:fireShake 0.3s infinite;
+animation:fireGlow 4s ease-in-out infinite;
 }
 
-@keyframes fireShake{
-0%{transform:translate(0px,0px);}
-50%{transform:translate(1px,-1px);}
-100%{transform:translate(0px,0px);}
+@keyframes fireGlow{
+0%{filter:brightness(1);}
+50%{filter:brightness(1.4) saturate(1.3);}
+100%{filter:brightness(1);}
 }
 
 /* 🌊 OCEAN */
 .ocean{
 background:linear-gradient(120deg,#000,#001a33,#00ccff);
-animation:oceanWave 4s infinite ease-in-out;
+animation:oceanFlow 6s ease-in-out infinite;
 }
 
-@keyframes oceanWave{
-0%{filter:hue-rotate(0deg);}
-50%{filter:hue-rotate(20deg);}
-100%{filter:hue-rotate(0deg);}
+@keyframes oceanFlow{
+0%{background-position:0% 50%;}
+50%{background-position:100% 50%;}
+100%{background-position:0% 50%;}
 }
 
 /* ⚡ CYBER */
 .cyber{
 background:linear-gradient(120deg,#000,#6600ff,#00ffff);
-animation:cyberFlash 1.5s infinite;
+background-size:300% 300%;
+animation:cyberMove 3s linear infinite;
 }
 
-@keyframes cyberFlash{
-0%{filter:contrast(1);}
-50%{filter:contrast(1.4) saturate(1.5);}
-100%{filter:contrast(1);}
+@keyframes cyberMove{
+0%{background-position:0% 50%;}
+100%{background-position:100% 50%;}
 }
 </style>
 </head>
