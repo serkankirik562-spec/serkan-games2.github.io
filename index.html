@@ -16,7 +16,48 @@ font-family:Arial;
 body{
 height:100vh;
 overflow:hidden;
-transition:1s ease;
+color:white;
+}
+
+/* 🌌 UZAY ARKA PLAN */
+.space{
+position:absolute;
+width:100%;
+height:100%;
+z-index:-2;
+background:linear-gradient(120deg,#000,#0a0a2a,#1a0033,#000814);
+background-size:300% 300%;
+animation:spaceMove 10s ease-in-out infinite;
+}
+
+@keyframes spaceMove{
+0%{background-position:0% 50%;}
+50%{background-position:100% 50%;}
+100%{background-position:0% 50%;}
+}
+
+/* ✨ YILDIZLAR */
+.stars{
+position:absolute;
+width:100%;
+height:100%;
+overflow:hidden;
+z-index:-1;
+}
+
+.star{
+position:absolute;
+width:3px;
+height:3px;
+background:white;
+border-radius:50%;
+opacity:0.6;
+animation:floatStar 6s linear infinite;
+}
+
+@keyframes floatStar{
+0%{transform:translateY(100vh);}
+100%{transform:translateY(-10vh);}
 }
 
 /* TOP BAR */
@@ -27,15 +68,15 @@ display:flex;
 justify-content:space-between;
 align-items:center;
 padding:0 20px;
-color:white;
-background:rgba(20,20,20,0.6);
+background:rgba(10,10,30,0.6);
 backdrop-filter:blur(12px);
+border-bottom:1px solid rgba(120,80,255,0.2);
 }
 
 .logo{
-color:#00f7ff;
+color:#b38cff;
 font-weight:bold;
-text-shadow:0 0 10px #00f7ff;
+text-shadow:0 0 10px #6a5acd;
 }
 
 .search-box input{
@@ -54,97 +95,45 @@ align-items:center;
 }
 
 .clock{
-color:#00f7ff;
+color:#b38cff;
 font-size:13px;
 }
 
 .settings{
 cursor:pointer;
+transition:0.3s;
 }
 
-/* PANEL */
-.panel{
+.settings:hover{
+transform:rotate(90deg);
+color:#ffffff;
+}
+
+/* ORTA IŞIK */
+.glow{
 position:absolute;
-right:20px;
-top:90px;
-width:240px;
-background:rgba(0,0,0,0.85);
-border-radius:10px;
-padding:10px;
-display:none;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+width:400px;
+height:400px;
+background:radial-gradient(circle,rgba(120,80,255,0.25),transparent 70%);
+animation:pulse 5s ease-in-out infinite;
 }
 
-.theme{
-padding:8px;
-margin:5px 0;
-background:rgba(255,255,255,0.1);
-cursor:pointer;
-border-radius:6px;
-text-align:center;
-}
-
-.save{
-margin-top:10px;
-padding:8px;
-background:#00f7ff;
-color:black;
-font-weight:bold;
-text-align:center;
-border-radius:6px;
-cursor:pointer;
-}
-
-/* 🌌 SPACE */
-.space{
-background:linear-gradient(120deg,#000,#001133,#330066);
-animation:spaceGlow 8s ease-in-out infinite;
-}
-
-@keyframes spaceGlow{
-0%{filter:brightness(1) hue-rotate(0deg);}
-50%{filter:brightness(1.3) hue-rotate(20deg);}
-100%{filter:brightness(1) hue-rotate(0deg);}
-}
-
-/* 🔥 FIRE */
-.fire{
-background:linear-gradient(120deg,#000,#330000,#ff3300);
-animation:fireGlow 4s ease-in-out infinite;
-}
-
-@keyframes fireGlow{
-0%{filter:brightness(1);}
-50%{filter:brightness(1.4) saturate(1.3);}
-100%{filter:brightness(1);}
-}
-
-/* 🌊 OCEAN */
-.ocean{
-background:linear-gradient(120deg,#000,#001a33,#00ccff);
-animation:oceanFlow 6s ease-in-out infinite;
-}
-
-@keyframes oceanFlow{
-0%{background-position:0% 50%;}
-50%{background-position:100% 50%;}
-100%{background-position:0% 50%;}
-}
-
-/* ⚡ CYBER */
-.cyber{
-background:linear-gradient(120deg,#000,#6600ff,#00ffff);
-background-size:300% 300%;
-animation:cyberMove 3s linear infinite;
-}
-
-@keyframes cyberMove{
-0%{background-position:0% 50%;}
-100%{background-position:100% 50%;}
+@keyframes pulse{
+0%{transform:translate(-50%,-50%) scale(1);}
+50%{transform:translate(-50%,-50%) scale(1.3);}
+100%{transform:translate(-50%,-50%) scale(1);}
 }
 </style>
 </head>
 
-<body class="space">
+<body>
+
+<div class="space"></div>
+
+<div class="stars" id="stars"></div>
 
 <div class="topbar">
 <div class="logo">SERKAN GAMES</div>
@@ -155,20 +144,11 @@ animation:cyberMove 3s linear infinite;
 
 <div class="right">
 <div id="clock"></div>
-<div class="settings" onclick="toggle()">⚙️</div>
+<div class="settings">⚙️</div>
 </div>
 </div>
 
-<div class="panel" id="panel">
-
-<div class="theme" onclick="set('space')">🌌 Uzay</div>
-<div class="theme" onclick="set('fire')">🔥 Fire</div>
-<div class="theme" onclick="set('ocean')">🌊 Ocean</div>
-<div class="theme" onclick="set('cyber')">⚡ Cyber</div>
-
-<div class="save" onclick="save()">KAYDET</div>
-
-</div>
+<div class="glow"></div>
 
 <script>
 
@@ -178,32 +158,15 @@ document.getElementById("clock").innerText=
 new Date().toLocaleTimeString("tr-TR")+" | "+new Date().toLocaleDateString("tr-TR");
 },1000);
 
-/* PANEL */
-function toggle(){
-let p=document.getElementById("panel");
-p.style.display=p.style.display==="block"?"none":"block";
-}
+/* STARS */
+const stars=document.getElementById("stars");
 
-/* THEME */
-let current="space";
-
-function set(t){
-document.body.className=t;
-current=t;
-}
-
-/* SAVE */
-function save(){
-localStorage.setItem("theme",current);
-alert("Kaydedildi!");
-}
-
-/* LOAD */
-window.onload=()=>{
-let t=localStorage.getItem("theme");
-if(t){
-set(t);
-}
+for(let i=0;i<40;i++){
+let s=document.createElement("div");
+s.className="star";
+s.style.left=Math.random()*100+"%";
+s.style.animationDuration=(3+Math.random()*5)+"s";
+stars.appendChild(s);
 }
 
 </script>
