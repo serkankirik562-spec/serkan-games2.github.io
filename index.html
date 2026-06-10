@@ -2,245 +2,265 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>Serkan Games</title>
+<title>Serkan Games V12</title>
 
 <style>
 body{
 margin:0;
-font-family:Arial;
-background:url("https://images.unsplash.com/photo-1511512578047-dfb367046420") no-repeat center center fixed;
-background-size:cover;
-color:white;
 overflow:hidden;
+font-family:Arial;
+background:black;
+color:white;
 }
 
-/* TOP BAR */
-#topbar{
+/* INTRO */
+#intro{
+position:absolute;
+width:100%;
+height:100%;
 display:flex;
-justify-content:space-between;
+justify-content:center;
 align-items:center;
-padding:10px;
-background:rgba(0,0,0,0.7);
-}
-
-#title{
-font-size:20px;
-font-weight:bold;
-}
-
-#search{
-padding:5px;
-width:150px;
-}
-
-/* MENU */
-#menu{
-display:flex;
-gap:20px;
-padding:20px;
-}
-
-.card{
-width:200px;
-background:rgba(0,0,0,0.6);
-padding:10px;
-border-radius:10px;
-cursor:pointer;
-transition:0.3s;
-}
-
-.card:hover{
-transform:scale(1.05);
+flex-direction:column;
+background:black;
+z-index:100;
 }
 
 /* GAME */
 canvas{
 display:none;
-background:rgba(135,206,235,0.8);
-margin:auto;
 }
 
-#settings{
-display:none;
+/* UI */
+#ui{
+position:absolute;
+top:10px;
+left:10px;
+z-index:10;
+}
+
+#shop{
 position:absolute;
 top:50%;
 left:50%;
 transform:translate(-50%,-50%);
 background:#111;
-padding:20px;
-border-radius:10px;
-width:300px;
+padding:15px;
+display:none;
+z-index:20;
 }
-
-button{margin:5px;padding:8px;}
 </style>
 </head>
 
 <body>
 
-<!-- TOP BAR -->
-<div id="topbar">
-<div id="title">SERKAN GAMES</div>
-
-<div id="time"></div>
-
-<input id="search" placeholder="Ara...">
-
-<button onclick="openSettings()">Ayarlar</button>
+<!-- INTRO -->
+<div id="intro">
+<h1>SERKAN GAMES V12</h1>
+<p>FINAL ULTIMATE ENGINE</p>
+<button onclick="start()">START</button>
 </div>
 
-<!-- MENU -->
-<div id="menu">
-<div class="card" onclick="startGame()">🕷 Spider Swing</div>
-<div class="card">🎮 Windclash</div>
+<div id="ui">
+<button onclick="attack()">⚔ Saldır</button>
+<button onclick="openShop()">Market</button>
+<button onclick="toggleMode()">Mode</button>
 </div>
 
-<!-- GAME -->
-<canvas id="game" width="900" height="450"></canvas>
-
-<!-- SETTINGS -->
-<div id="settings">
-<h3>Ayarlar</h3>
-
-<button onclick="toggleSound()">Ses Aç/Kapat</button>
-<button onclick="toggleMusic()">Müzik Aç/Kapat</button>
-<button onclick="toggleVibration()">Titreşim Aç/Kapat</button>
-<button onclick="pauseGame()">Durdur</button>
-<button onclick="resumeGame()">Devam</button>
-
-<br>
-<button onclick="closeSettings()">Kapat</button>
+<!-- SHOP -->
+<div id="shop">
+<h3>MARKET</h3>
+<button onclick="buy('sword')">Kılıç (7)</button>
+<button onclick="buy('bow')">Yay (20)</button>
+<button onclick="buy('bomb')">Bomba (11)</button>
+<button onclick="buy('mace')">Gürz (60)</button>
+<button onclick="closeShop()">Kapat</button>
 </div>
+
+<canvas id="game"></canvas>
 
 <script>
 
-/* TIME */
-setInterval(()=>{
-document.getElementById("time").innerHTML =
-new Date().toLocaleString();
-},1000);
-
-/* SETTINGS */
-let sound=true,music=true,vibration=true;
-let paused=false;
-
-/* GAME */
 let canvas=document.getElementById("game");
 let ctx=canvas.getContext("2d");
 
-let x=50,y=300,vx=0,vy=0;
-let ground=350;
-let finishX=800;
-let coins=0;
+function resize(){
+canvas.width=innerWidth;
+canvas.height=innerHeight;
+}
+window.addEventListener("resize",resize);
+resize();
 
-let swingZones=[200,400,600]; // SADECE BU NOKTALARDA SALINMA
-let swinging=false;
+/* GAME STATE */
+let x=100,y=200,vx=0,vy=0;
+let ground=innerHeight-120;
+
+let coins=50;
+
+/* MODE */
+let mode="normal"; // quest / normal
+
+/* DIFFICULTY */
+let difficulty="normal";
+
+/* WEAPONS */
+let weapons={
+sword:3,
+bow:2,
+bomb:1,
+mace:1
+};
+
+let current="sword";
+
+/* ENEMIES */
+let enemies=[];
+
+/* LEVEL RULE */
+let doorLocked=true;
 
 /* START */
-function startGame(){
-document.getElementById("menu").style.display="none";
+function start(){
+document.getElementById("intro").style.display="none";
 canvas.style.display="block";
+spawn();
 loop();
 }
 
-/* CONTROLS */
-document.addEventListener("keydown",(e)=>{
-if(e.key=="ArrowRight") vx=3;
-if(e.key=="ArrowLeft") vx=-3;
-if(e.key==" "){
-vy=-8; // jump
-}
-});
+/* SPAWN */
+function spawn(){
+enemies=[];
 
+let count=3;
+
+if(difficulty=="easy") count=2;
+if(difficulty=="hard") count=5;
+if(difficulty=="impossible") count=8;
+
+for(let i=0;i<count;i++){
+enemies.push({
+x:400+i*120,
+y:ground-40,
+hp:1
+});
+}
+}
+
+/* INPUT */
+document.addEventListener("keydown",(e)=>{
+if(e.key=="ArrowRight")vx=5;
+if(e.key=="ArrowLeft")vx=-5;
+if(e.key==" ")vy=-12;
+});
 document.addEventListener("keyup",()=>vx=0);
 
-/* TOUCH */
-let lastTap=0;
+/* ATTACK + DURABILITY */
+function attack(){
 
-document.addEventListener("touchstart",()=>{
-let now=Date.now();
+if(weapons[current]<=0) return;
 
-if(now-lastTap<300){
-vy=-9; // double jump
-}else{
-vx=2; // hold move
+weapons[current]--;
+
+enemies.forEach(e=>{
+if(Math.abs(e.x-x)<80){
+e.hp=0;
 }
-lastTap=now;
+});
+}
+
+/* SHOP */
+function openShop(){
+document.getElementById("shop").style.display="block";
+}
+
+function closeShop(){
+document.getElementById("shop").style.display="none";
+}
+
+function buy(item){
+
+let cost={
+sword:7,
+bow:20,
+bomb:11,
+mace:60
+};
+
+if(coins>=cost[item]){
+coins-=cost[item];
+weapons[item]+=3;
+}
+}
+
+/* MODE SWITCH */
+function toggleMode(){
+mode = (mode=="normal") ? "quest" : "normal";
+}
+
+/* PHYSICS */
+function physics(){
+vy+=0.5;
+x+=vx;
+y+=vy;
+
+if(y>ground){
+y=ground;
+vy=0;
+}
+}
+
+/* UPDATE */
+function update(){
+
+let alive=enemies.filter(e=>e.hp>0).length;
+
+/* door rule */
+doorLocked = alive>0;
+
+/* stomp */
+enemies.forEach(e=>{
+if(e.hp>0 && Math.abs(x-e.x)<40 && y<e.y){
+e.hp=0;
+}
+});
+}
+
+/* DRAW */
+function draw(){
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+/* ground */
+ctx.fillStyle="#333";
+ctx.fillRect(0,ground,canvas.width,200);
+
+/* player face */
+ctx.fillStyle="red";
+ctx.fillRect(x,y,30,30);
+
+/* enemies */
+ctx.fillStyle="green";
+enemies.forEach(e=>{
+if(e.hp>0) ctx.fillRect(e.x,e.y,30,30);
 });
 
-document.addEventListener("touchend",()=>vx=0);
+/* door */
+ctx.fillStyle=doorLocked?"red":"green";
+ctx.fillRect(900,ground-100,40,100);
+
+/* UI */
+ctx.fillStyle="white";
+ctx.fillText("Coins:"+coins,20,20);
+ctx.fillText("Mode:"+mode,20,40);
+ctx.fillText("Sword:"+weapons.sword,20,60);
+}
 
 /* LOOP */
 function loop(){
-
-if(paused) return;
-
-ctx.clearRect(0,0,900,450);
-
-/* gravity */
-vy+=0.3;
-y+=vy;
-x+=vx;
-
-/* ground */
-if(y>ground){ y=ground; vy=0; }
-
-/* swing zones */
-swinging = swingZones.includes(Math.floor(x));
-
-if(swinging){
-ctx.strokeStyle="brown";
-ctx.beginPath();
-ctx.moveTo(x,y);
-ctx.lineTo(x+40,y-80);
-ctx.stroke();
-
-if(vy>-2) vy=-3; // hafif sallanma
-}
-
-/* spikes */
-ctx.fillStyle="black";
-for(let i=250;i<800;i+=100){
-ctx.fillRect(i,370,30,30);
-}
-
-/* coins */
-ctx.fillStyle="gold";
-ctx.fillRect(500,320,10,10);
-
-/* finish */
-ctx.fillStyle="green";
-ctx.fillRect(finishX,280,20,120);
-
-/* player */
-ctx.fillStyle="red";
-ctx.fillRect(x,y-20,20,20);
-
-/* finish check */
-if(x>finishX){
-alert("BÖLÜM BİTTİ ⭐");
-finishX+=300;
-}
-
-/* pause check */
+physics();
+update();
+draw();
 requestAnimationFrame(loop);
 }
-
-/* SETTINGS */
-function openSettings(){
-document.getElementById("settings").style.display="block";
-}
-
-function closeSettings(){
-document.getElementById("settings").style.display="none";
-}
-
-function toggleSound(){sound=!sound;}
-function toggleMusic(){music=!music;}
-function toggleVibration(){vibration=!vibration;}
-
-function pauseGame(){paused=true;}
-function resumeGame(){paused=false; loop();}
 
 </script>
 
