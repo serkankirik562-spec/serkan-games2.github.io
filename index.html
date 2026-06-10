@@ -7,195 +7,180 @@
 
 <style>
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial;
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
 }
 
 body{
-    height:100vh;
-    overflow:hidden;
-    color:white;
-    transition:0.5s;
+height:100vh;
+overflow:hidden;
+transition:0.6s ease-in-out;
 }
 
-/* 🔥 ARKA PLAN ŞERİTLER */
-.bg{
-    position:absolute;
-    width:100%;
-    height:100%;
-    background:linear-gradient(120deg,#000,#001a1a,#1a0033,#000);
-    background-size:300% 300%;
-    animation:bgMove 10s infinite linear;
-    z-index:-3;
-}
-
-@keyframes bgMove{
-    0%{background-position:0% 50%;}
-    100%{background-position:100% 50%;}
-}
-
-/* 🔵 NOKTA ANİMASYON */
-.dots{
-    position:absolute;
-    width:100%;
-    height:100%;
-    overflow:hidden;
-    z-index:-2;
-}
-
-.dot{
-    position:absolute;
-    width:6px;
-    height:6px;
-    background:#00f7ff;
-    border-radius:50%;
-    animation:float 6s infinite linear;
-    opacity:0.6;
-}
-
-@keyframes float{
-    0%{transform:translateY(100vh);}
-    100%{transform:translateY(-10vh);}
-}
-
-/* ÜST BAR */
+/* TOP BAR */
 .topbar{
-    width:100%;
-    height:70px;
-    background:rgba(20,20,20,0.6);
-    backdrop-filter:blur(12px);
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:0 20px;
-    border-bottom:1px solid rgba(0,255,255,0.2);
+width:100%;
+height:70px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:0 20px;
+color:white;
+background:rgba(20,20,20,0.6);
+backdrop-filter:blur(12px);
 }
 
 .logo{
-    font-weight:bold;
-    color:#00f7ff;
-    text-shadow:0 0 10px #00f7ff;
+color:#00f7ff;
+font-weight:bold;
+text-shadow:0 0 10px #00f7ff;
 }
 
 .search-box input{
-    padding:7px;
-    border:none;
-    border-radius:6px;
-    background:rgba(255,255,255,0.1);
-    color:white;
-    outline:none;
+padding:7px;
+border:none;
+border-radius:6px;
+outline:none;
+background:rgba(255,255,255,0.1);
+color:white;
 }
 
 .right{
-    display:flex;
-    gap:15px;
-    align-items:center;
+display:flex;
+gap:15px;
+align-items:center;
 }
 
 .clock{
-    font-size:13px;
-    color:#00f7ff;
+color:#00f7ff;
+font-size:13px;
 }
 
 .settings{
-    cursor:pointer;
-    transition:0.3s;
+cursor:pointer;
+transition:0.3s;
 }
 
 .settings:hover{
-    transform:rotate(90deg);
-    color:#ff00ff;
+transform:rotate(90deg);
+color:#ff00ff;
 }
 
-/* 🎨 TEMA PANEL */
+/* PANEL */
 .panel{
-    position:absolute;
-    right:20px;
-    top:90px;
-    width:220px;
-    background:rgba(0,0,0,0.8);
-    border:1px solid rgba(0,255,255,0.3);
-    padding:10px;
-    border-radius:10px;
-    display:none;
+position:absolute;
+right:20px;
+top:90px;
+width:240px;
+background:rgba(0,0,0,0.85);
+border-radius:10px;
+padding:10px;
+display:none;
 }
 
-.theme-btn{
-    padding:8px;
-    margin:5px 0;
-    background:rgba(255,255,255,0.1);
-    cursor:pointer;
-    border-radius:6px;
-    text-align:center;
+.theme{
+padding:8px;
+margin:5px 0;
+background:rgba(255,255,255,0.1);
+cursor:pointer;
+border-radius:6px;
+text-align:center;
 }
 
-.theme-btn:hover{
-    background:rgba(0,255,255,0.2);
+.theme:hover{
+background:rgba(0,255,255,0.2);
+}
+
+/* KAYDET */
+.save{
+margin-top:10px;
+padding:8px;
+background:#00f7ff;
+color:black;
+font-weight:bold;
+text-align:center;
+border-radius:6px;
+cursor:pointer;
 }
 </style>
 </head>
 
 <body>
 
-<div class="bg"></div>
-
-<div class="dots" id="dots"></div>
-
 <div class="topbar">
-    <div class="logo">SERKAN GAMES</div>
+<div class="logo">SERKAN GAMES</div>
 
-    <div class="search-box">
-        <input placeholder="Oyun ara...">
-    </div>
-
-    <div class="right">
-        <div id="clock"></div>
-        <div class="settings" onclick="togglePanel()">⚙️</div>
-    </div>
+<div class="search-box">
+<input placeholder="Oyun ara...">
 </div>
 
-<!-- TEMA PANEL -->
+<div class="right">
+<div id="clock"></div>
+<div class="settings" onclick="toggle()">⚙️</div>
+</div>
+</div>
+
 <div class="panel" id="panel">
-    <div class="theme-btn" onclick="theme1()">🌌 Uzay</div>
-    <div class="theme-btn" onclick="theme2()">🔫 FPS</div>
-    <div class="theme-btn" onclick="theme3()">🏰 RPG</div>
-    <div class="theme-btn" onclick="theme4()">🧊 Sandbox</div>
+
+<div class="theme" onclick="setTheme('space')">🌌 Uzay</div>
+<div class="theme" onclick="setTheme('fire')">🔥 Fire</div>
+<div class="theme" onclick="setTheme('ocean')">🌊 Ocean</div>
+<div class="theme" onclick="setTheme('cyber')">⚡ Cyber</div>
+
+<div class="save" onclick="saveTheme()">KAYDET</div>
+
 </div>
 
 <script>
 
-/* SAAT + TARİH */
+let currentTheme="space";
+
+/* CLOCK */
 function clock(){
-    document.getElementById("clock").innerText =
-    new Date().toLocaleTimeString("tr-TR") + " | " +
-    new Date().toLocaleDateString("tr-TR");
+document.getElementById("clock").innerText=
+new Date().toLocaleTimeString("tr-TR")+" | "+new Date().toLocaleDateString("tr-TR");
 }
 setInterval(clock,1000);
 clock();
 
 /* PANEL */
-function togglePanel(){
-    let p = document.getElementById("panel");
-    p.style.display = p.style.display==="block"?"none":"block";
+function toggle(){
+let p=document.getElementById("panel");
+p.style.display=p.style.display==="block"?"none":"block";
 }
 
-/* TEMALAR */
-function theme1(){ document.body.style.background="linear-gradient(120deg,#000,#001a33,#330066)"; }
-function theme2(){ document.body.style.background="linear-gradient(120deg,#000,#330000,#111)"; }
-function theme3(){ document.body.style.background="linear-gradient(120deg,#111,#003300,#000)"; }
-function theme4(){ document.body.style.background="linear-gradient(120deg,#000,#002233,#000)"; }
+/* THEMES */
+function setTheme(t){
+currentTheme=t;
 
-/* NOKTALAR */
-const dots=document.getElementById("dots");
+if(t==="space"){
+document.body.style.background="linear-gradient(120deg,#000,#001133,#330066)";
+}
+if(t==="fire"){
+document.body.style.background="linear-gradient(120deg,#000,#330000,#ff3300)";
+}
+if(t==="ocean"){
+document.body.style.background="linear-gradient(120deg,#000,#001a33,#00ccff)";
+}
+if(t==="cyber"){
+document.body.style.background="linear-gradient(120deg,#000,#6600ff,#00ffff)";
+}
+}
 
-for(let i=0;i<25;i++){
-    let d=document.createElement("div");
-    d.className="dot";
-    d.style.left=Math.random()*100+"%";
-    d.style.animationDuration=(3+Math.random()*5)+"s";
-    dots.appendChild(d);
+/* SAVE */
+function saveTheme(){
+localStorage.setItem("theme",currentTheme);
+alert("Tema kaydedildi!");
+}
+
+/* LOAD */
+window.onload=function(){
+let t=localStorage.getItem("theme");
+if(t){
+setTheme(t);
+}
 }
 
 </script>
