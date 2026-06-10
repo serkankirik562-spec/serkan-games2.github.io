@@ -10,12 +10,11 @@
     margin:0;
     padding:0;
     box-sizing:border-box;
-    font-family:Arial, sans-serif;
+    font-family:Arial;
 }
 
 body{
     height:100vh;
-    background:url("https://images.unsplash.com/photo-1618336753974-aae8e04506aa?auto=format&fit=crop&w=1600&q=80");
     background-size:cover;
     background-position:center;
     overflow:hidden;
@@ -25,24 +24,20 @@ body{
 .topbar{
     width:100%;
     height:70px;
-    background:rgba(60,60,60,0.88);
+    background:rgba(60,60,60,0.9);
     display:flex;
-    align-items:center;
     justify-content:space-between;
+    align-items:center;
     padding:0 20px;
     color:white;
     backdrop-filter:blur(10px);
 }
 
-.logo{
-    font-size:20px;
-    font-weight:bold;
-    letter-spacing:1px;
-}
+.logo{font-weight:bold;}
 
 .search-box input{
-    width:300px;
-    padding:8px 12px;
+    width:250px;
+    padding:7px;
     border:none;
     border-radius:6px;
     outline:none;
@@ -50,23 +45,71 @@ body{
 
 .right{
     display:flex;
-    align-items:center;
     gap:15px;
-}
-
-.clock{
-    font-size:14px;
-    text-align:right;
+    align-items:center;
 }
 
 .settings{
-    font-size:22px;
     cursor:pointer;
+    font-size:22px;
+}
+
+/* MODAL */
+.modal{
+    position:fixed;
+    top:0;left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.7);
+    display:none;
+    justify-content:center;
+    align-items:center;
+}
+
+.panel{
+    width:80%;
+    height:80%;
+    background:#222;
+    border-radius:12px;
+    padding:20px;
+    color:white;
+    overflow:auto;
+}
+
+.games{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:15px;
+    margin-top:20px;
+}
+
+.card{
+    cursor:pointer;
+    border:2px solid transparent;
+    border-radius:10px;
+    overflow:hidden;
     transition:0.2s;
 }
 
-.settings:hover{
-    transform:rotate(90deg);
+.card img{
+    width:100%;
+    height:120px;
+    object-fit:cover;
+}
+
+.card:hover{
+    transform:scale(1.05);
+    border:2px solid #00ffcc;
+}
+
+.saveBtn{
+    margin-top:20px;
+    padding:10px;
+    width:100%;
+    background:#00ffcc;
+    border:none;
+    cursor:pointer;
+    font-weight:bold;
 }
 </style>
 </head>
@@ -77,24 +120,86 @@ body{
     <div class="logo">SERKAN GAMES</div>
 
     <div class="search-box">
-        <input type="text" placeholder="Oyun ara...">
+        <input placeholder="Oyun ara...">
     </div>
 
     <div class="right">
-        <div class="clock" id="clock">--:--</div>
-        <div class="settings">⚙️</div>
+        <div id="clock"></div>
+        <div class="settings" onclick="openMenu()">⚙️</div>
+    </div>
+</div>
+
+<!-- AYARLAR -->
+<div class="modal" id="modal">
+    <div class="panel">
+        <h2>Tema Seç</h2>
+
+        <div class="games">
+
+            <div class="card" onclick="selectBg(this)">
+                <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e">
+                <p>CS / FPS</p>
+            </div>
+
+            <div class="card" onclick="selectBg(this)">
+                <img src="https://images.unsplash.com/photo-1614294148960-9aa740632a87">
+                <p>Metin2 / RPG</p>
+            </div>
+
+            <div class="card" onclick="selectBg(this)">
+                <img src="https://images.unsplash.com/photo-1603481546579-65d935ba6a7c">
+                <p>Battle / Action</p>
+            </div>
+
+            <div class="card" onclick="selectBg(this)">
+                <img src="https://images.unsplash.com/photo-1618336753974-aae8e04506aa">
+                <p>Fantasy MMO</p>
+            </div>
+
+        </div>
+
+        <button class="saveBtn" onclick="saveTheme()">KAYDET</button>
     </div>
 </div>
 
 <script>
-function updateTime(){
+
+// SAAT
+function clock(){
     const now = new Date();
     document.getElementById("clock").innerHTML =
-        now.toLocaleTimeString("tr-TR") + "<br>" +
-        now.toLocaleDateString("tr-TR");
+        now.toLocaleTimeString("tr-TR");
 }
-setInterval(updateTime,1000);
-updateTime();
+setInterval(clock,1000);
+clock();
+
+// MODAL
+function openMenu(){
+    document.getElementById("modal").style.display="flex";
+}
+
+let selectedBg="";
+
+function selectBg(el){
+    selectedBg = el.querySelector("img").src;
+    alert("Seçildi!");
+}
+
+function saveTheme(){
+    if(selectedBg!=""){
+        document.body.style.backgroundImage=`url(${selectedBg})`;
+        localStorage.setItem("bg",selectedBg);
+    }
+    document.getElementById("modal").style.display="none";
+}
+
+// yükle
+window.onload=function(){
+    let bg = localStorage.getItem("bg");
+    if(bg){
+        document.body.style.backgroundImage=`url(${bg})`;
+    }
+}
 </script>
 
 </body>
