@@ -1,36 +1,65 @@
+<!-- ÜST BAR -->
+<div id="topbar">
+  <div class="logo">SERKAN GAMES</div>
+
+  <input type="text" id="search" placeholder="Oyun ara...">
+
+  <div id="datetime"></div>
+
+  <button id="settingsBtn">⚙ Ayarlar</button>
+</div>
+
 <style>
-body{
-margin:0;
-font-family:Arial;
-overflow:hidden;
-color:white;
+  body {
+    margin: 0;
+    font-family: Arial;
+  }
 
-/* 🌌 UZAY ARKA PLAN */
-background: radial-gradient(circle at 20% 20%, #1b2735, #090a0f);
-}
+  #topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 55px;
+    background: #777; /* Gri renk */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 15px;
+    color: white;
+    z-index: 9999;
+  }
 
-/* ⭐ yıldız efekti */
-body::before{
-content:"";
-position:absolute;
-width:200%;
-height:200%;
-background-image: radial-gradient(white 1px, transparent 1px);
-background-size:50px 50px;
-opacity:0.2;
-animation: moveStars 60s linear infinite;
-}
+  #topbar .logo {
+    font-weight: bold;
+    font-size: 18px;
+  }
 
-@keyframes moveStars{
-from{transform:translateY(0px);}
-to{transform:translateY(-1000px);}
-}
+  #search {
+    width: 40%;
+    padding: 6px;
+    border-radius: 6px;
+    border: none;
+  }
 
-/* panel cam efekti */
-.panel{
-background:rgba(20,20,40,0.6);
-backdrop-filter:blur(6px);
-border:1px solid rgba(255,255,255,0.1);
-border-radius:12px;
-}
+  #settingsBtn {
+    background: #555;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
 </style>
+
+<script>
+  function updateTime() {
+    const now = new Date();
+    const time = now.toLocaleTimeString();
+    const date = now.toLocaleDateString();
+    document.getElementById("datetime").innerText = date + " | " + time;
+  }
+
+  setInterval(updateTime, 1000);
+  updateTime();
+</script>
