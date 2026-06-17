@@ -1,65 +1,94 @@
-<!-- ÜST BAR -->
-<div id="topbar">
-  <div class="logo">SERKAN GAMES</div>
-
-  <input type="text" id="search" placeholder="Oyun ara...">
-
-  <div id="datetime"></div>
-
-  <button id="settingsBtn">⚙ Ayarlar</button>
-</div>
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Serkan Games</title>
 
 <style>
   body {
     margin: 0;
     font-family: Arial;
+    background: url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564') no-repeat center center fixed;
+    background-size: cover;
+    color: white;
   }
 
+  /* ÜST BAR */
   #topbar {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    height: 55px;
-    background: #777; /* Gri renk */
+    height: 70px;
+    background: rgba(0,0,0,0.7);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 15px;
-    color: white;
-    z-index: 9999;
+    padding: 0 20px;
+    backdrop-filter: blur(8px);
   }
 
-  #topbar .logo {
+  /* BÜYÜK LOGO */
+  #logo {
+    font-size: 28px;
     font-weight: bold;
-    font-size: 18px;
+    letter-spacing: 2px;
   }
 
+  /* ARAMA */
   #search {
     width: 40%;
-    padding: 6px;
-    border-radius: 6px;
+    padding: 8px;
     border: none;
+    border-radius: 8px;
+    outline: none;
   }
 
-  #settingsBtn {
-    background: #555;
-    color: white;
+  /* SAAT */
+  #clock {
+    font-size: 16px;
+    margin-right: 10px;
+  }
+
+  /* AYARLAR */
+  #settings {
+    background: #222;
     border: none;
-    padding: 6px 10px;
-    border-radius: 6px;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
     cursor: pointer;
   }
+
+  #settings:hover {
+    background: #444;
+  }
 </style>
+</head>
+
+<body>
+
+<div id="topbar">
+  <div id="logo">SERKAN GAMES</div>
+
+  <input id="search" type="text" placeholder="Oyun ara...">
+
+  <div style="display:flex; align-items:center;">
+    <div id="clock"></div>
+    <button id="settings">⚙ Ayarlar</button>
+  </div>
+</div>
 
 <script>
-  function updateTime() {
-    const now = new Date();
-    const time = now.toLocaleTimeString();
-    const date = now.toLocaleDateString();
-    document.getElementById("datetime").innerText = date + " | " + time;
-  }
+function updateClock(){
+  const now = new Date();
+  document.getElementById("clock").innerText =
+    now.toLocaleDateString() + " | " + now.toLocaleTimeString();
+}
 
-  setInterval(updateTime, 1000);
-  updateTime();
+setInterval(updateClock,1000);
+updateClock();
 </script>
+
+</body>
+</html>
