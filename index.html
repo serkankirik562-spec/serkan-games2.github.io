@@ -3,173 +3,272 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Serkan Games</title>
+<title>Car Clean Simulator L3</title>
 
 <style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial;
-}
-
 body{
-height:100vh;
-overflow:hidden;
+margin:0;
+font-family:Arial;
+background:#111;
 color:white;
-}
-
-/* 🌌 UZAY ARKA PLAN */
-.space{
-position:absolute;
-width:100%;
-height:100%;
-z-index:-2;
-background:linear-gradient(120deg,#000,#0a0a2a,#1a0033,#000814);
-background-size:300% 300%;
-animation:spaceMove 10s ease-in-out infinite;
-}
-
-@keyframes spaceMove{
-0%{background-position:0% 50%;}
-50%{background-position:100% 50%;}
-100%{background-position:0% 50%;}
-}
-
-/* ✨ YILDIZLAR */
-.stars{
-position:absolute;
-width:100%;
-height:100%;
 overflow:hidden;
-z-index:-1;
-}
-
-.star{
-position:absolute;
-width:3px;
-height:3px;
-background:white;
-border-radius:50%;
-opacity:0.6;
-animation:floatStar 6s linear infinite;
-}
-
-@keyframes floatStar{
-0%{transform:translateY(100vh);}
-100%{transform:translateY(-10vh);}
 }
 
 /* TOP BAR */
-.topbar{
+#topbar{
+position:absolute;
+top:0;
 width:100%;
-height:70px;
 display:flex;
 justify-content:space-between;
-align-items:center;
-padding:0 20px;
-background:rgba(10,10,30,0.6);
-backdrop-filter:blur(12px);
-border-bottom:1px solid rgba(120,80,255,0.2);
+padding:10px;
+background:#222;
+z-index:10;
 }
 
-.logo{
-color:#b38cff;
-font-weight:bold;
-text-shadow:0 0 10px #6a5acd;
-}
-
-.search-box input{
-padding:7px;
-border:none;
-border-radius:6px;
-outline:none;
-background:rgba(255,255,255,0.1);
-color:white;
-}
-
-.right{
+/* GAME AREA */
+#game{
+height:100vh;
 display:flex;
-gap:15px;
 align-items:center;
+justify-content:center;
 }
 
-.clock{
-color:#b38cff;
-font-size:13px;
+/* CAR */
+.car{
+width:240px;
+height:120px;
+background:#c0392b;
+border-radius:12px;
+position:relative;
 }
 
-.settings{
+.part{
+position:absolute;
+background:#333;
+}
+
+/* JOYSTICK */
+#joystickBase{
+position:absolute;
+bottom:20px;
+left:20px;
+width:100px;
+height:100px;
+background:#333;
+border-radius:50%;
+opacity:0.7;
+}
+
+#stick{
+width:40px;
+height:40px;
+background:#777;
+border-radius:50%;
+position:absolute;
+top:30px;
+left:30px;
+}
+
+/* TOOLBAR */
+#toolbar{
+position:absolute;
+bottom:20px;
+right:20px;
+display:flex;
+gap:10px;
+}
+
+.tool{
+padding:10px;
+background:#444;
+border-radius:8px;
 cursor:pointer;
-transition:0.3s;
 }
 
-.settings:hover{
-transform:rotate(90deg);
-color:#ffffff;
+/* CURSOR HAND */
+#hand{
+position:absolute;
+width:15px;
+height:15px;
+background:white;
+border-radius:50%;
+pointer-events:none;
+z-index:20;
 }
 
-/* ORTA IŞIK */
-.glow{
+/* MESSAGE */
+#msg{
 position:absolute;
 top:50%;
 left:50%;
 transform:translate(-50%,-50%);
-width:400px;
-height:400px;
-background:radial-gradient(circle,rgba(120,80,255,0.25),transparent 70%);
-animation:pulse 5s ease-in-out infinite;
-}
-
-@keyframes pulse{
-0%{transform:translate(-50%,-50%) scale(1);}
-50%{transform:translate(-50%,-50%) scale(1.3);}
-100%{transform:translate(-50%,-50%) scale(1);}
+background:black;
+padding:15px;
+display:none;
+z-index:30;
 }
 </style>
 </head>
 
 <body>
 
-<div class="space"></div>
-
-<div class="stars" id="stars"></div>
-
-<div class="topbar">
-<div class="logo">SERKAN GAMES</div>
-
-<div class="search-box">
-<input placeholder="Oyun ara...">
+<div id="topbar">
+<div>💰 Coin: <span id="money">0</span></div>
+<div>🚗 Durum: <span id="state">Kirli</span></div>
 </div>
 
-<div class="right">
-<div id="clock"></div>
-<div class="settings">⚙️</div>
-</div>
+<div id="game">
+<div class="car" id="car"></div>
 </div>
 
-<div class="glow"></div>
+<div id="hand"></div>
+
+<div id="joystickBase">
+<div id="stick"></div>
+</div>
+
+<div id="toolbar">
+<div class="tool" onclick="selectTool('sponge')">🧽 Sünger</div>
+<div class="tool" onclick="selectTool('foam')">🫧 Köpük</div>
+<div class="tool" onclick="selectTool('pressure')">💦 Basınç</div>
+</div>
+
+<div id="msg"></div>
 
 <script>
 
-/* CLOCK */
-setInterval(()=>{
-document.getElementById("clock").innerText=
-new Date().toLocaleTimeString("tr-TR")+" | "+new Date().toLocaleDateString("tr-TR");
-},1000);
+let money = 0;
 
-/* STARS */
-const stars=document.getElementById("stars");
+/* CAR STATE */
+let stage = 0; 
+// 0 dirty
+// 1 foam
+// 2 washed
+// 3 clean
 
-for(let i=0;i<40;i++){
-let s=document.createElement("div");
-s.className="star";
-s.style.left=Math.random()*100+"%";
-s.style.animationDuration=(3+Math.random()*5)+"s";
-stars.appendChild(s);
+let tool = null;
+
+/* HAND POSITION */
+let hx = window.innerWidth/2;
+let hy = window.innerHeight/2;
+
+const hand = document.getElementById("hand");
+
+function showMsg(t){
+let m = document.getElementById("msg");
+m.innerText = t;
+m.style.display="block";
+setTimeout(()=>m.style.display="none",1200);
 }
+
+/* TOOL SELECT */
+function selectTool(t){
+tool = t;
+showMsg("Seçildi: " + t);
+}
+
+/* CAR AREA */
+const car = document.getElementById("car");
+
+/* CLEANING LOGIC */
+function cleanAction(){
+
+if(stage===0 && tool!=="sponge"){
+showMsg("Araba hazır değil (önce sünger)");
+return;
+}
+
+if(stage===1 && tool!=="foam"){
+showMsg("Araba hazır değil (köpük gerekli)");
+return;
+}
+
+if(stage===2 && tool!=="pressure"){
+showMsg("Araba hazır değil (basınçlı yıkama gerekli)");
+return;
+}
+
+if(tool==="sponge"){
+stage = Math.max(stage,1);
+money += 1;
+}
+
+if(tool==="foam"){
+stage = Math.max(stage,2);
+money += 2;
+}
+
+if(tool==="pressure"){
+stage = Math.max(stage,3);
+money += 3;
+}
+
+updateState();
+
+if(stage===3){
+finishCar();
+}
+}
+
+/* FINISH */
+function finishCar(){
+let reward = 120 + Math.floor(Math.random()*31);
+money += reward;
+showMsg("Araba temiz! +" + reward + " coin");
+stage = 0;
+updateState();
+}
+
+/* UPDATE UI */
+function updateState(){
+let s = "Kirli";
+if(stage===1) s="Köpüklü";
+if(stage===2) s="Yıkanmış";
+if(stage===3) s="Temiz";
+
+document.getElementById("state").innerText = s;
+document.getElementById("money").innerText = money;
+}
+
+/* JOYSTICK */
+let joyActive=false;
+
+document.getElementById("joystickBase").addEventListener("touchmove",(e)=>{
+joyActive=true;
+let t = e.touches[0];
+hx = t.clientX;
+hy = t.clientY;
+
+hand.style.left = hx+"px";
+hand.style.top = hy+"px";
+
+checkTouch();
+});
+
+document.getElementById("joystickBase").addEventListener("touchend",()=>{
+joyActive=false;
+});
+
+/* CLICK CLEAN */
+hand.addEventListener("click",()=>{
+cleanAction();
+});
+
+/* AUTO INTERACTION */
+function checkTouch(){
+let rect = car.getBoundingClientRect();
+
+if(hx>rect.left && hx<rect.right && hy>rect.top && hy<rect.bottom){
+if(joyActive){
+cleanAction();
+}
+}
+}
+
+updateState();
 
 </script>
 
 </body>
-</html>
+  </html>
