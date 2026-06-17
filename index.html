@@ -8,34 +8,64 @@
   body {
     margin: 0;
     font-family: Arial;
-    background: url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564') no-repeat center center fixed;
+
+    /* 🌌 UZAY ARKA PLAN */
+    background: url('https://images.unsplash.com/photo-1446776811953-b23d57bd21aa') no-repeat center center fixed;
     background-size: cover;
+
+    overflow: hidden;
     color: white;
   }
 
-  /* ÜST BAR */
+  /* ⭐ YILDIZLAR */
+  #stars {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  .star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: white;
+    border-radius: 50%;
+    opacity: 0.8;
+    animation: fall linear infinite;
+  }
+
+  @keyframes fall {
+    from { transform: translateY(-10px); opacity: 1; }
+    to { transform: translateY(100vh); opacity: 0; }
+  }
+
+  /* 🔝 ÜST BAR (AYNI KALDI) */
   #topbar {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 70px;
-    background: rgba(0,0,0,0.7);
+    background: rgba(0,0,0,0.65);
+    backdrop-filter: blur(8px);
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 20px;
-    backdrop-filter: blur(8px);
+    z-index: 999;
   }
 
-  /* BÜYÜK LOGO */
   #logo {
     font-size: 28px;
     font-weight: bold;
     letter-spacing: 2px;
   }
 
-  /* ARAMA */
   #search {
     width: 40%;
     padding: 8px;
@@ -44,13 +74,16 @@
     outline: none;
   }
 
-  /* SAAT */
-  #clock {
-    font-size: 16px;
-    margin-right: 10px;
+  #right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
   }
 
-  /* AYARLAR */
+  #clock {
+    font-size: 14px;
+  }
+
   #settings {
     background: #222;
     border: none;
@@ -68,26 +101,50 @@
 
 <body>
 
+<!-- ⭐ YILDIZLAR -->
+<div id="stars"></div>
+
+<!-- 🔝 ÜST BAR (DEĞİŞMEDİ) -->
 <div id="topbar">
   <div id="logo">SERKAN GAMES</div>
 
   <input id="search" type="text" placeholder="Oyun ara...">
 
-  <div style="display:flex; align-items:center;">
+  <div id="right">
     <div id="clock"></div>
     <button id="settings">⚙ Ayarlar</button>
   </div>
 </div>
 
 <script>
+/* ⏰ SAAT */
 function updateClock(){
   const now = new Date();
   document.getElementById("clock").innerText =
     now.toLocaleDateString() + " | " + now.toLocaleTimeString();
 }
-
 setInterval(updateClock,1000);
 updateClock();
+
+/* ⭐ YILDIZ OLUŞTURMA */
+const starsContainer = document.getElementById("stars");
+
+function createStar() {
+  const star = document.createElement("div");
+  star.classList.add("star");
+
+  star.style.left = Math.random() * window.innerWidth + "px";
+  star.style.animationDuration = (2 + Math.random() * 5) + "s";
+  star.style.opacity = Math.random();
+
+  starsContainer.appendChild(star);
+
+  setTimeout(() => {
+    star.remove();
+  }, 7000);
+}
+
+setInterval(createStar, 80);
 </script>
 
 </body>
