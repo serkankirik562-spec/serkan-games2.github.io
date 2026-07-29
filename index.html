@@ -40,6 +40,7 @@ body {
     }
 }
 
+
 /* Menü */
 .navbar {
     height: 70px;
@@ -47,17 +48,17 @@ body {
     align-items: center;
     justify-content: space-between;
     padding: 0 25px;
-    background: rgba(0,0,0,0.6);
+    background: #808080;
     border-bottom: 2px solid #9b00ff;
     box-shadow: 0 0 20px #9b00ff;
 }
 
+
+/* Boş logo alanı */
 .logo {
-    font-size: 28px;
-    font-weight: bold;
-    color: #c000ff;
-    text-shadow: 0 0 15px #c000ff;
+    width: 200px;
 }
+
 
 /* Arama */
 .search {
@@ -69,12 +70,14 @@ body {
     color: white;
 }
 
+
 /* Saat */
 .right {
     display: flex;
     gap: 15px;
     align-items: center;
 }
+
 
 button {
     background: #9000ff;
@@ -84,6 +87,7 @@ button {
     border-radius: 10px;
     cursor: pointer;
 }
+
 
 /* Ayarlar menüsü */
 .settings {
@@ -98,6 +102,7 @@ button {
     box-shadow: 0 0 20px purple;
 }
 
+
 .settings button {
     width: 150px;
     margin-top: 10px;
@@ -105,21 +110,17 @@ button {
 
 
 /* Gündüz modu */
-
 .day {
     background: linear-gradient(135deg,#ffffff,#d9caff);
     color:black;
 }
+
 
 .day .navbar {
     background:white;
     border-color:#5500ff;
 }
 
-.day .logo {
-    color:#5500ff;
-    text-shadow:none;
-}
 
 </style>
 
@@ -130,9 +131,7 @@ button {
 
 <div class="navbar">
 
-<div class="logo">
-SERKAN GAMES
-</div>
+<div class="logo"></div>
 
 
 <input class="search" placeholder="Oyun ara...">
@@ -164,11 +163,13 @@ SERKAN GAMES
 Türkçe
 </button>
 
+
 <p>Tema</p>
 
 <button onclick="themeChange()">
 🌙 Gece / ☀️ Gündüz
 </button>
+
 
 </div>
 
@@ -191,6 +192,7 @@ setInterval(clock,1000);
 clock();
 
 
+
 // Ayarlar
 
 function openSettings(){
@@ -204,6 +206,7 @@ else
 menu.style.display="block";
 
 }
+
 
 
 // Tema
@@ -228,14 +231,13 @@ star.style.left=Math.random()*100+"%";
 
 star.style.top=Math.random()*100+"%";
 
-star.style.animationDuration=
+star.style.animationDuration =
 (5+Math.random()*10)+"s";
 
 
 document.body.appendChild(star);
 
 }
-
 
 </script>
 
